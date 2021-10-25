@@ -1,0 +1,12 @@
+version: "2"
+services:
+  data-server:
+    container_name: data-server
+    build:
+      context: backend/testhelper/
+      dockerfile: Dockerfile
+    image: data-server:latest
+    ports:
+      - 8081:8081
+    volumes:
+      - $HOME/.aws/credentials:/home/app/.aws/credentials:ro

@@ -1,0 +1,48 @@
+spring:
+  profiles:
+    active: local
+
+  datasource: #DB 접속정보
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  hikari: #Hikari 설정
+    maximum-pool-size: 3
+    connection-test-query: SELECT 1
+    data-source-properties:
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+
+  jpa: #JPA 설정
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        show_sql: true #하이버네이트가 실행하는 모든 SQL문을 콘솔로 출력해 준다.
+        format_sql: true #콘솔에 출력되는 JPA 실행 쿼리를 가독성있게 표현한다.
+        use_sql_comments: false #디버깅이 용이하도록 SQL문 이외에 추가적인 정보를 출력해 준다.
+        physical_naming_strategy: kr.ac.ajou.da.testhelper.common.database.naming.DBNamingStrategy
+
+mybatis: #Mybatis 설정
+  mapper-locations: mapper/**/*.xml
+
+
+--- #local 환경
+spring:
+  profiles: local
+  datasource:
+    url: jdbc:mariadb://testhelper-db.c4veo8ludcnc.us-east-2.rds.amazonaws.com:3306/testhelper
+    hikari:
+      username: server
+      password: alkz8VF0GkWue23LWac0GA
+    logging: # ROOT레벨 전체 로깅 레벨 결정
+      level:
+        root: trace
+
+server:
+  port:
+    8081
+
+logging: # ROOT레벨 전체 로깅 레벨 결정
+  level:
+    root: info
