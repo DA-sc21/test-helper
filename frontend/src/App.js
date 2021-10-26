@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 import Tests from './Tests'
 import Main from './Main'
 import NavBar from './NavBar'
-import TestStudentPre from './TestStudentPre'
+import TestStudentPre from './student/TestStudentPre'
 import Kinesis from './kinesisVideo/Home'
 
 function App() {

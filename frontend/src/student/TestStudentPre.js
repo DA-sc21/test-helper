@@ -6,7 +6,7 @@ import TestStudentPCSetting from './TestStudentPCSetting'
 import TestStudentMobileSetting from './TestStudentMobileSetting'
 import TestStudentIdentification from './TestStudentIdentification'
 import TestStudentWaiting from './TestStudentWaiting'
-import testDatas from './tests.json'
+import testDatas from '../tests.json'
 
 function TestStudentPre(){
   let tests=testDatas
