@@ -1,6 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import {Card, Button } from 'react-bootstrap';
 import axios from 'axios';
+import moment from "moment";
 
 function Tests(){
 
@@ -8,14 +9,15 @@ function Tests(){
   useEffect(()=>{
     getStudentRoom();
   },[]);
-  
+
+  let accountId=1;
+  let testStatus='"Mark"';
+
   async function getStudentRoom(){
     await axios
-    .get('/tests?accountId=1&testStatus="MARK"')
+    .get('/tests?accountId='+accountId+'&testStatus='+testStatus)
     .then((result)=>{ 
-      // tests = result.data
       setTestData(result.data);
-      console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -34,6 +36,12 @@ function Tests(){
 }
 
 function TestCard(props){
+  let test_status_options={
+    "CREATE" : "문제생성중",
+    "PROBLEM" : "실시대기중",
+    "MARK" : "채점중",
+    "FINISH" : "채점완료",
+  }
   return(
     <div className="col-md-4">
       <Card>
@@ -42,14 +50,15 @@ function TestCard(props){
           <Card.Text>
             {props.test.test_type}
           </Card.Text>
+          <hr />
           <Card.Text>
-            {props.test.test_status}
+            {test_status_options[props.test.test_status]}
           </Card.Text>
           <Card.Text>
-            시작시각 : {props.test.start_time}
+            시작시각 : {moment(props.test.start_time).format("YYYY-MM-DD dd HH:mm:ss")}
           </Card.Text>
           <Card.Text>
-            종료시각 : {props.test.end_time}
+            종료시각 : {moment(props.test.end_time).format("YYYY-MM-DD dd HH:mm:ss")}
           </Card.Text>
           <div className="row">
             <Button className="col-md-4" variant="primary">문제출제</Button>
