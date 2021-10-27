@@ -14,17 +14,17 @@ function TestStudentPre(){
     getStudentRoom();
   },[]);
 
+  async function getStudentRoom(){
+    await axios
+      .get('/tests/'+testId+'/students/'+studentId+'/room')
+      .then((result)=>{ 
+        console.log(result.data.room)
+        console.log(result.data.test) })
+      .catch(()=>{ console.log("실패") })
+  }
   let {testId, studentId} =useParams();
   console.log(testId,studentId)
   let tests=testDatas
-    async function getStudentRoom(){
-      await axios
-        .get('/tests/'+testId+'/students/'+studentId+'/room')
-        .then((result)=>{ 
-          console.log(result.data.room)
-          console.log(result.data.test) })
-        .catch(()=>{ console.log("실패") })
-    }
   let [tabCompleted,setTabCompleted]=useState([false,false,false,false,false])
   let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
