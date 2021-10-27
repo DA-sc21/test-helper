@@ -1,6 +1,7 @@
 import boto3
 import json
 import os
+import sys
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -9,8 +10,7 @@ def detect_text(bucket,path,studentID):
     correct = False 
     try :
         client=boto3.client('rekognition')
-        response = client.detect_text(Image=image)
-        # print('Detected texts for ' + path)   
+        response = client.detect_text(Image=image) 
         for textDetail in response['TextDetections']:
             # print(json.dumps(textDetail, indent=4, sort_keys=True))
             # print("DetectedText : " + str(textDetail['DetectedText']))
@@ -19,7 +19,7 @@ def detect_text(bucket,path,studentID):
                 correct= True
                 break
     except:
-        print("AWS 에 접근 시 오류가 발생하였습니다! ")
+        sys.stderr.write("AWS 에 접근 시 오류가 발생하였습니다! \n")
         return False
 
     return correct
