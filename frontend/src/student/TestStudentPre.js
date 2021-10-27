@@ -19,7 +19,8 @@ function TestStudentPre(){
       .get('/tests/'+testId+'/students/'+studentId+'/room')
       .then((result)=>{ 
         console.log(result.data.room)
-        console.log(result.data.test) })
+        console.log(result.data.test) 
+      })
       .catch(()=>{ console.log("실패") })
   }
   let {testId, studentId} =useParams();
@@ -32,8 +33,6 @@ function TestStudentPre(){
   return(
     <BrowserRouter>
       <div> 
-        <h4 className="mb-5">이 페이지(대학생 시험준비)에선 위의 Navbar는 없을 예정.</h4>
-        <hr></hr>
         <Nav variant="tabs" defaultActiveKey="link-0">
           {
             tabTitles.map((tabtitle,index)=>{
