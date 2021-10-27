@@ -4,11 +4,7 @@ import {Card, Button } from 'react-bootstrap';
 import TestDatas from './tests.json'
 
 function Tests(){
-  useEffect(()=>{
-    // axios.get('')
-    //     .then((result)=>{ console.log(result.data) })
-    //     .catch(()=>{ console.log("실패") })
-  })
+
   let [testDatas,setTestData] = useState(TestDatas)
   console.log(testDatas)
   return(
@@ -16,7 +12,7 @@ function Tests(){
       <div className="row mt-5">
         {
           testDatas.map((testdata,index)=>{
-            return <TestCard test = {testdata} / >;
+            return <TestCard key={index} test = {testdata} / >;
           })
         }
       </div>

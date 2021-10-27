@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
-import { Link,Route,BrowserRouter } from 'react-router-dom';
+import { Link , Route , BrowserRouter , useParams } from 'react-router-dom';
+import axios from "axios";
 import TestStudentAgreement from './TestStudentAgreement'
 import TestStudentPCSetting from './TestStudentPCSetting'
 import TestStudentMobileSetting from './TestStudentMobileSetting'
@@ -9,17 +10,25 @@ import TestStudentWaiting from './TestStudentWaiting'
 import testDatas from '../tests.json'
 
 function TestStudentPre(){
+  useEffect(()=>{
+    getStudentRoom();
+  },[]);
+
+  let {testId, studentId} =useParams();
+  console.log(testId,studentId)
   let tests=testDatas
+    async function getStudentRoom(){
+      await axios
+        .get('/tests/'+testId+'/students/'+studentId+'/room')
+        .then((result)=>{ 
+          console.log(result.data.room)
+          console.log(result.data.test) })
+        .catch(()=>{ console.log("실패") })
+    }
   let [tabCompleted,setTabCompleted]=useState([false,false,false,false,false])
   let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
-  let components={
-    0 : TestStudentAgreement,
-    1 : TestStudentPCSetting,
-    2 : TestStudentMobileSetting,
-    3 : TestStudentIdentification,
-    4 : TestStudentWaiting
-  }
+
   return(
     <BrowserRouter>
       <div> 
@@ -30,27 +39,57 @@ function TestStudentPre(){
             tabTitles.map((tabtitle,index)=>{
               return(
                 <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/students/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
+                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
                 </Nav.Item>
               )
             })
           }
         </Nav>
-        {  
-          tabTitles.map((tabtitle,index)=>{
-          let Content = components[index]
-          return(
-            <Route exact path={"/tests/students/"+tabPath[index]} component={components[index]} >
-              <Content 
+        <Route exact path="/tests/:testId/students/:studentId/agreement" 
+          render ={()=>
+              <TestStudentAgreement 
                 test={tests} 
                 tabTitles={tabTitles} 
                 tabCompleted={tabCompleted} 
-                setTabCompleted={setTabCompleted}>
-              </Content>
-            </Route>
-          )
-        })
-        }
+                setTabCompleted={setTabCompleted} />
+          }
+        />
+        <Route exact path="/tests/:testId/students/:studentId/pcsetting" 
+          render ={()=>
+            <TestStudentPCSetting 
+              test={tests} 
+              tabTitles={tabTitles} 
+              tabCompleted={tabCompleted} 
+              setTabCompleted={setTabCompleted} />
+          }
+        />
+        <Route exact path="/tests/:testId/students/:studentId/mobilesetting" 
+          render ={()=>
+            <TestStudentMobileSetting 
+              test={tests} 
+              tabTitles={tabTitles} 
+              tabCompleted={tabCompleted} 
+              setTabCompleted={setTabCompleted} />
+          }
+        />
+        <Route exact path="/tests/:testId/students/:studentId/identification" 
+          render ={()=>
+            <TestStudentIdentification 
+              test={tests} 
+              tabTitles={tabTitles} 
+              tabCompleted={tabCompleted} 
+              setTabCompleted={setTabCompleted} />
+          }
+        />
+        <Route exact path="/tests/:testId/students/:studentId/waiting" 
+          render ={()=>
+            <TestStudentWaiting 
+              test={tests} 
+              tabTitles={tabTitles} 
+              tabCompleted={tabCompleted} 
+              setTabCompleted={setTabCompleted} />
+          }
+        />
       </div>
     </BrowserRouter>
   )

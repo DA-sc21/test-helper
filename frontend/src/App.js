@@ -12,9 +12,9 @@ function App() {
       <NavBar></NavBar>
       <Route exact path="/" component={Main} />
       <Route exact path="/tests" component={Tests} />
-      <Route path="/tests/students" component={TestStudentPre} / >
+      <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} / >
       <Route path="/kinesis">
-      <Kinesis></Kinesis>
+        <Kinesis></Kinesis>
       </Route>
     </div>
   );
