@@ -9,4 +9,4 @@ services:
     ports:
       - 8081:8081
     volumes:
-      - $HOME/.aws/credentials:/home/app/.aws/credentials:ro
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro

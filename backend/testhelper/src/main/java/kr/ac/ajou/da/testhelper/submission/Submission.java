@@ -1,6 +1,9 @@
 package kr.ac.ajou.da.testhelper.submission;
 
 
+import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.test.Test;
+import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,10 +18,24 @@ public class Submission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long studentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Student student;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Test test;
 
     @Column(nullable = false)
-    private Long testId;
+    @Enumerated(EnumType.STRING)
+    private VerificationStatus verified;
 
+    @Column(nullable = false)
+    private Long supervisedBy;
+
+    public void updateVerified(boolean verified) {
+        this.setVerified(verified
+                ? VerificationStatus.SUCCESS
+                : VerificationStatus.REJECTED);
+    }
 }

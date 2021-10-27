@@ -25,10 +25,9 @@ $ activate venv
 <br />
 
 
-### 3. root 폴더에 .env 파일 생성 후, key 넣기
-(아직 넣을 일 없지만, api 가져올 때 필수 !)
-<br />
-<br />
+### 3. AWS boto를 위해 계정 연결하기 
+
+[Click! go to AWS boto 계정 설정 방법](https://github.com/DA-sc21/test-helper/tree/main/AI/AWS_boto.md)
 
 
 ### 4. flask 실행하기
