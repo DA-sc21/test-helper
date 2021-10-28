@@ -1,5 +1,5 @@
 import React from 'react'
-import PCScreenShare from './kinesisVideo/PCScreenShare'
+import PCScreenShare from './kinesisVideo/PCScreenshare'
 
 function TestStudentPCSetting(){
   return(

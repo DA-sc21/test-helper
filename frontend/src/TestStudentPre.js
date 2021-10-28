@@ -7,6 +7,7 @@ import TestStudentMobileSetting from './TestStudentMobileSetting'
 import TestStudentIdentification from './TestStudentIdentification'
 import TestStudentWaiting from './TestStudentWaiting'
 import testDatas from './tests.json'
+import { BrowserView, MobileView } from 'react-device-detect';
 
 function TestStudentPre(){
   let tests=testDatas
@@ -22,36 +23,41 @@ function TestStudentPre(){
   }
   return(
     <BrowserRouter>
-      <div> 
-        <h4 className="mb-5">이 페이지(대학생 시험준비)에선 위의 Navbar는 없을 예정.</h4>
-        <hr></hr>
-        <Nav variant="tabs" defaultActiveKey="link-0">
-          {
+      <BrowserView> {/*PC 화면*/}
+        <div> 
+          <h4 className="mb-5">이 페이지(대학생 시험준비)에선 위의 Navbar는 없을 예정.</h4>
+          <hr></hr>
+          <Nav variant="tabs" defaultActiveKey="link-0">
+            {
+              tabTitles.map((tabtitle,index)=>{
+                return(
+                  <Nav.Item key={index}>
+                    <Nav.Link  as={Link} to ={"/tests/students/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
+                  </Nav.Item>
+                )
+              })
+            }
+          </Nav>
+          {  
             tabTitles.map((tabtitle,index)=>{
-              return(
-                <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/students/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
-                </Nav.Item>
-              )
-            })
+            let Content = components[index]
+            return(
+              <Route exact path={"/tests/students/"+tabPath[index]} component={components[index]} >
+                <Content 
+                  test={tests} 
+                  tabTitles={tabTitles} 
+                  tabCompleted={tabCompleted} 
+                  setTabCompleted={setTabCompleted}>
+                </Content>
+              </Route>
+            )
+          })
           }
-        </Nav>
-        {  
-          tabTitles.map((tabtitle,index)=>{
-          let Content = components[index]
-          return(
-            <Route exact path={"/tests/students/"+tabPath[index]} component={components[index]} >
-              <Content 
-                test={tests} 
-                tabTitles={tabTitles} 
-                tabCompleted={tabCompleted} 
-                setTabCompleted={setTabCompleted}>
-              </Content>
-            </Route>
-          )
-        })
-        }
-      </div>
+        </div>
+      </BrowserView>
+      <MobileView> {/*모바일 화면*/}
+        <h5>대학생 모바일 접속 페이지 입니다</h5>
+      </MobileView>
     </BrowserRouter>
   )
 }
