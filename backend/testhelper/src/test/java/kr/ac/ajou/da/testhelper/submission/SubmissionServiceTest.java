@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,6 @@ class SubmissionServiceTest {
     private SubmissionRepository submissionRepository;
 
 
-
     private Course course = new Course(1L, "name");
     private final kr.ac.ajou.da.testhelper.test.Test test = new kr.ac.ajou.da.testhelper.test.Test(1L,
             TestType.MID,
@@ -37,7 +37,7 @@ class SubmissionServiceTest {
             LocalDateTime.now(),
             course);
     private final Student student = new Student(1L, "name", "201820000", "email@ajou.ac.kr");
-    private final Long supervisedBy = 1L;
+    private final long supervisedBy = 1L;
     private final Submission submission = new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy);
     private final List<Submission> submissions = new LinkedList<>();
 
