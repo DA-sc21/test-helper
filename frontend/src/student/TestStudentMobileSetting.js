@@ -9,16 +9,18 @@ function TestStudentMobileSetting(){
   let [studentCard,setStudentCard]= useState("");
   
   return(
-    <div className="m-5 p-5"> 
+    <div className="capture m-5 p-5"> 
       <h4 >모바일 세팅페이지입니다.</h4>
       {/* <div>{studentCard}</div> */}
       <div className="row">
         <Button className="col-md-4" variant="primary" onClick={()=>screenCapture(setStudentCard)}>얼굴사진등록</Button>
-        <div className="col-md-4"/>
         <Button className="col-md-4" variant="info" onClick={()=>UploadImageToS3(testId,studentId,studentCard)}>AWS업로드</Button>
-        <div className="capture col-md-1">캡쳐할사진</div>
-        <img src={studentCard} className="col-md-1"></img>
+        <Button className="col-md-4" variant="success" onClick={()=>DownloadImageFromS3(testId,studentId,studentCard,setStudentCard)}>AWS다운로드</Button>
+        </div>
+      <div className="row m-5 p-5">
+        <img src={studentCard} className="col-md-12"></img>
       </div>
+      
     </div>
   )
 }
@@ -30,25 +32,34 @@ function screenCapture(setStudentCard){
 async function UploadImageToS3(testId,studentId,studentCard){
   let preSignedUrl="";
   await axios
-    .get('/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
+    .get('http://api.testhelper.com/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
     .then((result)=>{
-      console.log(studentCard)
-      console.log(result.data)
       preSignedUrl=result.data;
-      console.log(preSignedUrl)
-      
     })
     .catch(()=>{ console.log("실패") })
 
   await axios
-    .put(preSignedUrl ,studentCard)
+    .put(preSignedUrl ,studentCard
+    )
     .then((result)=>{
-      console.log(studentCard)
+      console.log("put성공")
       console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
 
   
+}
+
+async function DownloadImageFromS3(testId,studentId,studentCard,setstudentCard){
+  let preSignedUrl="";
+  await axios
+    .get('http://api.testhelper.com/s3-download-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
+    .then((result)=>{
+      setstudentCard(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+
+
 }
 
 export default TestStudentMobileSetting

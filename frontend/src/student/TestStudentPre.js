@@ -1,5 +1,5 @@
 import React, { useState ,useEffect } from 'react';
-import { Nav , Button,ListGroup } from 'react-bootstrap';
+import { Nav , Button } from 'react-bootstrap';
 import { Link , Route , BrowserRouter , useParams } from 'react-router-dom';
 import axios from "axios";
 import TestStudentAgreement from './TestStudentAgreement'
@@ -8,6 +8,8 @@ import TestStudentMobileSetting from './TestStudentMobileSetting'
 import TestStudentIdentification from './TestStudentIdentification'
 import TestStudentWaiting from './TestStudentWaiting'
 import { BrowserView, MobileView } from 'react-device-detect';
+import SetViewer from '../kinesisVideo/SetViewer';
+import Viewer from '../kinesisVideo/Viewer';
 
 function TestStudentPre(){
   useEffect(()=>{
@@ -66,16 +68,17 @@ function TestStudentPre(){
               test={test} 
               tabTitles={tabTitles} 
               tabCompleted={tabCompleted} 
-              setTabCompleted={setTabCompleted} />
+              setTabCompleted={setTabCompleted}
+              credentials={credentials} />
           }
         />
         <Route exact path="/tests/:testId/students/:studentId/mobilesetting" 
           render ={()=>
-            <TestStudentMobileSetting 
-              test={test} 
-              tabTitles={tabTitles} 
-              tabCompleted={tabCompleted} 
-              setTabCompleted={setTabCompleted} />
+              <TestStudentMobileSetting 
+                test={test} 
+                tabTitles={tabTitles} 
+                tabCompleted={tabCompleted} 
+                setTabCompleted={setTabCompleted} />
           }
         />
         <Route exact path="/tests/:testId/students/:studentId/identification" 
