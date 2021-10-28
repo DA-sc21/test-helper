@@ -6,6 +6,7 @@ import axios from 'axios';
 
 
 function TestStudentIdentification(props){
+  let baseUrl ="http://api.testhelper.com"
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setface]= useState("");
@@ -14,14 +15,14 @@ function TestStudentIdentification(props){
   },[]);
   async function getimages(){
     await axios
-      .get('http://api.testhelper.com/s3-download-url?objectKey=test/00002/submission/201820742/student_card.jpg')
+      .get(baseUrl+'/s3-download-url?objectKey=test/00002/submission/201820742/student_card.jpg')
       .then((result)=>{
         setStudentCard(result.data)
         
       })
       .catch(()=>{ console.log("실패") })
     await axios
-    .get('http://api.testhelper.com/s3-download-url?objectKey=test/00002/submission/201820742/face.jpg')
+    .get(baseUrl+'/s3-download-url?objectKey=test/00002/submission/201820742/face.jpg')
     .then((result)=>{
       setface(result.data)
       

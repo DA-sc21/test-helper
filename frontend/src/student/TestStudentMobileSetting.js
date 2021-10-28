@@ -20,7 +20,6 @@ function TestStudentMobileSetting(){
       <div className="row m-5 p-5">
         <img src={studentCard} className="col-md-12"></img>
       </div>
-      
     </div>
   )
 }
@@ -31,8 +30,9 @@ function screenCapture(setStudentCard){
 }
 async function UploadImageToS3(testId,studentId,studentCard){
   let preSignedUrl="";
+  let baseUrl ="http://api.testhelper.com"
   await axios
-    .get('http://api.testhelper.com/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
+    .get(baseUrl+'/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
     .then((result)=>{
       preSignedUrl=result.data;
     })
@@ -46,20 +46,17 @@ async function UploadImageToS3(testId,studentId,studentCard){
       console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
-
   
 }
 
 async function DownloadImageFromS3(testId,studentId,studentCard,setstudentCard){
-  let preSignedUrl="";
+  let baseUrl ="http://api.testhelper.com"
   await axios
-    .get('http://api.testhelper.com/s3-download-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
+    .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentId+'/sin.jpg')
     .then((result)=>{
       setstudentCard(result.data);
     })
     .catch(()=>{ console.log("실패") })
-
-
 }
 
 export default TestStudentMobileSetting

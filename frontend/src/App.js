@@ -13,8 +13,8 @@ function App() {
     <div className="App">
       <NavBar></NavBar>
       <Switch>
-        <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} / >
         <Route path="/kinesis" component={Kinesis} />
+        <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} / >
         <Route path='/tests/setting' component={SetViewer}/>
         <Route path='/tests/viewer' component={Viewer} />
         <Route path="/tests" component={Tests} />

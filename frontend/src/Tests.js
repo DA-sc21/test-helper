@@ -6,6 +6,7 @@ import moment from "moment";
 function Tests(){
 
   let [testDatas,setTestData] = useState([])
+  let baseUrl ="http://api.testhelper.com"
   useEffect(()=>{
     getStudentRoom();
   },[]);
@@ -15,7 +16,7 @@ function Tests(){
 
   async function getStudentRoom(){
     await axios
-    .get('http://api.testhelper.com/tests?accountId='+accountId+'&testStatus='+testStatus)
+    .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus)
     .then((result)=>{ 
       setTestData(result.data);
     })
