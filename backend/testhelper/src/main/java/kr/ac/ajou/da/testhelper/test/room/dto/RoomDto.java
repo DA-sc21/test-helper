@@ -19,7 +19,7 @@ public class RoomDto {
     private final TestDto test;
 
     public RoomDto(Submission submission, DeviceType device) {
-        this.id = submission.getId().toString();
+        this.id = submission.resolveRoomId();
         this.device = device;
         this.student = new StudentDto(submission.getStudent());
         this.test = new TestDto(submission.getTest());
