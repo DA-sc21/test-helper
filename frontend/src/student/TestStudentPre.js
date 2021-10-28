@@ -1,5 +1,5 @@
 import React, { useState ,useEffect } from 'react';
-import { Nav } from 'react-bootstrap';
+import { Nav , Button,ListGroup } from 'react-bootstrap';
 import { Link , Route , BrowserRouter , useParams } from 'react-router-dom';
 import axios from "axios";
 import TestStudentAgreement from './TestStudentAgreement'
@@ -7,26 +7,31 @@ import TestStudentPCSetting from './TestStudentPCSetting'
 import TestStudentMobileSetting from './TestStudentMobileSetting'
 import TestStudentIdentification from './TestStudentIdentification'
 import TestStudentWaiting from './TestStudentWaiting'
-import testDatas from '../tests.json'
 import { BrowserView, MobileView } from 'react-device-detect';
 
 function TestStudentPre(){
   useEffect(()=>{
     getStudentRoom();
   },[]);
-
+  
+  let {testId, studentId} =useParams();
+  let [room,setRoom]=useState();
+  let [student,setStudent]=useState();
+  let [test,setTest]=useState();
+  let [credentials,setCredentials]=useState();
   async function getStudentRoom(){
     await axios
-      .get('/tests/'+testId+'/students/'+studentId+'/room')
-      .then((result)=>{ 
-        console.log(result.data.room)
-        console.log(result.data.test) 
-      })
-      .catch(()=>{ console.log("실패") })
+    .get('http://api.testhelper.com/tests/'+testId+'/students/'+studentId+'/room')
+    .then((result)=>{ 
+      setCredentials(result.data.credentials)
+      setRoom(result.data.room)
+      setStudent(result.data.room.student)
+      setTest(result.data.room.test)
+      // console.log(result.data)
+      
+    })
+    .catch(()=>{ console.log("실패") })
   }
-  let {testId, studentId} =useParams();
-  console.log(testId,studentId)
-  let tests=testDatas
   let [tabCompleted,setTabCompleted]=useState([false,false,false,false,false])
   let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
@@ -49,7 +54,7 @@ function TestStudentPre(){
         <Route exact path="/tests/:testId/students/:studentId/agreement" 
           render ={()=>
               <TestStudentAgreement 
-                test={tests} 
+                test={test} 
                 tabTitles={tabTitles} 
                 tabCompleted={tabCompleted} 
                 setTabCompleted={setTabCompleted} />
@@ -58,7 +63,7 @@ function TestStudentPre(){
         <Route exact path="/tests/:testId/students/:studentId/pcsetting" 
           render ={()=>
             <TestStudentPCSetting 
-              test={tests} 
+              test={test} 
               tabTitles={tabTitles} 
               tabCompleted={tabCompleted} 
               setTabCompleted={setTabCompleted} />
@@ -67,7 +72,7 @@ function TestStudentPre(){
         <Route exact path="/tests/:testId/students/:studentId/mobilesetting" 
           render ={()=>
             <TestStudentMobileSetting 
-              test={tests} 
+              test={test} 
               tabTitles={tabTitles} 
               tabCompleted={tabCompleted} 
               setTabCompleted={setTabCompleted} />
@@ -76,7 +81,8 @@ function TestStudentPre(){
         <Route exact path="/tests/:testId/students/:studentId/identification" 
           render ={()=>
             <TestStudentIdentification 
-              test={tests} 
+              test={test} 
+              credentials={credentials}
               tabTitles={tabTitles} 
               tabCompleted={tabCompleted} 
               setTabCompleted={setTabCompleted} />
@@ -85,7 +91,7 @@ function TestStudentPre(){
         <Route exact path="/tests/:testId/students/:studentId/waiting" 
           render ={()=>
             <TestStudentWaiting 
-              test={tests} 
+              test={test} 
               tabTitles={tabTitles} 
               tabCompleted={tabCompleted} 
               setTabCompleted={setTabCompleted} />

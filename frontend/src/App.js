@@ -14,10 +14,10 @@ function App() {
       <NavBar></NavBar>
       <Switch>
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} / >
-        <Route path="/tests" component={Tests} />
         <Route path="/kinesis" component={Kinesis} />
         <Route path='/tests/setting' component={SetViewer}/>
         <Route path='/tests/viewer' component={Viewer} />
+        <Route path="/tests" component={Tests} />
         <Route path="/" component={Main} />
       </Switch>
     </div>

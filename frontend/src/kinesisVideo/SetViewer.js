@@ -35,7 +35,22 @@ const SetViewer = () => {
         </div>
       </div>
 
-      <Button variant="primary"><Link to ={{pathname: "/tests/viewer", state:{sendVideo: video, sendAudio: audio, region: "", accessKey: "", secretAccessKey: "",  channelName: "", clientId: "", sessionToken: ""}}} style={{textDecorationLine: 'none', color: 'white'}}>설정 완료</Link></Button>
+      <Button variant="primary">
+        <Link to ={{
+          pathname: "/tests/viewer", 
+          state:{
+            sendVideo: video, 
+            sendAudio: audio, 
+            region: "", 
+            accessKey: "", 
+            secretAccessKey: "",  
+            channelName: "", 
+            clientId: "", 
+            sessionToken: ""}}} 
+          style={{textDecorationLine: 'none', color: 'white'}}>
+            설정 완료
+        </Link>
+      </Button>
 
     </div>
   );

@@ -15,7 +15,7 @@ function Tests(){
 
   async function getStudentRoom(){
     await axios
-    .get('/tests?accountId='+accountId+'&testStatus='+testStatus)
+    .get('http://api.testhelper.com/tests?accountId='+accountId+'&testStatus='+testStatus)
     .then((result)=>{ 
       setTestData(result.data);
     })
