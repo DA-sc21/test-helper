@@ -1,9 +1,9 @@
 package kr.ac.ajou.da.testhelper.submission;
 
 
-import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.test.Test;
+import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import lombok.*;
 
 import javax.persistence.*;
