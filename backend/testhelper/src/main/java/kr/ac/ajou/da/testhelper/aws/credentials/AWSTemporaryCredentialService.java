@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.aws.credentials;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.Credentials;
@@ -15,7 +16,9 @@ public class AWSTemporaryCredentialService {
     private final AWSSecurityTokenService stsClient;
 
     public AWSTemporaryCredentialService() {
-        this.stsClient = AWSSecurityTokenServiceClientBuilder.standard().build();
+        this.stsClient = AWSSecurityTokenServiceClientBuilder.standard()
+                .withRegion(Regions.US_EAST_2)
+                .build();
     }
 
     public Credentials createTemporaryCredential() {

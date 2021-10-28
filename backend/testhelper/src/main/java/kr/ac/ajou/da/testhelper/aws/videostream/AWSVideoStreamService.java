@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.aws.videostream;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kinesisvideo.AmazonKinesisVideo;
 import com.amazonaws.services.kinesisvideo.AmazonKinesisVideoClient;
 import com.amazonaws.services.kinesisvideo.model.*;
@@ -12,7 +13,9 @@ public class AWSVideoStreamService {
     private final AmazonKinesisVideo kinesisVideoClient;
 
     public AWSVideoStreamService() {
-        this.kinesisVideoClient = AmazonKinesisVideoClient.builder().build();
+        this.kinesisVideoClient = AmazonKinesisVideoClient.builder()
+                .withRegion(Regions.US_EAST_2)
+                .build();
     }
 
     public void createSignalingChannel(String channelName) {

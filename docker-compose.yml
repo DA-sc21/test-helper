@@ -1,0 +1,54 @@
+version: "2"
+services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    build:
+      context: nginx/
+      dockerfile : Dockerfile
+    image: reverse-proxy:latest
+    ports:
+      - 80:80
+    depends_on:
+      - data-server
+  data-server:
+    container_name: data-server
+    build:
+      context: backend/testhelper/
+      dockerfile: Dockerfile
+    image: data-server:latest
+    environment :
+      - AWS_PROFILE=test-helper
+    ports:
+      - 8081:8081
+    expose:
+      - 8081
+    environment:
+      - AWS_PROFILE=test-helper
+    volumes:
+      - ~/.aws/:/root/.aws:ro
+    
+  front: 
+    container_name: front
+    build:
+      context: frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - "./frontend/:/app"
+      - "/app/node_modules"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+
+  ai-server:
+    container_name: ai-server
+    build:
+      context: AI/
+      dockerfile: Dockerfile
+    environment:
+      - AWS_PROFILE=test-helper
+    ports:
+      - 5000:5000
+    volumes:
+      - ~/.aws/:/root/.aws:ro

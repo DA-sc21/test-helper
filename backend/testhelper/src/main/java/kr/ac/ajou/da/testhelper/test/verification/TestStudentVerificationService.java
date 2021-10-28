@@ -24,8 +24,8 @@ public class TestStudentVerificationService {
 
         return submissions.stream()
                 .map(submission -> new GetTestStudentVerificationResDto(
-                        submission.getTestId(),
-                        submission.getStudentId(),
+                        submission.getTest().getId(),
+                        submission.getStudent().getId(),
                         submission.getId(),
                         submission.getVerified()))
                 .collect(Collectors.toList());
