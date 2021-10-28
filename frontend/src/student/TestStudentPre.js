@@ -8,6 +8,7 @@ import TestStudentMobileSetting from './TestStudentMobileSetting'
 import TestStudentIdentification from './TestStudentIdentification'
 import TestStudentWaiting from './TestStudentWaiting'
 import testDatas from '../tests.json'
+import { BrowserView, MobileView } from 'react-device-detect';
 
 function TestStudentPre(){
   useEffect(()=>{
@@ -32,6 +33,7 @@ function TestStudentPre(){
 
   return(
     <BrowserRouter>
+      <BrowserView> {/*PC 화면*/}
       <div> 
         <Nav variant="tabs" defaultActiveKey="link-0">
           {
@@ -90,6 +92,14 @@ function TestStudentPre(){
           }
         />
       </div>
+      </BrowserView>
+      <MobileView> {/*모바일 화면*/}
+        <div style={{marginTop: '25%', marginLeft:'3%', marginRight: '3%'}}>
+          <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>안녕하세요. O O O 시험</p>
+          <p style={{marginBottom: '30%', fontSize: '20px', fontWeight: 'bold'}}>응시 환경 세팅 화면입니다.</p>
+          <Button variant="primary"><Link to ="/tests/setting" style={{textDecorationLine: 'none', color: 'white'}}>핸드폰 카메라 설정</Link></Button>
+        </div>
+      </MobileView>
     </BrowserRouter>
   )
 }
