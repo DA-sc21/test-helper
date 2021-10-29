@@ -1,5 +1,4 @@
 import React ,{useEffect, useState} from 'react';
-import SetViewer from "../kinesisVideo/SetViewer"
 import { useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
