@@ -17,6 +17,7 @@ spring:
   jpa: #JPA 설정
     properties:
       hibernate:
+        default_batch_fetch_size: 100
         dialect: org.hibernate.dialect.MariaDBDialect
         show_sql: true #하이버네이트가 실행하는 모든 SQL문을 콘솔로 출력해 준다.
         format_sql: true #콘솔에 출력되는 JPA 실행 쿼리를 가독성있게 표현한다.
@@ -25,7 +26,6 @@ spring:
 
 mybatis: #Mybatis 설정
   mapper-locations: mapper/**/*.xml
-
 
 --- #local 환경
 spring:
@@ -40,8 +40,8 @@ spring:
         root: trace
 
 server:
-  port:
-    8081
+  port: 8081
+  ai: http://ai-server:5000
 
 logging: # ROOT레벨 전체 로깅 레벨 결정
   level:

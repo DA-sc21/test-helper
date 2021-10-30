@@ -13,35 +13,66 @@ public class AWSVideoStreamService {
     private final AmazonKinesisVideo kinesisVideoClient;
 
     public AWSVideoStreamService() {
+
         this.kinesisVideoClient = AmazonKinesisVideoClient.builder()
                 .withRegion(Regions.US_EAST_2)
                 .build();
+
     }
 
     public void createSignalingChannel(String channelName) {
-        CreateSignalingChannelRequest req = new CreateSignalingChannelRequest();
-        req.setChannelName(channelName);
-        req.setChannelType("SINGLE_MASTER");
-        CreateSignalingChannelResult res = this.kinesisVideoClient.createSignalingChannel(req);
-        log.info("Create Channel : {} {}", channelName, res.getChannelARN());
+
+        try {
+
+            describeSignalingChannel(channelName);
+
+            log.info("Channel Already Exists : {}", channelName);
+
+            return;
+
+        } catch (ResourceNotFoundException ignore) {}
+
+        CreateSignalingChannelRequest req = new CreateSignalingChannelRequest()
+                .withChannelName(channelName)
+                .withChannelType(ChannelType.SINGLE_MASTER);
+
+        try {
+
+            CreateSignalingChannelResult res = this.kinesisVideoClient.createSignalingChannel(req);
+
+            log.info("Create Channel : {} {}", channelName, res.getChannelARN());
+
+        } catch (ResourceInUseException ignore) {
+            log.error("Channel Already Exists : {}", channelName);
+        }
+
     }
 
     public void deleteSignalingChannel(String channelName) {
-        DescribeSignalingChannelRequest channelInfoReq = new DescribeSignalingChannelRequest();
-        channelInfoReq.setChannelName(channelName);
-        ChannelInfo channelInfo;
+
         try {
-            channelInfo = this.kinesisVideoClient.describeSignalingChannel(channelInfoReq).getChannelInfo();
 
-            DeleteSignalingChannelRequest req = new DeleteSignalingChannelRequest();
-            req.setChannelARN(channelInfo.getChannelARN());
-            req.setCurrentVersion(channelInfo.getVersion());
-            DeleteSignalingChannelResult res = this.kinesisVideoClient.deleteSignalingChannel(req);
+            ChannelInfo channelInfo = describeSignalingChannel(channelName);
 
-            log.info("Deleted Channel : {} {}", channelName, channelInfo.getChannelARN());
+            DeleteSignalingChannelRequest req = new DeleteSignalingChannelRequest()
+                    .withChannelARN(channelInfo.getChannelARN())
+                    .withCurrentVersion(channelInfo.getVersion());
 
-        } catch (Exception ignored) {
-            log.info("{} channel doesn't exist", channelName);
+            this.kinesisVideoClient.deleteSignalingChannel(req);
+
+            log.info("Delete Channel : {} {}", channelName, channelInfo.getChannelARN());
+
+        } catch (ResourceNotFoundException ignored) {
+            log.info("Channel Not Found : {}", channelName);
         }
+
+    }
+
+    private ChannelInfo describeSignalingChannel(String channelName) throws ResourceNotFoundException {
+
+        DescribeSignalingChannelRequest req = new DescribeSignalingChannelRequest()
+                .withChannelName(channelName);
+
+        return this.kinesisVideoClient.describeSignalingChannel(req).getChannelInfo();
     }
 }

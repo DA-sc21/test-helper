@@ -55,7 +55,7 @@ class SubmissionServiceTest {
         when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
 
         //when
-        Submission submission = submissionService.getByTestIDAndStudentID(test.getId(), student.getId());
+        Submission submission = submissionService.getByTestIdAndStudentId(test.getId(), student.getId());
 
         //then
 
@@ -69,7 +69,7 @@ class SubmissionServiceTest {
 
         //when
         assertThrows(SubmissionNotFoundException.class, () -> {
-            Submission submission = submissionService.getByTestIDAndStudentID(test.getId(), student.getId());
+            Submission submission = submissionService.getByTestIdAndStudentId(test.getId(), student.getId());
         });
 
         //then
@@ -83,7 +83,7 @@ class SubmissionServiceTest {
         when(submissionRepository.findByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
-        List<Submission> res = submissionService.getByTestIDAndSupervisedBy(test.getId(), supervisedBy);
+        List<Submission> res = submissionService.getByTestIdAndSupervisedBy(test.getId(), supervisedBy);
 
         //then
         assertEquals(submissions, res);

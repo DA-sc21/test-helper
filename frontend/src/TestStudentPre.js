@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Nav } from 'react-bootstrap';
-import { Link,Route,BrowserRouter } from 'react-router-dom';
+import { Nav, Button } from 'react-bootstrap';
+import { Link, Route, BrowserRouter } from 'react-router-dom';
+import { Switch , withRouter } from "react-router";
 import TestStudentAgreement from './TestStudentAgreement'
 import TestStudentPCSetting from './TestStudentPCSetting'
 import TestStudentMobileSetting from './TestStudentMobileSetting'
 import TestStudentIdentification from './TestStudentIdentification'
 import TestStudentWaiting from './TestStudentWaiting'
 import testDatas from './tests.json'
+import { BrowserView, MobileView } from 'react-device-detect';
 
 function TestStudentPre(){
   let tests=testDatas
@@ -22,36 +24,45 @@ function TestStudentPre(){
   }
   return(
     <BrowserRouter>
-      <div> 
-        <h4 className="mb-5">이 페이지(대학생 시험준비)에선 위의 Navbar는 없을 예정.</h4>
-        <hr></hr>
-        <Nav variant="tabs" defaultActiveKey="link-0">
-          {
+      <BrowserView> {/*PC 화면*/}
+        <div> 
+          <h4 className="mb-5">이 페이지(대학생 시험준비)에선 위의 Navbar는 없을 예정.</h4>
+          <hr></hr>
+          <Nav variant="tabs" defaultActiveKey="link-0">
+            {
+              tabTitles.map((tabtitle,index)=>{
+                return(
+                  <Nav.Item key={index}>
+                    <Nav.Link  as={Link} to ={"/tests/students/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
+                  </Nav.Item>
+                )
+              })
+            }
+          </Nav>
+          {  
             tabTitles.map((tabtitle,index)=>{
-              return(
-                <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/students/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
-                </Nav.Item>
-              )
-            })
+            let Content = components[index]
+            return(
+              <Route exact path={"/tests/students/"+tabPath[index]} component={components[index]} >
+                <Content 
+                  test={tests} 
+                  tabTitles={tabTitles} 
+                  tabCompleted={tabCompleted} 
+                  setTabCompleted={setTabCompleted}>
+                </Content>
+              </Route>
+            )
+          })
           }
-        </Nav>
-        {  
-          tabTitles.map((tabtitle,index)=>{
-          let Content = components[index]
-          return(
-            <Route exact path={"/tests/students/"+tabPath[index]} component={components[index]} >
-              <Content 
-                test={tests} 
-                tabTitles={tabTitles} 
-                tabCompleted={tabCompleted} 
-                setTabCompleted={setTabCompleted}>
-              </Content>
-            </Route>
-          )
-        })
-        }
-      </div>
+        </div>
+      </BrowserView>
+      <MobileView> {/*모바일 화면*/}
+        <div style={{marginTop: '25%', marginLeft:'3%', marginRight: '3%'}}>
+          <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>안녕하세요. O O O 시험</p>
+          <p style={{marginBottom: '30%', fontSize: '20px', fontWeight: 'bold'}}>응시 환경 세팅 화면입니다.</p>
+          <Button variant="primary"><Link to ="/tests/setting" style={{textDecorationLine: 'none', color: 'white'}}>핸드폰 카메라 설정</Link></Button>
+        </div>
+      </MobileView>
     </BrowserRouter>
   )
 }

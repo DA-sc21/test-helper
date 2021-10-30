@@ -14,15 +14,15 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
 
     @Transactional
-    public Submission getByTestIDAndStudentID(Long testID, Long studentID) {
+    public Submission getByTestIdAndStudentId(Long testId, Long studentId) {
 
-        return submissionRepository.findByTestIdAndStudentId(testID, studentID)
+        return submissionRepository.findByTestIdAndStudentId(testId, studentId)
                 .orElseThrow(SubmissionNotFoundException::new);
 
     }
 
     @Transactional
-    public List<Submission> getByTestIDAndSupervisedBy(Long testId, Long supervisedBy) {
+    public List<Submission> getByTestIdAndSupervisedBy(Long testId, Long supervisedBy) {
         return submissionRepository.findByTestIdAndSupervisedBy(testId, supervisedBy);
     }
 }
