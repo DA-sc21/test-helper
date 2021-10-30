@@ -77,7 +77,7 @@ const Viewer = (props) => {
 };
 
 async function startPlayerForViewer(props, e) {
-    console.log(props.location.state);
+    console.log("viewer credentials : ",props.location.state);
 
     // Create KVS client
     console.log('Created KVS client...');
@@ -87,7 +87,7 @@ async function startPlayerForViewer(props, e) {
       correctClockSkew: true,
       accessKeyId: props.location.state.accessKey,
       secretAccessKey: props.location.state.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      sessionToken: props.location.state.sessionToken || null
     });
   
     // Get signaling channel ARN
@@ -131,7 +131,7 @@ async function startPlayerForViewer(props, e) {
       credentials: {
         accessKeyId: props.location.state.accessKey,
         secretAccessKey: props.location.state.secretAccessKey,
-        sessionToken: state.sessionToken || null
+        sessionToken: props.location.state.sessionToken || null
       }
     });
     
@@ -143,7 +143,7 @@ async function startPlayerForViewer(props, e) {
       correctClockSkew: true,
       accessKeyId: props.location.state.accessKey,
       secretAccessKey: props.location.state.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      sessionToken: props.location.state.sessionToken || null
     });
   
     console.log('Getting ICE server config response...');

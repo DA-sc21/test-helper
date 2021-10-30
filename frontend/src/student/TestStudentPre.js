@@ -36,6 +36,7 @@ function TestStudentPre(){
   let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
   let history = useHistory()
+  let path="/tests/:testId/students/:studentId"
   return(
     <BrowserRouter>
       <BrowserView> {/*PC 화면*/}
@@ -51,7 +52,7 @@ function TestStudentPre(){
             })
           }
         </Nav>
-        <Route exact path="/tests/:testId/students/:studentId/agreement" 
+        <Route exact path={path+"/agreement"} 
           render ={()=>
               <TestStudentAgreement 
                 test={test} 
@@ -60,7 +61,7 @@ function TestStudentPre(){
                 setTabCompleted={setTabCompleted} />
           }
         />
-        <Route exact path="/tests/:testId/students/:studentId/pcsetting" 
+        <Route exact path={path+"/pcsetting"}
           render ={()=>
             <TestStudentPCSetting 
               test={test} 
@@ -70,7 +71,7 @@ function TestStudentPre(){
               credentials={credentials} />
           }
         />
-        <Route exact path="/tests/:testId/students/:studentId/mobilesetting" 
+        <Route exact path={path+"/mobilesetting"}
           render ={()=>
               <TestStudentMobileSetting 
                 test={test} 
@@ -79,7 +80,7 @@ function TestStudentPre(){
                 setTabCompleted={setTabCompleted} />
           }
         />
-        <Route exact path="/tests/:testId/students/:studentId/identification" 
+        <Route exact path={path+"/identification"}
           render ={()=>
             <TestStudentIdentification 
               test={test} 
@@ -89,7 +90,7 @@ function TestStudentPre(){
               setTabCompleted={setTabCompleted} />
           }
         />
-        <Route exact path="/tests/:testId/students/:studentId/waiting" 
+        <Route exact path={path+"/waiting"}
           render ={()=>
             <TestStudentWaiting 
               test={test} 

@@ -6,6 +6,7 @@ const SetViewer = (props) => {
   const [video, setVideo] = useState(false);
   const [audio, setAudio] = useState(false);
   let credentials = props.location.state.credentials;
+  console.log("Setviewer credentials : ",credentials)
   let changeVideo = (e) => {
     setVideo(e.target.checked)
     console.log('카메라 공유 여부:', e.target.checked)
