@@ -1,11 +1,9 @@
 import boto3
 import json
-import os
 import sys
-from dotenv import load_dotenv
-load_dotenv()
 
-def detect_text(bucket,path,studentID):
+
+def detect_text(bucket,path,studentNum):
     image = {'S3Object':{'Bucket':bucket,'Name':path}}
     correct = False 
     try :
@@ -13,9 +11,7 @@ def detect_text(bucket,path,studentID):
         response = client.detect_text(Image=image) 
         for textDetail in response['TextDetections']:
             # print(json.dumps(textDetail, indent=4, sort_keys=True))
-            # print("DetectedText : " + str(textDetail['DetectedText']))
-            # print("Confidence: " + str(textDetail['Type']))
-            if studentID == str(textDetail['DetectedText']) :
+            if studentNum == str(textDetail['DetectedText']) :
                 correct= True
                 break
     except:
@@ -26,12 +22,12 @@ def detect_text(bucket,path,studentID):
     
 def main():
     import sys
-    sys.path.append('../')
+    sys.path.extend(['../','../../'])
     import s3path
     bucket=s3path.S3_BUCKET
-    path=s3path.S3_ROOT + os.environ['S3_TEMP_TEST'] + s3path.S3_STUDENT_FOLDER+ os.environ['S3_TEMP_STUDENT'] + s3path.S3_STUDENT_CARD
-    student_id=os.environ['STUDENT_ID']
-    response =detect_text(bucket,path, student_id)
+    path=s3path.S3_ROOT + s3path.S3_TEMP_TEST_ID + s3path.S3_STUDENT_FOLDER+ s3path.S3_TEMP_STUDENT_NUM + s3path.S3_STUDENT_CARD
+    student_num= s3path.S3_TEMP_STUDENT_NUM
+    response =detect_text(bucket,path, student_num)
     if response :
         print("Result : True")
     else :

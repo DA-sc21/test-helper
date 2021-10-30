@@ -18,18 +18,18 @@ def index_test():
 @app.route('/identification',methods=['POST'])
 def identification_test():
     test_id = request.form['test_id']
-    student_id = request.form['student_id']
-    idcard_path= s3path.S3_ROOT+ test_id + s3path.S3_STUDENT_FOLDER+ student_id + s3path.S3_STUDENT_CARD
-    face_path = s3path.S3_ROOT+ test_id + s3path.S3_STUDENT_FOLDER+ student_id + s3path.S3_FACE
+    student_num = request.form['student_num']
+    idcard_path= s3path.S3_ROOT+ test_id + s3path.S3_STUDENT_FOLDER+ student_num+ s3path.S3_STUDENT_CARD
+    face_path = s3path.S3_ROOT+ test_id + s3path.S3_STUDENT_FOLDER+ student_num + s3path.S3_FACE
     bucket=s3path.S3_BUCKET
 
-    if not test_id or not student_id :
+    if not test_id or not student_num :
         return render_template(
             'result_id.html',
             result = False,
     )
 
-    result_text = detect_text(bucket, idcard_path,student_id)
+    result_text = detect_text(bucket, idcard_path,student_num)
     
     if not result_text :
         return render_template(

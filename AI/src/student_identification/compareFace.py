@@ -1,9 +1,6 @@
 import boto3
 import json
-import os
 import sys
-from dotenv import load_dotenv
-load_dotenv()
 
 
 def compare_faces(bucket,src_path,tar_path):
@@ -16,7 +13,6 @@ def compare_faces(bucket,src_path,tar_path):
         response = client.compare_faces(SimilarityThreshold=SIMILARITY_THRESHOLD, SourceImage=src_img, TargetImage=tar_img)
         if len(response['FaceMatches'])==0 :
             answer=False
-        # print(json.dumps(response, indent=4, sort_keys=True))
     except :
         sys.stderr.write("AWS 에 접근 시 오류가 발생하였습니다! \n")
         return False
@@ -25,12 +21,12 @@ def compare_faces(bucket,src_path,tar_path):
     
 def main():
     import sys
-    sys.path.append('../')
+    sys.path.extend(['../','../../'])
     import s3path    
     bucket= s3path.S3_BUCKET
-    src_path = s3path.S3_ROOT + os.environ['S3_TEMP_TEST'] + s3path.S3_STUDENT_FOLDER+ os.environ['S3_TEMP_STUDENT'] + s3path.S3_STUDENT_CARD
-    tar_path = s3path.S3_ROOT + os.environ['S3_TEMP_TEST'] + s3path.S3_STUDENT_FOLDER + os.environ['S3_TEMP_STUDENT'] + s3path.S3_FACE
-    # tar_path = os.environ['S3_ROOT'] + os.environ['S3_TEMP_TEST'] + "/student/" + os.environ['S3_TEMP_STUDENT'] + "/fake_face.jpg"
+    src_path = s3path.S3_ROOT + s3path.S3_TEMP_TEST_ID + s3path.S3_STUDENT_FOLDER+ s3path.S3_TEMP_STUDENT_NUM + s3path.S3_STUDENT_CARD
+    tar_path = s3path.S3_ROOT + s3path.S3_TEMP_TEST_ID  + s3path.S3_STUDENT_FOLDER + s3path.S3_TEMP_STUDENT_NUM + s3path.S3_FACE
+   
     response =compare_faces(bucket,src_path,tar_path)
     if response :
         print("Result : True")
