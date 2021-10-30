@@ -5,13 +5,17 @@ import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationReqDto;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class TestStudentVerificationController {
 
     private final TestStudentVerificationService testStudentVerificationService;
@@ -32,6 +36,11 @@ public class TestStudentVerificationController {
 
         return ResponseEntity.ok().body(new BooleanResponse(testStudentVerificationService.update(testId, studentId, reqDto.getVerified())));
 
+    }
+    
+    @PostMapping("/tests/{testId}/students/{studentId}/verification")
+    public String postTestStudentVerification(@PathVariable String testId, @PathVariable String studentId) throws SQLException {
+    	return testStudentVerificationService.verification(testId, studentId);
     }
 
 }

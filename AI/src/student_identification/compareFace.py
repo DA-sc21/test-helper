@@ -1,6 +1,7 @@
 import boto3
 import json
 import os
+import sys
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -17,7 +18,7 @@ def compare_faces(bucket,src_path,tar_path):
             answer=False
         # print(json.dumps(response, indent=4, sort_keys=True))
     except :
-        print("AWS 에 접근 시 오류가 발생하였습니다! ")
+        sys.stderr.write("AWS 에 접근 시 오류가 발생하였습니다! \n")
         return False
         
     return answer

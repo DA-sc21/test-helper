@@ -50,7 +50,7 @@ class TestStudentVerificationServiceTest {
     @Test
     void getList_success() {
         //given
-        when(submissionService.getByTestIDAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
+        when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
         List<GetTestStudentVerificationResDto> res = testStudentVerificationService.getList(test.getId(), supervisedBy);
@@ -70,7 +70,7 @@ class TestStudentVerificationServiceTest {
     @Test
     void update_verifiedTrue_success() {
         //given
-        when(submissionService.getByTestIDAndStudentID(anyLong(), anyLong())).thenReturn(submission);
+        when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when
         testStudentVerificationService.update(test.getId(), student.getId(), true);
@@ -83,7 +83,7 @@ class TestStudentVerificationServiceTest {
     @Test
     void update_verifiedFalse_success() {
         //given
-        when(submissionService.getByTestIDAndStudentID(anyLong(), anyLong())).thenReturn(submission);
+        when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when
         testStudentVerificationService.update(test.getId(), student.getId(), false);
