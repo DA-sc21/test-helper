@@ -4,9 +4,10 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
 
+let baseUrl ="http://api.testhelper.com"
+
 function SuperviseTest(){
 
-  let baseUrl ="http://api.testhelper.com"
   let [verifications,setVerifications] = useState([])
   let [loading,setLoading] = useState(false)
   let [toggled,setToggled]=useState(0)
@@ -41,7 +42,6 @@ function SuperviseTest(){
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="conatiner p-3">
-      
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <StudentsList verifications={verifications} ></StudentsList>
@@ -56,12 +56,10 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} verification = {verification} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} / >;
             })
           }
         </div>
-          
-      
     </div> 
   )
 }
@@ -89,7 +87,14 @@ function StudentCard(props){
             {verification_status_options[props.verification.verified]}
           </Card.Text>
           <div className="row">
-            <Button className="col-md-4" variant="primary">본인인증변경</Button>
+            {props.verification.verified==="SUCCESS"
+            ? <Button className="col-md-4" variant="primary" onClick={()=>{
+                changeVerifications(props,false)}}>본인인증거절
+              </Button> 
+            : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
+                changeVerifications(props,true)}}>본인인증승인
+              </Button> }
+            
             <Button className="col-md-4" variant="success">채팅</Button>
             <Button className="col-md-4" variant="danger">경고</Button>
           </div>
@@ -103,6 +108,24 @@ function StudentCard(props){
       </Card>
     </div>
   )
+}
+async function changeVerifications(props,verified){
+  let testId=props.testId
+  let studentId=props.verification.studentId
+  let setVerifications=props.setVerifications
+  await axios
+  .put(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification',{"verified" : verified})
+  .then((result)=>{ 
+    console.log(result.data)
+  })
+  .catch(()=>{ console.log("실패") })
+
+  await axios
+    .get(baseUrl+'/tests/'+testId+'/students/verification')
+    .then((result)=>{ 
+      setVerifications(result.data)
+    })
+    .catch(()=>{ console.log("실패") })
 }
 
 function StudentsList(props) {

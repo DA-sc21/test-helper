@@ -42,7 +42,7 @@ function Tests(){
 
   if(!loading)return(<Loading></Loading>)
   return(
-    <div className="container p-5">
+    <div className="container mt-3 p-2">
       <ButtonGroup aria-label="Basic example">
         <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>id순오름정렬</Button>
         <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>id순내림정렬</Button>
@@ -71,7 +71,6 @@ function TestCard(props){
 
   return(
     <div className="col-md-4">
-      
       <Card>
         <Card.Body>
           <Card.Title>{props.test.name}</Card.Title>
