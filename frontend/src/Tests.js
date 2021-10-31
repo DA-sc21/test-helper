@@ -1,5 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import {Card, Button } from 'react-bootstrap';
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import axios from 'axios';
 import moment from "moment";
 
@@ -7,14 +8,15 @@ function Tests(){
 
   let [testDatas,setTestData] = useState([])
   let baseUrl ="http://api.testhelper.com"
+  
   useEffect(()=>{
-    getStudentRoom();
+    getTests();
   },[]);
 
   let accountId=1;
   let testStatus='"Mark"';
 
-  async function getStudentRoom(){
+  async function getTests(){
     await axios
     .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus)
     .then((result)=>{ 
@@ -22,9 +24,27 @@ function Tests(){
     })
     .catch(()=>{ console.log("실패") })
   }
+  function sortTests(inc,standard){
+    let temp = [...testDatas].sort(function (a,b){
+      let value  = a[standard] > b[standard] ?  1 :  -1
+      return inc*value 
+    })
+    setTestData(temp)
+    
+  }
+  let [toggled,setToggled]=useState(0)
+  function buttonCss(idx) {
+    return toggled===idx? "primary" : "outline-primary"  
+  }
 
   return(
-    <div className="container">
+    <div className="container p-5">
+      <ButtonGroup aria-label="Basic example">
+        <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>id순오름정렬</Button>
+        <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>id순내림정렬</Button>
+        <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
+        <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
+      </ButtonGroup>
       <div className="row mt-5">
         {
           testDatas.map((testdata,index)=>{
@@ -45,6 +65,7 @@ function TestCard(props){
   }
   return(
     <div className="col-md-4">
+      
       <Card>
         <Card.Body>
           <Card.Title>{props.test.name}</Card.Title>
@@ -71,4 +92,5 @@ function TestCard(props){
     </div>
   )
 }
+
 export default Tests
