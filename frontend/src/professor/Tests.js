@@ -1,14 +1,16 @@
 import React,{useEffect, useState} from 'react'
-import {Card, Button } from 'react-bootstrap';
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import {Card, Button,ButtonGroup } from 'react-bootstrap';
 import axios from 'axios';
 import moment from "moment";
+import { useHistory } from 'react-router-dom';
+import Loading from '../component/Loading';
 
 function Tests(){
 
-  let [testDatas,setTestData] = useState([])
   let baseUrl ="http://api.testhelper.com"
-  
+  let [testDatas,setTestData] = useState([])
+  let [loading,setLoading] = useState(false)
+
   useEffect(()=>{
     getTests();
   },[]);
@@ -21,6 +23,7 @@ function Tests(){
     .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus)
     .then((result)=>{ 
       setTestData(result.data);
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -37,6 +40,7 @@ function Tests(){
     return toggled===idx? "primary" : "outline-primary"  
   }
 
+  if(!loading)return(<Loading></Loading>)
   return(
     <div className="container p-5">
       <ButtonGroup aria-label="Basic example">
@@ -63,6 +67,8 @@ function TestCard(props){
     "MARK" : "채점중",
     "FINISH" : "채점완료",
   }
+  let history = useHistory()
+
   return(
     <div className="col-md-4">
       
@@ -84,7 +90,7 @@ function TestCard(props){
           </Card.Text>
           <div className="row">
             <Button className="col-md-4" variant="primary">문제출제</Button>
-            <Button className="col-md-4" variant="danger">시험감독</Button>
+            <Button className="col-md-4" variant="danger" onClick={()=>{history.push("/tests/"+props.test.id+"/supervise")}}>시험감독</Button>
             <Button className="col-md-4" variant="success">채점하기</Button>
           </div>
         </Card.Body>
