@@ -1,19 +1,71 @@
 import React, { useState } from 'react'
-import {ListGroup ,Button} from 'react-bootstrap'
+import { ListGroup ,Button , Table } from 'react-bootstrap'
 import moment from 'moment';
+import Moment from "react-moment"
 import 'moment/locale/ko';
+import { useInterval } from 'react-use';
 
 function TestStudentWaiting(props){
-  // console.log(props.tabCompleted)
-  let testInformations=["id","name","startTime","endTime"]
-  let startTime=props.test.startTime
+  let testInformations = ["id","name","startTime","endTime"]
+  let startTime = props.test.startTime
+  startTime = moment(startTime).format("YYYY-MM-DD dd HH:mm:ss")
+ 
+  const [remainTime, setRemainTime] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+  let [started,setStarted]=useState(false)
+  useInterval(() => {
+    
+    let currentTime = moment();
+    let testStartTime = moment("2021 10 31 18:07");
+    // let testStartTime = moment(props.test.startTime);
+    let duration = moment.duration(testStartTime.diff(currentTime));
+    duration < 0 ? setStarted(true) :setStarted(false) 
+    let temp={
+      days: duration.days(),
+      hours: duration.hours(),
+      minutes: duration.minutes(),
+      seconds: duration.seconds()
+    }
+    setRemainTime(temp)
+  }, 1000);
 
   return(
-    <div className="m-5 p-5"> 
+    <div className="conatiner m-4 px-5"> 
       <div className="row">
-        <h4>시험 시작시간 {moment(startTime).format("YYYY-MM-DD dd HH:mm:ss")}</h4> 
-        <h4>남은시간은 </h4>
-        <hr />
+        <div className="col-md-12 my-4">
+          <Button variant= "success" size="lg" disabled= {!started} >
+            시험장입장
+          </Button>
+        </div>
+        <div className="col-md-12">
+          <Table striped bordered hover size="sm">
+            <tbody>
+              <tr>
+                <td> 현재 시간 </td>
+                <td> <Moment format="YYYY-MM-DD dd HH:mm:ss" >{Date.now()}</Moment>  </td>
+              </tr>
+              <tr>
+                <td>시험시작 시간</td>
+                <td> {startTime}  </td>
+              </tr>
+              <tr>
+                <td colSpan="2">
+                  { started 
+                    ?  (-remainTime.days)+"일 "+(-remainTime.hours)+"시간 "+(-remainTime.minutes)+"분 "+(-remainTime.seconds)+"초 지났습니다."
+                    :  remainTime.days+"일 "+remainTime.hours+"시간 "+remainTime.minutes+"분 "+remainTime.seconds+"초 남았습니다." 
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+      </div>
+      <hr />
+      <div className="row mt-5">
         <div className="col-md-6">
           <h4>Setting현황</h4>
           <ListGroup>
@@ -39,12 +91,6 @@ function TestStudentWaiting(props){
               })
             }
           </ListGroup>
-        </div>
-        <div className="col-md-12 mt-5">
-          {/* <h2>남은시간 { hours }</h2> */}
-          <Button variant="info" size="lg">
-            시험장입장
-          </Button>
         </div>
       </div>
     </div>
