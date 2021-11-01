@@ -30,6 +30,7 @@ jobs:
       
       - name: Build
         run: |
+          cd frontend
           npm run build
 
       # 추후 테스트 코드 추가 예정
@@ -83,11 +84,11 @@ jobs:
 
       - name : Build with Gradle
         run: |
-          ./gradlew build
+          ./backend/testhelper/gradlew build
 
       - name: run backend test
         run: |
-          ./gradlew test
+          ./backend/testhelper/gradlew test
 
 
       - name: if fail  
