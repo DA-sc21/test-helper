@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run : |
           cd frontend
-          npm ci
+          npm install
       
       - name: Build
         run: |
@@ -84,11 +84,13 @@ jobs:
 
       - name : Build with Gradle
         run: |
-          ./backend/testhelper/gradlew build
+          cd backend/testhelper
+          ./gradlew build
 
       - name: run backend test
         run: |
-          ./backend/testhelper/gradlew test
+          cd backend/testhelper
+          ./gradlew test
 
 
       - name: if fail  
