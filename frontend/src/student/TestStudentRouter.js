@@ -14,6 +14,8 @@ function TestStudentRouter (props){
   let tabCompleted=props.tabCompleted
   let setTabCompleted=props.setTabCompleted
   let credentials=props.credentials
+  let student=props.student
+  let room=props.room
 
   return (
     <>
@@ -43,7 +45,9 @@ function TestStudentRouter (props){
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
             setTabCompleted={setTabCompleted}
-            credentials={credentials} />
+            credentials={credentials} 
+            student={student}
+            room={room}/>
         }
       />
       <Route exact path={path+"/identification"}
@@ -53,7 +57,8 @@ function TestStudentRouter (props){
             credentials={credentials}
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
-            setTabCompleted={setTabCompleted} />
+            setTabCompleted={setTabCompleted}
+            student={student} />
         }
       />
       <Route exact path={path+"/waiting"}

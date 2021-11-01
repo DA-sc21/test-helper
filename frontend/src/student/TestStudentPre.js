@@ -90,7 +90,7 @@ function TestStudentPre(){
               onClick={()=>{ 
                 console.log('Button clicked')
                 setmobileAgreement(true)
-                history.push("/tests/1/students/1/mobilesetting")
+                history.push("/tests/"+testId+"/students/"+studentId+"/mobilesetting")
               }} 
               className="btn btn-primary" >
               화상 회의 입장
@@ -106,6 +106,8 @@ function TestStudentPre(){
           tabCompleted={tabCompleted} 
           setTabCompleted={setTabCompleted}
           credentials={credentials}
+          student={student}
+          room={room}
         />
     </div>
   )

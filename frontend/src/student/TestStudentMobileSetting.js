@@ -9,9 +9,10 @@ function TestStudentMobileSetting(props){
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
-  // console.log(props)
   let credentials=props.credentials
-  
+  let room=props.room
+  let studentNum=props.student.studentNumber
+
   return(
     <div className="m-4"> 
       <BrowserView>
@@ -28,8 +29,8 @@ function TestStudentMobileSetting(props){
           region= "us-east-2" 
           accessKey= {credentials.accessKeyId} 
           secretAccessKey= {credentials.secretAccessKey}  
-          channelName = "test"
-          clientId = "MO" 
+          channelName = {room.id}
+          clientId = {room.device} 
           sessionToken = {credentials.sessionToken} />
         <div className="container">
           <div className="row">
@@ -37,7 +38,7 @@ function TestStudentMobileSetting(props){
               className="col-5" 
               variant="primary" 
               onClick =
-                {(e) => capture(e,testId,studentId,setStudentCard,"student_card")
+                {(e) => capture(e,testId,studentNum,setStudentCard,"student_card")
                 }>학생증사진등록
             </Button>
             <div className="col-2"></div>
@@ -45,7 +46,7 @@ function TestStudentMobileSetting(props){
               className="col-5" 
               variant="danger" 
               onClick =
-                {(e) => capture(e,testId,studentId,setFace,"face")
+                {(e) => capture(e,testId,studentNum,setFace,"face")
                 }>얼굴사진등록
             </Button>
           </div>
@@ -82,6 +83,8 @@ async function UploadImageToS3(testId,studentId,img,target){
 
   let preSignedUrl="";
   let baseUrl ="http://api.testhelper.com"
+  testId=String(testId).padStart(5,"0")
+
   await axios
     .get(baseUrl+'/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/'+target+'.jpg')
     .then((result)=>{
