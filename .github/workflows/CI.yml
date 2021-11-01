@@ -29,7 +29,8 @@ jobs:
           npm install
       
       - name: Build
-        run: npm run build
+        run: |
+          npm start
 
       # 추후 테스트 코드 추가 예정
       # - name: run frontend test
@@ -77,8 +78,7 @@ jobs:
       
       - name: Grant execute permission for gradlew
         run: |
-          cd backend/
-          chmod +x gradlew
+          chmod +x backend/gradlew
 
       - name : Build with Gradle
         run: ./gradlew build
