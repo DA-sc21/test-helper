@@ -25,12 +25,12 @@ jobs:
       
       - name: Install dependencies
         run : |
-          cd frontend/
+          cd frontend
           npm install
       
       - name: Build
         run: |
-          cd frontend/
+          cd frontend
           npm run build
 
       # 추후 테스트 코드 추가 예정
@@ -80,17 +80,17 @@ jobs:
       - name: Grant execute permission for gradlew
         run: |
           pwd
-          cd backend/
+          cd backend
           chmod +x gradlew
 
       - name : Build with Gradle
         run: |
-          cd backend/
+          cd backend
           ./gradlew build
 
       - name: run backend test
         run: |
-          cd backend/
+          cd backend
           ./gradlew test
 
 
