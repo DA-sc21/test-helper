@@ -16,13 +16,13 @@ public class TestsService {
 	@Autowired
 	private AccountMapper accountMapper;
 	
-	public List<HashMap<String, Object>> getTests(int accountId, String testStatus) throws SQLException {
+	public List<HashMap<String, Object>> getTests(int accountId) throws SQLException {
 		String role = getAccountRole(accountId);
 		
 		if(role.equals("PROFESSOR")) {
-			return testsMapper.getTestListOfProfessor(accountId, testStatus);
+			return testsMapper.getTestListOfProfessor(accountId);
 		} else if(role.equals("ASSISTANT")) {
-			return testsMapper.getTestListOfAssistant(accountId, testStatus);
+			return testsMapper.getTestListOfAssistant(accountId);
 		}
 		
 		return null;
