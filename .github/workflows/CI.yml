@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ dev, main ]
+  pull_request:
+    branches: [ activity/** ,dev, main ]
+
+  workflow_dispatch:
+
+jobs:
+  AI-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id : ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key : ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region : ${{secrets.AWS_REGION}}
+      
+      - name: Install Python 3
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r AI/requirements.txt
+
+      - name: run unit test
+        run: |
+          sh AI/test/all_test.sh
+
+      - name: if fail  
+        uses: actions/github-script@v3  
+        with:  
+          github-token: $  
+          script: |
+            const ref = "$"
+            const pull_number = Number(ref.split("/")[2])
+            await github.pulls.createReview({
+              ...context.repo,
+              pull_number,
+              body:"테스트코드를 다시 확인해주세요. ",
+              event: "REQUEST_CHANGES"
+            })
+            await github.pulls.update({
+              ...context.repo,
+              pull_number,
+              state: "closed"
+            })
+        if: failure()  
