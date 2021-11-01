@@ -53,9 +53,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
-
 }
 
 test {
+	testLogging {
+		events "PASSED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+	}
 	useJUnitPlatform()
 }
