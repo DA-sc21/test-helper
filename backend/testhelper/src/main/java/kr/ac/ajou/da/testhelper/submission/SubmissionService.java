@@ -34,10 +34,11 @@ public class SubmissionService {
         return submissionRepository.findByTestIdAndSupervisedBy(testId, supervisedBy);
     }
 
-	public List<HashMap<String, Object>> getSubmission(int testId, int studentId) throws SQLException {
+	public List<HashMap<String, Object>> getSubmissionStatus(int testId, int studentId) throws SQLException {
 		if (studentId == 0) {
-			return submissionMapper.getSubmission(testId);
+			return submissionMapper.getTestSubmissionStatus(testId);
+		} else {
+			return submissionMapper.getStudentSubmissionStatus(testId, studentId);
 		}
-		return null;
 	}
 }

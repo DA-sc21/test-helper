@@ -16,7 +16,7 @@ public class SubmissionController {
 	private SubmissionService submissionService;
 	
 	@GetMapping("/tests/{testId}/submissions")
-    public List<HashMap<String, Object>> getSubmission(@PathVariable int testId, @RequestParam(required = false, defaultValue = "0") int studentId) throws SQLException {
-    	return submissionService.getSubmission(testId, studentId);
+    public List<HashMap<String, Object>> getSubmissionStatus(@PathVariable int testId, @RequestParam(required = false, defaultValue = "0") int studentId) throws SQLException {
+    	return submissionService.getSubmissionStatus(testId, studentId);
     }
 }
