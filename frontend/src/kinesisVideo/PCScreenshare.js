@@ -56,7 +56,7 @@ function onStatsReport(report) {
 const PCScreenShare = (props) => {
     state.localView = useRef(null);
     state.screenStream = useRef(null);
-
+    console.log(props)
     return (
       <div>
         <br />

@@ -12,7 +12,9 @@ function TestStudentMobileSetting(props){
   let credentials=props.credentials
   let room=props.room
   let studentNum=props.student.studentNumber
-
+  let video=props.video
+  let audio=props.audio
+  console.log(props)
   return(
     <div className="m-4"> 
       <BrowserView>
@@ -24,8 +26,8 @@ function TestStudentMobileSetting(props){
         <Viewer 
           testId ={testId}
           studentId={studentId}
-          sendVideo= "true"
-          sendAudio= "true" 
+          sendVideo={video}
+          sendAudio={audio}
           region= "us-east-2" 
           accessKey= {credentials.accessKeyId} 
           secretAccessKey= {credentials.secretAccessKey}  

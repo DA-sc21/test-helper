@@ -108,6 +108,8 @@ function TestStudentPre(){
           credentials={credentials}
           student={student}
           room={room}
+          video={video}
+          audio={audio}
         />
     </div>
   )

@@ -16,6 +16,8 @@ function TestStudentRouter (props){
   let credentials=props.credentials
   let student=props.student
   let room=props.room
+  let video=props.video
+  let audio=props.audio
 
   return (
     <>
@@ -47,7 +49,9 @@ function TestStudentRouter (props){
             setTabCompleted={setTabCompleted}
             credentials={credentials} 
             student={student}
-            room={room}/>
+            room={room}
+            video={video}
+            audio={audio} />
         }
       />
       <Route exact path={path+"/identification"}

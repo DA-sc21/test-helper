@@ -3,11 +3,14 @@ import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
+import Master from '../kinesisVideo/Master';
 
 let baseUrl ="http://api.testhelper.com"
 
 function SuperviseTest(){
 
+  let [testRooms,setTestRooms] = useState([])
+  let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([])
   let [loading,setLoading] = useState(false)
   let [toggled,setToggled]=useState(0)
@@ -15,6 +18,7 @@ function SuperviseTest(){
   
   useEffect(()=>{
     getVerifications();
+    createTestRooms();
   },[]);
 
   async function getVerifications(){
@@ -22,9 +26,29 @@ function SuperviseTest(){
     .get(baseUrl+'/tests/'+testId+'/students/verification')
     .then((result)=>{ 
       setVerifications(result.data)
-      setLoading(true);
+      console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
+  }
+
+  async function createTestRooms(){
+    await axios
+    .post(baseUrl+'/tests/'+testId+'/students/room')
+    .then((result)=>{
+      sortTestRooms(result.data.students)
+      setCredentials(result.data.credentials)
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  function sortTestRooms(arr){
+    let temp = []
+    let rooms = arr.map(data=>{
+      temp.push(data.roomId)
+    })
+    setLoading(true);
+    setTestRooms(temp)
   }
 
   function sortVerifications(inc,standard){
@@ -56,7 +80,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} / >;
             })
           }
         </div>
@@ -74,8 +98,9 @@ function StudentCard(props){
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <video className="col-md-12" controls></video>
-          <video className="col-md-12" controls></video>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2"></Master>
+          {/* <video className="col-md-12" controls></video>
+          <video className="col-md-12" controls></video> */}
         </div>
         <Card.Body>
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>

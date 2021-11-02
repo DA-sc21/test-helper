@@ -11,8 +11,8 @@ function TestStudentPCSetting(props){
         accessKey={props.credentials.accessKeyId}
         secretAccessKey={props.credentials.secretAccessKey}
         sessionToken= {props.credentials.sessionToken }
-        channelName="" 
-        clientId=""
+        channelName="2" 
+        clientId="PC"
       />
     </div>
   )
