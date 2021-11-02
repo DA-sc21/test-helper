@@ -4,7 +4,6 @@ on:
   push:
     branches: [ dev, main ]
   pull_request:
-    branches: [ activity/** ,dev, main ]
 
   workflow_dispatch:
 
@@ -27,12 +26,7 @@ jobs:
         run : |
           cd frontend
           npm install
-      
-      - name : fix dependencies
-        run : |
-          cd frontend
-          npm audit fix
-          
+
       - name: Build
         run: |
           cd frontend
