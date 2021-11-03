@@ -14,6 +14,7 @@ function TestStudentMobileSetting(props){
   let studentNum=props.student.studentNumber
   let video=props.video
   let audio=props.audio
+  let id=props.room.device+props.student.id
   console.log(props)
   return(
     <div className="m-4"> 
@@ -32,7 +33,7 @@ function TestStudentMobileSetting(props){
           accessKey= {credentials.accessKeyId} 
           secretAccessKey= {credentials.secretAccessKey}  
           channelName = {room.id}
-          clientId = {room.device} 
+          clientId = {id} 
           sessionToken = {credentials.sessionToken} />
         <div className="container">
           <div className="row">

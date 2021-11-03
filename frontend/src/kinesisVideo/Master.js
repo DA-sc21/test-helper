@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
+import { Button } from 'react-bootstrap';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -37,31 +38,39 @@ const state = store({
   playerIsStarted: false,
   
   // These are set when user starts video; a few of them are only used when you start the stream as MASTER:
-  signalingClient: null,
-  localStream: null,
-  remoteView: null,
-  pcView: null, // pc screen view
-  dataChannel: null,
-  peerConnectionStatsInterval: null,
-  peerConnectionByClientId: {},
-  dataChannelByClientId: [],
-  receivedMessages: '',
+  // dataChannel: null,
+  // receivedMessages: '',
 });
+
+const master = {
+  signalingClient: null,
+  peerConnectionByClientId: {},
+  dataChannelByClientId: {},
+  localStream: null,
+  remoteStreams: [],
+  peerConnectionStatsInterval: null,
+};
 
 function onStatsReport(report) {
     // TODO: Publish stats
 }
 
 const Master = (props) => {
-  state.remoteView = useRef(null);
-  state.pcView = useRef(null);
+  const remoteView = useRef(null);
+  const pcView = useRef(null);
+  const [isAudioShare, setIsAudioShare] = useState(false); //모바일 마이크 공유 여부
 
   useEffect(() => {
     console.log(props);
-    startPlayerForMaster(props);
+    // let time = (props.index+1)*1000;
+    // // console.log(time);
+    // setTimeout(function () {
+    //   startPlayerForMaster(props);
+    // }, time);
+    //startPlayerForMaster(props);
   }, []);
 
-  async function startPlayerForMaster(props) {
+  async function startPlayerForMaster(props,e) {
     // Create KVS client
     const kinesisVideoClient = new AWS.KinesisVideo({
         region: props.region,
@@ -102,7 +111,7 @@ const Master = (props) => {
 
     // Create Signaling Client
     console.log(`Creating signaling client...`);
-    state.signalingClient = new window.KVSWebRTC.SignalingClient({
+    master.signalingClient = new window.KVSWebRTC.SignalingClient({
         channelARN,
         channelEndpoint: endpointsByProtocol.WSS,
         role: state.role, //roleOption.MASTER
@@ -157,21 +166,21 @@ const Master = (props) => {
           
     const resolution = (state.resolution === OPTIONS.TRAVERSAL.WIDESCREEN) ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
           
-    state.signalingClient.on('open', async () => {
+    master.signalingClient.on('open', async () => {
       console.log('[MASTER] Connected to signaling service');
     });
   
-    state.signalingClient.on('sdpOffer', async (offer, remoteClientId) => {
+    master.signalingClient.on('sdpOffer', async (offer, remoteClientId) => {
       console.log('[MASTER] Received SDP offer from client: ' + remoteClientId);
   
       // Create a new peer connection using the offer from the given client
       const peerConnection = new RTCPeerConnection(configuration);
   
-      state.peerConnectionByClientId[remoteClientId] = peerConnection;
+      master.peerConnectionByClientId[remoteClientId] = peerConnection;
       
       if (state.openDataChannel) {
         console.log(`Opened data channel with ${remoteClientId}`);
-        state.dataChannelByClientId[remoteClientId] = peerConnection.createDataChannel('kvsDataChannel');
+        master.dataChannelByClientId[remoteClientId] = peerConnection.createDataChannel('kvsDataChannel');
         peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
             const timestamp = new Date().toISOString();
@@ -183,8 +192,8 @@ const Master = (props) => {
       }
   
       // Poll for connection stats
-      if (!state.peerConnectionStatsInterval) {
-          state.peerConnectionStatsInterval = setInterval(() => peerConnection.getStats().then(onStatsReport), 1000);
+      if (!master.peerConnectionStatsInterval) {
+          master.peerConnectionStatsInterval = setInterval(() => peerConnection.getStats().then(onStatsReport), 1000);
       }          
   
       // Send any ICE candidates to the other peer
@@ -195,7 +204,7 @@ const Master = (props) => {
             // When trickle ICE is enabled, send the ICE candidates as they are generated.
             if (state.useTrickleICE) {
               console.log('[MASTER] Sending ICE candidate to client: ' + remoteClientId);
-              state.signalingClient.sendIceCandidate(candidate, remoteClientId);
+              master.signalingClient.sendIceCandidate(candidate, remoteClientId);
             }
           } else {
             console.log('[MASTER] All ICE candidates have been generated for client: ' + remoteClientId);
@@ -203,7 +212,7 @@ const Master = (props) => {
             // When trickle ICE is disabled, send the answer now that all the ICE candidates have ben generated.
             if (!state.useTrickleICE) {
               console.log('[MASTER] Sending SDP answer to client: ' + remoteClientId);
-              state.signalingClient.sendSdpAnswer(peerConnection.localDescription, remoteClientId);
+              master.signalingClient.sendSdpAnswer(peerConnection.localDescription, remoteClientId);
             }
           }
       });
@@ -211,21 +220,36 @@ const Master = (props) => {
       // As remote tracks are received, add them to the remote view
       peerConnection.addEventListener('track', event => {
           console.log('[MASTER] Received remote track from client: ' + remoteClientId);
-          // if (state.remoteView.current.srcObject) {
+          // if (remoteView.current.srcObject) {
           //   return;
           // }
-          if(remoteClientId === "PC"){ //pc인 경우
-            state.pcView.current.srcObject = event.streams[0];     
+          // if (pcView.current.srcObject) {
+          //   return;
+          // }
+          // if(remoteClientId === "PC"){ //pc인 경우
+          //   state.pcView.current.srcObject = event.streams[0];     
+          // }
+          // else if(remoteClientId === "MO"){ //mobile인 경우
+          //   state.remoteView.current.srcObject = event.streams[0];
+          // }
+          if(remoteClientId.indexOf('PC')!=-1){ //pc인 경우
+            pcView.current.srcObject = event.streams[0];
           }
-          else if(remoteClientId === "MO"){ //mobile인 경우
-            state.remoteView.current.srcObject = event.streams[0];
+          else if(remoteClientId.indexOf('MO')!=-1){ //mobile인 경우
+            remoteView.current.srcObject = event.streams[0];
+            event.track.onunmute = () => {
+              console.log("마이크 on");
+              if(event.track.kind == "audio"){
+                setIsAudioShare(true);
+              }
+            }
           }
       });
   
       // If there's no video/audio, master.localStream will be null. So, we should skip adding the tracks from it.
-      if (state.localStream) {
+      if (master.localStream) {
           console.log("There's no audio/video...");
-          state.localStream.getTracks().forEach(track => peerConnection.addTrack(track, state.localStream));
+          master.localStream.getTracks().forEach(track => peerConnection.addTrack(track, master.localStream));
       }
       await peerConnection.setRemoteDescription(offer);
   
@@ -241,61 +265,53 @@ const Master = (props) => {
       // When trickle ICE is enabled, send the answer now and then send ICE candidates as they are generated. Otherwise wait on the ICE candidates.
       if (state.useTrickleICE) {
           console.log('[MASTER] Sending SDP answer to client: ' + remoteClientId);
-          state.signalingClient.sendSdpAnswer(peerConnection.localDescription, remoteClientId);
+          master.signalingClient.sendSdpAnswer(peerConnection.localDescription, remoteClientId);
       }
       console.log('[MASTER] Generating ICE candidates for client: ' + remoteClientId);
         
     });
         
-    state.signalingClient.on('iceCandidate', async (candidate, remoteClientId) => {
+    master.signalingClient.on('iceCandidate', async (candidate, remoteClientId) => {
         console.log('[MASTER] Received ICE candidate from client: ' + remoteClientId);
   
         // Add the ICE candidate received from the client to the peer connection
-        const peerConnection = state.peerConnectionByClientId[remoteClientId];
+        const peerConnection = master.peerConnectionByClientId[remoteClientId];
         peerConnection.addIceCandidate(candidate);
     });
 
-    state.signalingClient.on('close', () => {
+    master.signalingClient.on('close', () => {
         console.log('[MASTER] Disconnected from signaling channel');
     });
 
-    state.signalingClient.on('error', () => {
+    master.signalingClient.on('error', () => {
         console.error('[MASTER] Signaling client error');
     });
 
     console.log('[MASTER] Starting master connection');
-
-    setTimeout(function () {
-      state.signalingClient.open();
-    }, 15000);
-    console.log(state.signalingClient.readyState);
-    // if(props.testRooms=="2"){
-    //   state.signalingClient.open();
-    // }
-    // state.signalingClient.open();
+    master.signalingClient.open();
            
   }
 
   return (
     <div>
+      <Button variant="secondary" style={{marginBottom: '1%'}} onClick={(e) => startPlayerForMaster(props,e)}>Start connect channel</Button>
       <div className="col-md-12" >
-        <h5>Mobile view</h5>
         <video
             className="return-view"
-            ref={state.remoteView}
+            ref={remoteView}
             style={{width: '100%', height: '280px'}}
             autoPlay playsInline controls 
         />
       </div>
       <div>
-        <h5>PC Screen view</h5>
         <video
             className="return-view"
-            ref={state.pcView}
+            ref={pcView}
             style={{width: '100%', height: '280px'}}
             autoPlay playsInline controls 
         />
       </div>
+      {isAudioShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
     </div>
   );
 };

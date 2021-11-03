@@ -37,7 +37,9 @@ function TestStudentRouter (props){
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
             setTabCompleted={setTabCompleted}
-            credentials={credentials} />
+            credentials={credentials}
+            student={student}
+            room={room} />
         }
       />
       <Route exact path={path+"/mobilesetting"}

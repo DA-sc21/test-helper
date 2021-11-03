@@ -98,9 +98,7 @@ function StudentCard(props){
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2"></Master>
-          {/* <video className="col-md-12" controls></video>
-          <video className="col-md-12" controls></video> */}
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index}></Master>
         </div>
         <Card.Body>
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>
