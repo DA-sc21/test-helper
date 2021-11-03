@@ -59,6 +59,7 @@ const Master = (props) => {
   const remoteView = useRef(null);
   const pcView = useRef(null);
   const [isAudioShare, setIsAudioShare] = useState(false); //모바일 마이크 공유 여부
+  const [isPcShare, setIsPcShare] = useState(false); //PC 화면 공유 여부
 
   useEffect(() => {
     console.log(props);
@@ -245,6 +246,28 @@ const Master = (props) => {
             }
           }
       });
+
+      peerConnection.addEventListener("connectionstatechange", ev => {
+        if(remoteClientId.indexOf('PC')!=-1){
+          switch(peerConnection.connectionState) {
+            case "connected":
+              setIsPcShare(true);
+              console.log('pc connect');
+              break;
+            case "disconnected":
+              setIsPcShare(false);
+              console.log('pc connection disconnected');
+            case "failed":
+              setIsPcShare(false);
+              console.log('pc connection failed');
+              break;
+            case "closed":
+              setIsPcShare(false);
+              console.log('pc connection closed');
+              break;
+          }
+        }
+      }, false);
   
       // If there's no video/audio, master.localStream will be null. So, we should skip adding the tracks from it.
       if (master.localStream) {
@@ -311,7 +334,8 @@ const Master = (props) => {
             autoPlay playsInline controls 
         />
       </div>
-      {isAudioShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
+      {isPcShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
+      {isAudioShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '38px', height: '38px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
     </div>
   );
 };
