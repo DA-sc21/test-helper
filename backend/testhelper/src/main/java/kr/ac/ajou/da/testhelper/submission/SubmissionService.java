@@ -29,7 +29,12 @@ public class SubmissionService {
 
     @Transactional
     public String getUploadUrlByTestIdAndStudentIdAndSubmissionType(Long testId, Long studentId, SubmissionType submissionType) {
-        return null;
+
+        if(!submissionRepository.existsByTestIdAndStudentId(testId, studentId)){
+            throw new SubmissionNotFoundException();
+        }
+
+        return submissionType.resolveSubmissionPath(testId, studentId);
     }
 
 }
