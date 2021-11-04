@@ -65,6 +65,8 @@ class TestRoomServiceTest {
         RoomDto room = this.testRoomService.getRoom(test.getId(), student.getId(), DeviceType.PC);
 
         //then
+        verify(submissionService, times(1)).getByTestIdAndStudentId(anyLong(), anyLong());
+
         assertEquals(submission.resolveRoomId(), room.getId());
         assertEquals(DeviceType.PC, room.getDevice());
 
@@ -122,6 +124,7 @@ class TestRoomServiceTest {
         });
 
         //then
+        verify(submissionService, times(1)).getByTestIdAndStudentId(anyLong(), anyLong());
 
     }
 
@@ -134,9 +137,10 @@ class TestRoomServiceTest {
         List<StudentRoomDto> rooms = testRoomService.createRoomsForStudents(test.getId(), supervisedBy);
 
         //then
-        assertEquals(submissions.size(), rooms.size());
-
+        verify(submissionService, times(1)).getByTestIdAndSupervisedBy(anyLong(), anyLong());
         verify(testRoomManagingService, times(submissions.size())).createRoom(anyString());
+
+        assertEquals(submissions.size(), rooms.size());
 
         if(rooms.size() > 0){
             Submission submission = submissions.get(0);
