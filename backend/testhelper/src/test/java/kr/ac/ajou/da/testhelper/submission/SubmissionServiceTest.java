@@ -28,6 +28,8 @@ class SubmissionServiceTest {
     private SubmissionService submissionService;
     @Mock
     private SubmissionRepository submissionRepository;
+    @Mock
+    private SubmissionMapper submissionMapper;
 
 
     private final Course course = new Course(1L, "name");
@@ -50,7 +52,8 @@ class SubmissionServiceTest {
     void init() {
         submissionRepository = mock(SubmissionRepository.class);
         fileService = mock(FileService.class);
-        submissionService = new SubmissionService(submissionRepository, fileService);
+        submissionMapper = mock(SubmissionMapper.class);
+        submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
 
         submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
     }
