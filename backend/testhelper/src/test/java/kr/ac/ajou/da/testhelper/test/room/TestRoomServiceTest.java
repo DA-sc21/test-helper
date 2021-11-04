@@ -2,7 +2,6 @@ package kr.ac.ajou.da.testhelper.test.room;
 
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.definition.DeviceType;
-import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.submission.SubmissionService;
@@ -43,7 +42,7 @@ class TestRoomServiceTest {
             LocalDateTime.now(),
             course);
     private final Long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy);
+    private final Submission submission = new Submission(1L, student, test, supervisedBy);
     private final List<Submission> submissions = new ArrayList<>();
 
     @BeforeEach
@@ -52,9 +51,9 @@ class TestRoomServiceTest {
         this.testRoomManagingService = mock(TestRoomManagingService.class);
         this.testRoomService = new TestRoomService(submissionService, testRoomManagingService);
 
-        this.submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
-        this.submissions.add(new Submission(2L, student, test, VerificationStatus.PENDING, supervisedBy));
-        this.submissions.add(new Submission(3L, student, test, VerificationStatus.PENDING, supervisedBy));
+        this.submissions.add(new Submission(1L, student, test, supervisedBy));
+        this.submissions.add(new Submission(2L, student, test, supervisedBy));
+        this.submissions.add(new Submission(3L, student, test, supervisedBy));
     }
 
     @Test
@@ -69,6 +68,7 @@ class TestRoomServiceTest {
 
         assertEquals(submission.resolveRoomId(), room.getId());
         assertEquals(DeviceType.PC, room.getDevice());
+        assertEquals(submission.getConsented(), room.getConsented());
 
         assertAll("Student Info Correct",
                 () -> assertEquals(student.getId(), room.getStudent().getId()),

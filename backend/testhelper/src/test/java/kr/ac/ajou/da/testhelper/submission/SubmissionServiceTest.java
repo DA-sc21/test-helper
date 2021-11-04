@@ -42,7 +42,7 @@ class SubmissionServiceTest {
             course);
     private final Student student = new Student(1L, "name", "201820000", "email@ajou.ac.kr");
     private final long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy);
+    private final Submission submission = new Submission(1L, student, test, supervisedBy);
     private final List<Submission> submissions = new LinkedList<>();
 
     private final SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
@@ -57,7 +57,7 @@ class SubmissionServiceTest {
         fileService = mock(FileService.class);
         submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
 
-        submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
+        submissions.add(new Submission(1L, student, test, supervisedBy));
     }
 
     @Test

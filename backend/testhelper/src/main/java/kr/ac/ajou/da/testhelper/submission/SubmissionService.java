@@ -52,4 +52,13 @@ public class SubmissionService {
         return fileService.getUploadUrl(submissionPath);
     }
 
+
+    @Transactional
+    public boolean updateConsentedByTestIdAndStudentId(Long testId, Long studentId, Boolean consented){
+        Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        submission.updateConsented(consented);
+
+        return true;
+    }
 }
