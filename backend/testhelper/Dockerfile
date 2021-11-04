@@ -1,10 +1,5 @@
 FROM adoptopenjdk/openjdk11:ubi
 MAINTAINER da.ajou.ac.kr
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY src src
-RUN chmod +x ./gradlew
-
-ENTRYPOINT ["./gradlew","bootRun"]
+ARG JAR_FILE=build/libs/testhelper-0.0.1-SNAPSHOT-plain.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
