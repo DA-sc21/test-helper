@@ -4,6 +4,7 @@ import { Link , useParams ,useHistory } from 'react-router-dom';
 import axios from "axios";
 import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
+import Loading from '../component/Loading';
 
 function TestStudentPre(){
   useEffect(()=>{
@@ -17,8 +18,15 @@ function TestStudentPre(){
   let [test,setTest]=useState();
   let [credentials,setCredentials]=useState();
   let [mobileAgreement,setmobileAgreement]=useState(false);
-  const [video, setVideo] = useState(false);
-  const [audio, setAudio] = useState(false);
+  let [loading,setLoading] = useState(false)
+  let [video, setVideo] = useState(false);
+  let [audio, setAudio] = useState(false);
+  let [tabCompleted,setTabCompleted]=useState([false,false,false,false,false])
+  let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
+  let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
+  let history = useHistory()
+  let path="/tests/:testId/students/:studentId"
+
   let changeVideo = (e) => {
     setVideo(e.target.checked)
     console.log('카메라 공유 여부:', e.target.checked)
@@ -37,19 +45,16 @@ function TestStudentPre(){
       setRoom(result.data.room)
       setStudent(result.data.room.student)
       setTest(result.data.room.test)
-      console.log("room,credential,student 가져오는 중 .. .")
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
-  let [tabCompleted,setTabCompleted]=useState([false,false,false,false,false])
-  let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
-  let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
-  let history = useHistory()
-  let path="/tests/:testId/students/:studentId"
+  
+  if(!loading)return(<Loading></Loading>)
   return(
     <div>
       <BrowserView> 
-        <Nav variant="tabs" defaultActiveKey="link-0">
+        <Nav variant="tabs" >
           {
             tabTitles.map((tabtitle,index)=>{
               return(
@@ -85,7 +90,7 @@ function TestStudentPre(){
               onClick={()=>{ 
                 console.log('Button clicked')
                 setmobileAgreement(true)
-                history.push("/tests/1/students/1/mobilesetting")
+                history.push("/tests/"+testId+"/students/"+studentId+"/mobilesetting")
               }} 
               className="btn btn-primary" >
               화상 회의 입장
@@ -101,6 +106,8 @@ function TestStudentPre(){
           tabCompleted={tabCompleted} 
           setTabCompleted={setTabCompleted}
           credentials={credentials}
+          student={student}
+          room={room}
         />
     </div>
   )

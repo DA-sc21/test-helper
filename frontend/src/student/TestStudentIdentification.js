@@ -9,15 +9,18 @@ function TestStudentIdentification(props){
   let [studentCard,setStudentCard]= useState("");
   let [face,setface]= useState("");
   let [identificationResult, setIdentificationResult]=useState("");
-
+  let studentNum=props.student.studentNumber
+  
   useEffect(()=>{
     getimages("student_card",setStudentCard);
     getimages("face",setface);
   },[]);
   
   async function getimages(target,setfunc){
+    testId=String(testId).padStart(5,"0")
+    
     await axios
-      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentId+'/'+target+'.jpg')
+      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg')
       .then((result)=>{
         setfunc(result.data)
       })
