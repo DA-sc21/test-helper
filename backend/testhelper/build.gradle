@@ -48,6 +48,10 @@ dependencies {
 
 	// mobile detection
 	implementation 'org.springframework.boot:spring-boot-starter-mobile:1.5.22.RELEASE'
+	
+	// web client
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 
 }
