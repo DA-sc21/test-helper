@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.test.verification;
 
+import kr.ac.ajou.da.testhelper.student.StudentMapper;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.submission.SubmissionService;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
@@ -39,6 +40,8 @@ public class TestStudentVerificationService {
     
     @Autowired
     private TestStudentVerificationMapper testStudentVerificationMapper;
+    @Autowired
+    private StudentMapper studentMapper;
 
     public List<GetTestStudentVerificationResDto> getList(Long testId, Long proctorId) {
 
@@ -71,12 +74,16 @@ public class TestStudentVerificationService {
     	webClient = WebClient.create(aiServerURL);
     }
 
-	public String verification(String testId, String studentId) throws SQLException {
+	public String verification(int testId, int studentId) throws SQLException {
 		
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 		
-		formData.add("test_id", testId);
-		formData.add("student_id", studentId);
+		String studentNum = studentMapper.getStudentNum(studentId);
+		log.info(studentNum);
+		log.info(String.format("%05d", testId));
+		
+		formData.add("test_id", String.format("%05d", testId));
+		formData.add("student_num", studentNum);
 		
 		String response = webClient.post()
 				.uri("/identification")

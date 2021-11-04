@@ -3,88 +3,77 @@ import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
 
 const OPTIONS = {
-    TRAVERSAL: {
-      STUN_TURN: 'stunTurn',
-      TURN_ONLY: 'turnOnly',
-      DISABLED: 'disabled'
-    },
-    ROLE: {
-      MASTER: 'MASTER',
-      VIEWER: 'VIEWER'
-    },
-    RESOLUTION: {
-      WIDESCREEN: 'widescreen',
-      FULLSCREEN: 'fullscreen'
-    }
-  };
+  TRAVERSAL: {
+    STUN_TURN: 'stunTurn',
+    TURN_ONLY: 'turnOnly',
+    DISABLED: 'disabled'
+  },
+  ROLE: {
+    MASTER: 'MASTER',
+    VIEWER: 'VIEWER'
+  },
+  RESOLUTION: {
+    WIDESCREEN: 'widescreen',
+    FULLSCREEN: 'fullscreen'
+  }
+};
 
-  const state = store({
-    // These are config params set by the user:
-    accessKey: '',
-    secretAccessKey: '',
-    sessionToken: '',
-    region: '',
-    role: OPTIONS.ROLE.VIEWER,
-    channelName: '',
-    clientId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-    endpoint: null,
-    //sendVideo: true,
-    //sendAudio: true,
-    openDataChannel: true,
-    resolution: OPTIONS.RESOLUTION.WIDESCREEN,
-    natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
-    useTrickleICE: false,
-    messageToSend: '',
-    playerIsStarted: false,
+const state = store({
+  // These are config params set by the user:
+  accessKey: '',
+  secretAccessKey: '',
+  sessionToken: '',
+  region: '',
+  role: OPTIONS.ROLE.VIEWER,
+  channelName: '',
+  clientId: '',
+  endpoint: null,
+  //sendVideo: true,
+  //sendAudio: true,
+  openDataChannel: true,
+  resolution: OPTIONS.RESOLUTION.WIDESCREEN,
+  natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
+  useTrickleICE: false,
+  messageToSend: '',
+  playerIsStarted: false,
   
-    // These are set when user starts video; a few of them are only used when you start the stream as MASTER:
-    signalingClient: null,
-    localStream: null,
-    localView: null,
-    remoteView: null,
-    dataChannel: null,
-    peerConnectionStatsInterval: null,
-    peerConnectionByClientId: {},
-    dataChannelByClientId: [],
-    receivedMessages: '',
-  });
+  // These are set when user starts video; a few of them are only used when you start the stream as MASTER:
+  signalingClient: null,
+  localStream: null,
+  localView: null,
+  remoteView: null,
+  zdataChannel: null,
+  peerConnectionStatsInterval: null,
+  peerConnectionByClientId: {},
+  dataChannelByClientId: [],
+  receivedMessages: '',
+});
 
 function onStatsReport(report) {
     // TODO: Publish stats
 }
 
 const Viewer = (props) => {
-    // In order to modify properties of our <video> components, we need a reference
-    // to them in the DOM; first, we declare set them up with the useRef hook. 
-    // Later, when we render the <VideoPlayers/> component, we include this reference
-    // in the component definition. Finally, we can reference the object properties
-    // by state.localView.current.<PROPERTY>:
-    state.localView = useRef(null);
-    state.remoteView = useRef(null);
+  state.localView = useRef(null);
+  state.remoteView = useRef(null);
+
+  useEffect(() => {
+    console.log(props);
+    startPlayerForViewer(props);
+  }, []);
   
-    // When widget first loads, get saved state values from localStorage:
-    useEffect(() => {
-      console.log(props);
-      startPlayerForViewer(props);
-    }, []);
-  
-    return (
-      <div>
-        <h1>Viewer</h1>
-        <br /><br />
-        <div className="box">
-          <div><h1>본인 view</h1>
+  return (
+    <div>
+      <div style={{marginTop: '8%'}}>
           <video
-                className="output-view"
-                ref={state.localView}
-                style={{width: '30%', minHeight: '250px', maxHeight: '100px', position: 'relative' }}
-                autoPlay playsInline controls muted
-              />
-          </div>
-          </div>
+            className="output-view"
+            ref={state.localView}
+            style={{width: '80%', minHeight: '250px', maxHeight: '100px' }}
+            autoPlay playsInline controls muted
+          />
       </div>
-    );
-    
+    </div>
+  );  
 };
 
 async function startPlayerForViewer(props, e) {
@@ -138,7 +127,7 @@ async function startPlayerForViewer(props, e) {
       role: state.role, //roleOption.MASTER
       region: props.location.state.region,
       systemClockOffset: kinesisVideoClient.config.systemClockOffset,
-      clientId: state.clientId,
+      clientId: props.location.state.clientId,
       credentials: {
         accessKeyId: props.location.state.accessKey,
         secretAccessKey: props.location.state.secretAccessKey,

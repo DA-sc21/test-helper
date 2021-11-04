@@ -10,7 +10,8 @@ services:
       - 80:80
     depends_on:
       - data-server
-      - ai-server
+      - front
+
   data-server:
     container_name: data-server
     build:
@@ -41,15 +42,3 @@ services:
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
-
-  ai-server:
-    container_name: ai-server
-    build:
-      context: AI/
-      dockerfile: Dockerfile
-    environment:
-      - AWS_PROFILE=test-helper
-    ports:
-      - 5000:5000
-    volumes:
-      - ~/.aws/:/root/.aws:ro

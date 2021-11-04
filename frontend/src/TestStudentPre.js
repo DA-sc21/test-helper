@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Nav } from 'react-bootstrap';
-import { Link,Route,BrowserRouter } from 'react-router-dom';
+import { Nav, Button } from 'react-bootstrap';
+import { Link, Route, BrowserRouter } from 'react-router-dom';
+import { Switch , withRouter } from "react-router";
 import TestStudentAgreement from './TestStudentAgreement'
 import TestStudentPCSetting from './TestStudentPCSetting'
 import TestStudentMobileSetting from './TestStudentMobileSetting'
@@ -56,7 +57,11 @@ function TestStudentPre(){
         </div>
       </BrowserView>
       <MobileView> {/*모바일 화면*/}
-        <h5>대학생 모바일 접속 페이지 입니다</h5>
+        <div style={{marginTop: '25%', marginLeft:'3%', marginRight: '3%'}}>
+          <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>안녕하세요. O O O 시험</p>
+          <p style={{marginBottom: '30%', fontSize: '20px', fontWeight: 'bold'}}>응시 환경 세팅 화면입니다.</p>
+          <Button variant="primary"><Link to ="/tests/setting" style={{textDecorationLine: 'none', color: 'white'}}>핸드폰 카메라 설정</Link></Button>
+        </div>
       </MobileView>
     </BrowserRouter>
   )

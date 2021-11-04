@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface TestStudentVerificationMapper {
 	@Update("UPDATE SUBMISSION "
 			+ "SET verified = \"${result}\" "
-			+ "WHERE test_id = ${testId} AND student_id = (SELECT id FROM STUDENT WHERE student_num = ${studentId})")
-	void insertToSubmission(@Param("testId") String testId, @Param("studentId") String studentId, @Param("result") String result) throws SQLException;
+			+ "WHERE test_id = ${testId} AND student_id = ${studentId}")
+	void insertToSubmission(@Param("testId") int testId, @Param("studentId") int studentId, @Param("result") String result) throws SQLException;
 }
