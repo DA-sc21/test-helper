@@ -25,4 +25,13 @@ public class SubmissionService {
     public List<Submission> getByTestIdAndSupervisedBy(Long testId, Long supervisedBy) {
         return submissionRepository.findByTestIdAndSupervisedBy(testId, supervisedBy);
     }
+
+    @Transactional
+    public boolean updateConsentedByTestIdAndStudentId(Long testId, Long studentId, Boolean consented){
+        Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        submission.updateConsented(consented);
+
+        return true;
+    }
 }

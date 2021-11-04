@@ -36,7 +36,7 @@ class TestStudentVerificationServiceTest {
             LocalDateTime.now(),
             course);
     private final Long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy);
+    private final Submission submission = new Submission(1L, student, test, supervisedBy);
     private final List<Submission> submissions = new ArrayList<>();
 
     @BeforeEach
@@ -44,7 +44,7 @@ class TestStudentVerificationServiceTest {
         submissionService = mock(SubmissionService.class);
         testStudentVerificationService = new TestStudentVerificationService(submissionService);
 
-        submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
+        submissions.add(new Submission(1L, student, test, supervisedBy));
     }
 
     @Test
