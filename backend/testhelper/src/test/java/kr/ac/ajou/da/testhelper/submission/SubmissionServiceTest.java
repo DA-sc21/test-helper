@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
+import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
@@ -42,10 +43,14 @@ class SubmissionServiceTest {
 
     private final SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
 
+    private final String uploadUrl = "uploadUrl";
+    private FileService fileService;
+
     @BeforeEach
     void init() {
         submissionRepository = mock(SubmissionRepository.class);
-        submissionService = new SubmissionService(submissionRepository);
+        fileService = mock(FileService.class);
+        submissionService = new SubmissionService(submissionRepository, fileService);
 
         submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
     }
@@ -98,15 +103,18 @@ class SubmissionServiceTest {
     void getUploadUrlByTestIdAndStudentIdAndSubmissionType_success() {
         //given
         when(submissionRepository.existsByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(true);
+        when(fileService.getUploadUrl(anyString())).thenReturn(this.uploadUrl);
 
         //when
         String uploadUrl = submissionService.getUploadUrlByTestIdAndStudentIdAndSubmissionType(test.getId(), student.getId(), submissionType);
 
         //then
         verify(submissionRepository, times(1)).existsByTestIdAndStudentId(anyLong(), anyLong());
+        // TODO : final object의 메소드가 호출되었는지 확인하는 방법 검토
+        // verify(submissionType, times(1)).resolveSubmissionPath(anyLong(), anyLong());
+        verify(fileService, times(1)).getUploadUrl(anyString());
 
-        String submissionPath = submissionType.resolveSubmissionPath(test.getId(), student.getId());
-        assertEquals(submissionPath, uploadUrl);
+        assertEquals(this.uploadUrl, uploadUrl);
     }
 
     @Test
@@ -121,5 +129,6 @@ class SubmissionServiceTest {
 
         //then
         verify(submissionRepository, times(1)).existsByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileService, never()).getUploadUrl(anyString());
     }
 }
