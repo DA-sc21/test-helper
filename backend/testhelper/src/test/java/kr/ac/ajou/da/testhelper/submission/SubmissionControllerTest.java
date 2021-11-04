@@ -10,8 +10,7 @@ import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class SubmissionControllerTest {
 
@@ -39,6 +38,8 @@ class SubmissionControllerTest {
         GetSubmissionUploadUrlResDto submissionUploadUrl = submissionController.getSubmissionUploadUrl(testId, studentId, SubmissionType.SCREEN_SHARE_VIDEO).getBody();
 
         //then
+        verify(submissionService, times(1)).getUploadUrlByTestIdAndStudentIdAndSubmissionType(anyLong(), anyLong(), any(SubmissionType.class));
+
         assertEquals(url, submissionUploadUrl.getUploadUrl());
 
     }

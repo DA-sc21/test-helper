@@ -59,6 +59,7 @@ class SubmissionServiceTest {
         Submission submission = submissionService.getByTestIdAndStudentId(test.getId(), student.getId());
 
         //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
 
         assertEquals(this.submission, submission);
     }
@@ -74,6 +75,7 @@ class SubmissionServiceTest {
         });
 
         //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
 
     }
 
@@ -87,6 +89,8 @@ class SubmissionServiceTest {
         List<Submission> res = submissionService.getByTestIdAndSupervisedBy(test.getId(), supervisedBy);
 
         //then
+        verify(submissionRepository, times(1)).findByTestIdAndSupervisedBy(anyLong(), anyLong());
+
         assertEquals(submissions, res);
     }
 
