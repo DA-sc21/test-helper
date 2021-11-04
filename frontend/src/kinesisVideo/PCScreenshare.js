@@ -75,10 +75,14 @@ const PCScreenShare = (props) => {
 //PC 화면 공유
 function screenshare(props, e){
     navigator.mediaDevices.getDisplayMedia({
-        audio: true,
+        audio: false, //audio 없음
         video: true
     }).then(function(stream){
         //success
+        stream.getVideoTracks()[0].addEventListener('ended', () => {
+          console.log('screensharing has ended')
+          stopPlayerForViewer()});
+
         state.screenStream.current.srcObject = stream;
         state.localStream = stream;
 
@@ -220,8 +224,10 @@ async function startPlayerForViewer(props, e) {
   
       // Put the PC sharing screen in the local stream
       try{
+          console.log(state.localStream);
           state.localStream.getTracks().forEach(track => state.peerConnection.addTrack(track, state.localStream));
-          state.localView.current.srcObject = state.localStream;
+          state.localView.current.srcObject = state.localStream; 
+          console.log(state.localView);
 
           } catch (e){
               console.log('[PC SCREEN] could not find');
@@ -299,5 +305,46 @@ async function startPlayerForViewer(props, e) {
     state.signalingClient.open();
     
 } 
+
+function stopPlayerForViewer() {
+
+  console.log('[VIEWER] Stopping viewer connection');
+  if (state.signalingClient) {
+    state.signalingClient.close();
+    state.signalingClient = null;
+  }
+
+  if (state.peerConnection) {
+    state.peerConnection.close();
+    state.peerConnection = null;
+  }
+
+  if (state.localStream) {
+    state.localStream.getTracks().forEach(track => track.stop());
+    state.localStream = null;
+  }
+
+  if (state.remoteStream) {
+    state.remoteStream.getTracks().forEach(track => track.stop());
+    state.remoteStream = null;
+  }
+
+  if (state.peerConnectionStatsInterval) {
+      clearInterval(state.peerConnectionStatsInterval);
+      state.peerConnectionStatsInterval = null;
+  }
+
+  if (state.localView) {
+    state.localView.current.srcObject = null;
+  }
+
+  if (state.remoteView) {
+    state.remoteView.current.srcObject = null;
+  }
+
+  if (state.dataChannel) {
+    state.dataChannel = null;
+  }
+}
 
 export default PCScreenShare;
