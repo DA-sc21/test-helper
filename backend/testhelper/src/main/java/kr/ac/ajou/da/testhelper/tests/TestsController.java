@@ -14,7 +14,7 @@ public class TestsController {
 	private TestsService testsService;
 	    
     @GetMapping("/tests")
-    public List<HashMap<String, Object>> getTests(@RequestParam int accountId, @RequestParam String accountRole, @RequestParam String testStatus) throws Exception {
-    	return testsService.getTests(accountId, accountRole, testStatus);
+    public List<HashMap<String, Object>> getTests(@RequestParam int accountId, @RequestParam String testStatus) throws Exception {
+    	return testsService.getTests(accountId, testStatus);
     }
 }

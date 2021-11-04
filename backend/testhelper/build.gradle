@@ -23,6 +23,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 	//aws
 	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
@@ -47,6 +48,10 @@ dependencies {
 
 	// mobile detection
 	implementation 'org.springframework.boot:spring-boot-starter-mobile:1.5.22.RELEASE'
+	
+	// web client
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 
 }
