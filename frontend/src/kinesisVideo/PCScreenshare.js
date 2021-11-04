@@ -98,7 +98,7 @@ async function startPlayerForViewer(props, e) {
       correctClockSkew: true,
       accessKeyId: props.accessKey,
       secretAccessKey: props.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      sessionToken: props.sessionToken || null
     });
   
     // Get signaling channel ARN
@@ -142,7 +142,7 @@ async function startPlayerForViewer(props, e) {
       credentials: {
         accessKeyId: props.accessKey,
         secretAccessKey: props.secretAccessKey,
-        sessionToken: state.sessionToken || null
+        sessionToken: props.sessionToken || null
       }
     });
     
@@ -154,7 +154,7 @@ async function startPlayerForViewer(props, e) {
       correctClockSkew: true,
       accessKeyId: props.accessKey,
       secretAccessKey: props.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      sessionToken: props.sessionToken || null
     });
   
     console.log('Getting ICE server config response...');

@@ -63,38 +63,35 @@ const Viewer = (props) => {
   }, []);
   
   return (
-    <div>
-      <div style={{marginTop: '8%'}}>
-          <video
-            className="output-view"
-            ref={state.localView}
-            style={{width: '80%', minHeight: '250px', maxHeight: '100px' }}
-            autoPlay playsInline controls muted
-          />
-      </div>
+    <div className="my-5" >
+      <video
+        className="w-100 output-view"
+        ref={state.localView}
+        autoPlay playsInline controls muted
+      />
     </div>
   );  
 };
 
 async function startPlayerForViewer(props, e) {
-    console.log(props.location.state);
+    console.log("viewer credentials : ",props.credentials);
 
     // Create KVS client
     console.log('Created KVS client...');
     const kinesisVideoClient = new AWS.KinesisVideo({
-      region: props.location.state.region,
+      region: props.region,
       endpoint: state.endpoint || null,
       correctClockSkew: true,
-      accessKeyId: props.location.state.accessKey,
-      secretAccessKey: props.location.state.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      accessKeyId: props.accessKey,
+      secretAccessKey: props.secretAccessKey,
+      sessionToken: props.sessionToken || null
     });
   
     // Get signaling channel ARN
     console.log('Getting signaling channel ARN...');
     const describeSignalingChannelResponse = await kinesisVideoClient
       .describeSignalingChannel({
-          ChannelName: props.location.state.channelName,
+          ChannelName: props.channelName,
       })
       .promise();
     
@@ -125,25 +122,25 @@ async function startPlayerForViewer(props, e) {
       channelARN,
       channelEndpoint: endpointsByProtocol.WSS,
       role: state.role, //roleOption.MASTER
-      region: props.location.state.region,
+      region: props.region,
       systemClockOffset: kinesisVideoClient.config.systemClockOffset,
-      clientId: props.location.state.clientId,
+      clientId: props.clientId,
       credentials: {
-        accessKeyId: props.location.state.accessKey,
-        secretAccessKey: props.location.state.secretAccessKey,
-        sessionToken: state.sessionToken || null
+        accessKeyId: props.accessKey,
+        secretAccessKey: props.secretAccessKey,
+        sessionToken: props.sessionToken || null
       }
     });
     
     // Get ICE server configuration
     console.log('Creating ICE server configuration...');
     const kinesisVideoSignalingChannelsClient = new AWS.KinesisVideoSignalingChannels({
-      region: props.location.state.region,
+      region: props.region,
       endpoint: endpointsByProtocol.HTTPS,
       correctClockSkew: true,
-      accessKeyId: props.location.state.accessKey,
-      secretAccessKey: props.location.state.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      accessKeyId: props.accessKey,
+      secretAccessKey: props.secretAccessKey,
+      sessionToken: props.sessionToken || null
     });
   
     console.log('Getting ICE server config response...');
@@ -156,7 +153,7 @@ async function startPlayerForViewer(props, e) {
     const iceServers = [];
     if (state.natTraversal === OPTIONS.TRAVERSAL.STUN_TURN) {
       console.log('Getting STUN servers...');
-      iceServers.push({ urls: `stun:stun.kinesisvideo.${props.location.state.region}.amazonaws.com:443` });
+      iceServers.push({ urls: `stun:stun.kinesisvideo.${props.region}.amazonaws.com:443` });
     }
     
     if (state.natTraversal !== OPTIONS.TRAVERSAL.DISABLED) {
@@ -178,8 +175,8 @@ async function startPlayerForViewer(props, e) {
     const resolution = (state.resolution === OPTIONS.TRAVERSAL.WIDESCREEN) ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
   
     const constraints = {
-        video: props.location.state.sendVideo ? resolution : false,
-        audio: props.location.state.sendAudio,
+        video: props.sendVideo ? resolution : false,
+        audio: props.sendAudio,
     };
   
     state.peerConnection = new RTCPeerConnection(configuration);
@@ -212,7 +209,7 @@ async function startPlayerForViewer(props, e) {
       // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
       // If no video/audio needed, no need to request for the sources. 
       // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
-      if (props.location.state.sendVideo || props.location.state.sendAudio) {
+      if (props.sendVideo || props.sendAudio) {
           try {
               state.localStream = await navigator.mediaDevices.getUserMedia(constraints);
               console.log(state.localStream);
