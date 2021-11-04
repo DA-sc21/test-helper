@@ -10,6 +10,7 @@ services:
       - 80:80
     depends_on:
       - data-server
+      - ai-server
   data-server:
     container_name: data-server
     build:

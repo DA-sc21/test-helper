@@ -33,6 +33,10 @@ public class Submission {
     @Column(nullable = false)
     private Long supervisedBy;
 
+    public String resolveRoomId(){
+        return this.id.toString();
+    }
+
     public void updateVerified(boolean verified) {
         this.setVerified(verified
                 ? VerificationStatus.SUCCESS

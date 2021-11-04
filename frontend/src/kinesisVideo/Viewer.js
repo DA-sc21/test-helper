@@ -3,109 +3,95 @@ import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
 
 const OPTIONS = {
-    TRAVERSAL: {
-      STUN_TURN: 'stunTurn',
-      TURN_ONLY: 'turnOnly',
-      DISABLED: 'disabled'
-    },
-    ROLE: {
-      MASTER: 'MASTER',
-      VIEWER: 'VIEWER'
-    },
-    RESOLUTION: {
-      WIDESCREEN: 'widescreen',
-      FULLSCREEN: 'fullscreen'
-    }
-  };
+  TRAVERSAL: {
+    STUN_TURN: 'stunTurn',
+    TURN_ONLY: 'turnOnly',
+    DISABLED: 'disabled'
+  },
+  ROLE: {
+    MASTER: 'MASTER',
+    VIEWER: 'VIEWER'
+  },
+  RESOLUTION: {
+    WIDESCREEN: 'widescreen',
+    FULLSCREEN: 'fullscreen'
+  }
+};
 
-  const state = store({
-    // These are config params set by the user:
-    accessKey: '',
-    secretAccessKey: '',
-    sessionToken: '',
-    region: '',
-    role: OPTIONS.ROLE.VIEWER,
-    channelName: '',
-    clientId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-    endpoint: null,
-    //sendVideo: true,
-    //sendAudio: true,
-    openDataChannel: true,
-    resolution: OPTIONS.RESOLUTION.WIDESCREEN,
-    natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
-    useTrickleICE: false,
-    messageToSend: '',
-    playerIsStarted: false,
+const state = store({
+  // These are config params set by the user:
+  accessKey: '',
+  secretAccessKey: '',
+  sessionToken: '',
+  region: '',
+  role: OPTIONS.ROLE.VIEWER,
+  channelName: '',
+  clientId: '',
+  endpoint: null,
+  //sendVideo: true,
+  //sendAudio: true,
+  openDataChannel: true,
+  resolution: OPTIONS.RESOLUTION.WIDESCREEN,
+  natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
+  useTrickleICE: false,
+  messageToSend: '',
+  playerIsStarted: false,
   
-    // These are set when user starts video; a few of them are only used when you start the stream as MASTER:
-    signalingClient: null,
-    localStream: null,
-    localView: null,
-    remoteView: null,
-    dataChannel: null,
-    peerConnectionStatsInterval: null,
-    peerConnectionByClientId: {},
-    dataChannelByClientId: [],
-    receivedMessages: '',
-  });
+  // These are set when user starts video; a few of them are only used when you start the stream as MASTER:
+  signalingClient: null,
+  localStream: null,
+  localView: null,
+  remoteView: null,
+  zdataChannel: null,
+  peerConnectionStatsInterval: null,
+  peerConnectionByClientId: {},
+  dataChannelByClientId: [],
+  receivedMessages: '',
+});
 
 function onStatsReport(report) {
     // TODO: Publish stats
 }
 
 const Viewer = (props) => {
-    // In order to modify properties of our <video> components, we need a reference
-    // to them in the DOM; first, we declare set them up with the useRef hook. 
-    // Later, when we render the <VideoPlayers/> component, we include this reference
-    // in the component definition. Finally, we can reference the object properties
-    // by state.localView.current.<PROPERTY>:
-    state.localView = useRef(null);
-    state.remoteView = useRef(null);
+  state.localView = useRef(null);
+  state.remoteView = useRef(null);
+
+  useEffect(() => {
+    console.log(props);
+    startPlayerForViewer(props);
+  }, []);
   
-    // When widget first loads, get saved state values from localStorage:
-    useEffect(() => {
-      console.log(props);
-      startPlayerForViewer(props);
-    }, []);
-  
-    return (
-      <div>
-        <h1>Viewer</h1>
-        <br /><br />
-        <div className="box">
-          <div><h1>본인 view</h1>
-          <video
-                className="output-view"
-                ref={state.localView}
-                style={{width: '30%', minHeight: '250px', maxHeight: '100px', position: 'relative' }}
-                autoPlay playsInline controls muted
-              />
-          </div>
-          </div>
-      </div>
-    );
-    
+  return (
+    <div className="my-5" >
+      <video
+        className="w-100 output-view"
+        ref={state.localView}
+        autoPlay playsInline controls muted
+      />
+    </div>
+  );  
 };
 
 async function startPlayerForViewer(props, e) {
-    console.log(props.location.state);
+    console.log("viewer credentials : ",props.credentials);
 
     // Create KVS client
     console.log('Created KVS client...');
     const kinesisVideoClient = new AWS.KinesisVideo({
-      region: props.location.state.region,
+      region: props.region,
       endpoint: state.endpoint || null,
       correctClockSkew: true,
-      accessKeyId: props.location.state.accessKey,
-      secretAccessKey: props.location.state.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      accessKeyId: props.accessKey,
+      secretAccessKey: props.secretAccessKey,
+      sessionToken: props.sessionToken || null
     });
   
     // Get signaling channel ARN
     console.log('Getting signaling channel ARN...');
     const describeSignalingChannelResponse = await kinesisVideoClient
       .describeSignalingChannel({
-          ChannelName: props.location.state.channelName,
+          ChannelName: props.channelName,
       })
       .promise();
     
@@ -136,25 +122,25 @@ async function startPlayerForViewer(props, e) {
       channelARN,
       channelEndpoint: endpointsByProtocol.WSS,
       role: state.role, //roleOption.MASTER
-      region: props.location.state.region,
+      region: props.region,
       systemClockOffset: kinesisVideoClient.config.systemClockOffset,
-      clientId: state.clientId,
+      clientId: props.clientId,
       credentials: {
-        accessKeyId: props.location.state.accessKey,
-        secretAccessKey: props.location.state.secretAccessKey,
-        sessionToken: state.sessionToken || null
+        accessKeyId: props.accessKey,
+        secretAccessKey: props.secretAccessKey,
+        sessionToken: props.sessionToken || null
       }
     });
     
     // Get ICE server configuration
     console.log('Creating ICE server configuration...');
     const kinesisVideoSignalingChannelsClient = new AWS.KinesisVideoSignalingChannels({
-      region: props.location.state.region,
+      region: props.region,
       endpoint: endpointsByProtocol.HTTPS,
       correctClockSkew: true,
-      accessKeyId: props.location.state.accessKey,
-      secretAccessKey: props.location.state.secretAccessKey,
-      sessionToken: state.sessionToken || null
+      accessKeyId: props.accessKey,
+      secretAccessKey: props.secretAccessKey,
+      sessionToken: props.sessionToken || null
     });
   
     console.log('Getting ICE server config response...');
@@ -167,7 +153,7 @@ async function startPlayerForViewer(props, e) {
     const iceServers = [];
     if (state.natTraversal === OPTIONS.TRAVERSAL.STUN_TURN) {
       console.log('Getting STUN servers...');
-      iceServers.push({ urls: `stun:stun.kinesisvideo.${props.location.state.region}.amazonaws.com:443` });
+      iceServers.push({ urls: `stun:stun.kinesisvideo.${props.region}.amazonaws.com:443` });
     }
     
     if (state.natTraversal !== OPTIONS.TRAVERSAL.DISABLED) {
@@ -189,8 +175,8 @@ async function startPlayerForViewer(props, e) {
     const resolution = (state.resolution === OPTIONS.TRAVERSAL.WIDESCREEN) ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
   
     const constraints = {
-        video: props.location.state.sendVideo ? resolution : false,
-        audio: props.location.state.sendAudio,
+        video: props.sendVideo ? resolution : false,
+        audio: props.sendAudio,
     };
   
     state.peerConnection = new RTCPeerConnection(configuration);
@@ -223,7 +209,7 @@ async function startPlayerForViewer(props, e) {
       // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
       // If no video/audio needed, no need to request for the sources. 
       // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
-      if (props.location.state.sendVideo || props.location.state.sendAudio) {
+      if (props.sendVideo || props.sendAudio) {
           try {
               state.localStream = await navigator.mediaDevices.getUserMedia(constraints);
               console.log(state.localStream);
