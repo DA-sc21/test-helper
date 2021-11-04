@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.submission;
 
+import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,4 +26,10 @@ public class SubmissionService {
     public List<Submission> getByTestIdAndSupervisedBy(Long testId, Long supervisedBy) {
         return submissionRepository.findByTestIdAndSupervisedBy(testId, supervisedBy);
     }
+
+    @Transactional
+    public String getUploadUrlByTestIdAndStudentIdAndSubmissionType(Long testId, Long studentId, SubmissionType submissionType) {
+        return null;
+    }
+
 }
