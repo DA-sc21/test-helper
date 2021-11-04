@@ -12,8 +12,8 @@ COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json 
 COPY . ./
 
-RUN npm install
-RUN npm install react-scripts@3.0.1 -g
+RUN npm ci
+# RUN npm install react-scripts@3.0.1 -g
 
 # start app 
 CMD ["npm","start"]
