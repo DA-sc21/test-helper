@@ -28,6 +28,10 @@ class SubmissionServiceTest {
     private SubmissionService submissionService;
     @Mock
     private SubmissionRepository submissionRepository;
+    @Mock
+    private SubmissionMapper submissionMapper;
+    @Mock
+    private FileService fileService;
 
 
     private final Course course = new Course(1L, "name");
@@ -44,13 +48,14 @@ class SubmissionServiceTest {
     private final SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
 
     private final String uploadUrl = "uploadUrl";
-    private FileService fileService;
+
 
     @BeforeEach
     void init() {
         submissionRepository = mock(SubmissionRepository.class);
+        submissionMapper = mock(SubmissionMapper.class);
         fileService = mock(FileService.class);
-        submissionService = new SubmissionService(submissionRepository, fileService);
+        submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
 
         submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
     }
