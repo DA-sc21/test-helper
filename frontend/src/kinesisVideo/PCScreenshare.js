@@ -295,7 +295,7 @@ const PCScreenShare = (props) => {
     console.log(viewer)
     try {
       const timestamp = moment().format("HH:mm:ss");
-      const loggedMessage = `${timestamp} Viewer: ${viewer.messageToSend}\n`;
+      const loggedMessage = `${timestamp}!@#Viewer!@#${viewer.messageToSend}\n`;
   
       dataChannels.send(Messages+=loggedMessage);
       // Messages+=viewer.messageToSend

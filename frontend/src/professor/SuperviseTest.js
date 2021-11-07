@@ -1,10 +1,11 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react-bootstrap';
+import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal,Form} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
 import Master from '../kinesisVideo/Master';
-
+import "./Chat.css"
+import $ from 'jquery';
 let baseUrl ="http://api.testhelper.com"
 
 function SuperviseTest(){
@@ -94,13 +95,17 @@ function StudentCard(props){
     "PENDING" : "보류",
     "SUCCESS" : "성공",
   }
+  const [show, setShow] = useState(false);
+  let [chat,setchat]=useState("")
+  let [newchat,setnewchat]=useState(false)
   return(
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index}></Master>
+          <Master setnewchat={setnewchat} chat={chat} setchat={setchat} testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index}></Master>
         </div>
         <Card.Body>
+          
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>
           <hr />
           <Card.Text>
@@ -117,8 +122,14 @@ function StudentCard(props){
             : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
                 changeVerifications(props,true)}}>본인인증승인
               </Button> }
-            
-            <Button className="col-md-4" variant="success">채팅</Button>
+            <Button className="col-md-4" variant="success" onClick={() => {setShow(true) ; setnewchat(false)}}>채팅
+             {newchat===true ?
+              <Badge pill bg="warning" text="dark" className="float-end">
+                New
+              </Badge>
+              : null
+             }
+            </Button>
             <Button className="col-md-4" variant="danger">경고</Button>
           </div>
         </Card.Body>
@@ -128,9 +139,71 @@ function StudentCard(props){
             <Image className="col-md-7" src="https://cdn.pixabay.com/photo/2018/10/02/11/13/girl-3718526_1280.jpg" />
           </div>
         </Card.Footer>
+        <Modal
+          show={show}
+          onHide={() => setShow(false)}
+          dialogClassName="modal-90w"
+          aria-labelledby="example-custom-modal-styling-title"
+        >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-custom-modal-styling-title">
+            {props.verification.studentId}번 학생
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <div className="row clearfix">
+            <div className="col-lg-12">
+                <div className="card chat-app">
+                    <div className="chat">
+                        <div className="chat-history">
+                            <ul className="m-b-0">
+                              {
+                              chat.split("\n").map((chat,index)=>{
+                                if (chat==="")return
+                                let temp=chat.split("!@#");
+                                let time=temp[0]
+                                let person=temp[1]
+                                let dialog=temp[2]
+                                return(
+                                <li className="clearfix" key={index}>
+                                  <div className={person==="Master"?"message-data text-right":"message-data"}>
+                                      <span className="message-data-time">{time}, {person}</span>
+                                  </div>
+                                  <div className={person==="Master"?" col-md-12 message other-message float-right":" col-md-12 message my-message"} > {dialog} </div>
+                                </li>)
+                              })
+                              }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div className="chat-message clearfix">
+            <div className="input-group mb-0">
+                <Form.Control size="lg" type="text" 
+                id={"MessageModal"+props.index} placeholder="메세지를 입력하세요." 
+                onChange={(e) => 
+                {
+                  $('#messageToSend'+props.index).val(e.target.value).trigger("change");
+                }}  />
+                <Button variant="primary" onClick={()=>sendMessage(props.index)} >전송</Button>
+            </div>
+        </div>
+        </Modal.Body>
+      </Modal>
       </Card>
+     
     </div>
   )
+}
+
+function sendMessage(index){
+  let button= document.querySelector("#startPlayer"+index)
+  let textModal= document.querySelector("#MessageModal"+index)
+  let text= document.querySelector("#messageToSend"+index)
+  text.value = textModal.value
+  button.click()
 }
 async function changeVerifications(props,verified){
   let testId=props.testId

@@ -167,10 +167,10 @@ const Master = (props) => {
         setdataChannels(peerConnection.createDataChannel('kvsDataChannel'))
         peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
-            console.log(message)
             const loggedMessage = `${message.data}\n`;
-            console.log(loggedMessage);
             setMessages(loggedMessage)
+            props.setchat(loggedMessage)
+            props.setnewchat(true)
             master.receivedMessages += loggedMessage;
           };
         };
@@ -293,11 +293,13 @@ const Master = (props) => {
     console.log(dataChannels,peerconnections)
     try {
       const timestamp = moment().format("HH:mm:ss");
-      const loggedMessage = `${timestamp} Master: ${master.messageToSend}\n`;
-  
+      // const loggedMessage = `${timestamp}!@#Master!@#${master.messageToSend}\n`;
+      const loggedMessage = `${timestamp}!@#Master!@#${document.querySelector('#messageToSend'+props.index).value}\n`;
+      document.querySelector('#messageToSend'+props.index).value=""
       dataChannels.send(Messages+=loggedMessage);
       // Messages+=master.messageToSend
       setMessages(Messages)
+      props.setchat(Messages)
       console.log(`Message sent to viewer: ${master.messageToSend}`);
     } catch (e) {
         console.error('[MASTER] Send DataChannel: ', e.toString());
@@ -333,36 +335,17 @@ const Master = (props) => {
         </div>
       </div>
       <div className="row">
-        <div className="col-md-10">
-          <Form.Control as="textarea" 
+        <div className="input-group px-4 mt-3">
+          <Form.Control type="text" 
             placeholder="메시지를 입력하세요."
-            id="messageToSend"
-            onChange={(e) => updateState('messageToSend', e.target.value)}
+            id={"messageToSend"+props.index}
+            onChange={(e) => {updateState('messageToSend', e.target.value)}}
             value={master.messageToSend} />
-          {/* <textarea
-            id="messageToSend"
-            label="DataChannel Message"
-            onChange={(e) => updateState('messageToSend', e.target.value)}
-            value={master.messageToSend} 
-          /> */}
-        </div>
-        <div className="col-md-2">
-          <Button id="startPlayer" variant="primary" onClick={sendMessage}>
+          <Button id={"startPlayer"+props.index} variant="primary" onClick={sendMessage}>
             전송
           </Button>
         </div>
       </div>
-      <div className="row">
-        <div className="col-md-12">
-          <Form.Control
-            as="textarea"
-            id="receivedMessages"
-            label="received messages"
-            value={Messages}
-            disabled={true}
-            readOnly/>
-          </div>
-        </div>
     </div>
   );
 };
