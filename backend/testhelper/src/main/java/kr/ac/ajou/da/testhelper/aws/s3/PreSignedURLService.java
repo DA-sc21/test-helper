@@ -1,23 +1,27 @@
 package kr.ac.ajou.da.testhelper.aws.s3;
 
-import java.net.URL;
-import java.util.Date;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.stereotype.Service;
-
 import com.amazonaws.HttpMethod;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-
+import kr.ac.ajou.da.testhelper.file.FileService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.net.URL;
+import java.util.Date;
 
 @Service
 @Slf4j
-public class PreSignedURLService {
+@Primary
+public class PreSignedURLService implements FileService {
+
+	private static final long EXPIRATION_TIME = 1000 * 60 * 3; // 3분;
+	private static final String BUCKET_NAME = "testhelper";
+
 	private AmazonS3 s3Client;
 	
 	@PostConstruct
@@ -28,7 +32,17 @@ public class PreSignedURLService {
 				.build();
 	}
 
-	public String getPreSignedURL(String objectKey, long expirationTime, String bucketName, HttpMethod method) {
+	@Override
+	public String getUploadUrl(String path) {
+		return this.getPreSignedURL(path, EXPIRATION_TIME, BUCKET_NAME, HttpMethod.PUT);
+	}
+
+	@Override
+	public String getDownloadUrl(String path) {
+		return this.getPreSignedURL(path, EXPIRATION_TIME, BUCKET_NAME, HttpMethod.GET);
+	}
+
+	private String getPreSignedURL(String objectKey, long expirationTime, String bucketName, HttpMethod method) {
 		log.info(objectKey);		
 	    GeneratePresignedUrlRequest generatePresignedUrlRequest = 
 	    		new GeneratePresignedUrlRequest(bucketName, objectKey)
@@ -47,5 +61,4 @@ public class PreSignedURLService {
 		expiration.setTime(expTimeMillis);
 		return expiration;
 	}
-
 }

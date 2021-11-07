@@ -14,6 +14,8 @@ public class RoomDto {
     //clientID
     private final DeviceType device;
 
+    private final Boolean consented;
+
     private final StudentDto student;
 
     private final TestDto test;
@@ -21,6 +23,7 @@ public class RoomDto {
     public RoomDto(Submission submission, DeviceType device) {
         this.id = submission.resolveRoomId();
         this.device = device;
+        this.consented = submission.getConsented();
         this.student = new StudentDto(submission.getStudent());
         this.test = new TestDto(submission.getTest());
     }

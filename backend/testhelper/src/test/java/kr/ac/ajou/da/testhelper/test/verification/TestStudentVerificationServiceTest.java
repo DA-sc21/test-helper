@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TestStudentVerificationServiceTest {
 
@@ -36,7 +36,7 @@ class TestStudentVerificationServiceTest {
             LocalDateTime.now(),
             course);
     private final Long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy);
+    private final Submission submission = new Submission(1L, student, test, supervisedBy);
     private final List<Submission> submissions = new ArrayList<>();
 
     @BeforeEach
@@ -44,7 +44,7 @@ class TestStudentVerificationServiceTest {
         submissionService = mock(SubmissionService.class);
         testStudentVerificationService = new TestStudentVerificationService(submissionService);
 
-        submissions.add(new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy));
+        submissions.add(new Submission(1L, student, test, supervisedBy));
     }
 
     @Test
@@ -58,11 +58,11 @@ class TestStudentVerificationServiceTest {
         //then
         assertEquals(submissions.size(), res.size());
 
-        //TODO : 이거 더 깔끔하게 작성하는 방법 찾아보기
-
         if (submissions.size() > 0) {
-            assertEquals(submissions.get(0).getId(), res.get(0).getSubmissionId());
-            assertEquals(submissions.get(0).getVerified(), res.get(0).getVerified());
+            assertAll( "Submission Info Correct",
+                    () -> assertEquals(submissions.get(0).getId(), res.get(0).getSubmissionId()),
+                    () -> assertEquals(submissions.get(0).getVerified(), res.get(0).getVerified())
+            );
         }
 
     }
@@ -76,6 +76,8 @@ class TestStudentVerificationServiceTest {
         testStudentVerificationService.update(test.getId(), student.getId(), true);
 
         //then
+        verify(submissionService, times(1)).getByTestIdAndStudentId(anyLong(), anyLong());
+
         assertEquals(VerificationStatus.SUCCESS, submission.getVerified());
 
     }
@@ -89,6 +91,8 @@ class TestStudentVerificationServiceTest {
         testStudentVerificationService.update(test.getId(), student.getId(), false);
 
         //then
+        verify(submissionService, times(1)).getByTestIdAndStudentId(anyLong(), anyLong());
+
         assertEquals(VerificationStatus.REJECTED, submission.getVerified());
 
     }
