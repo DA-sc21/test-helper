@@ -4,7 +4,7 @@ public enum SubmissionType {
     SCREEN_SHARE_VIDEO("screen_share_video.mov"),
     ROOM_VIDEO("mobile_cam_video.mov");
 
-    private static String pathFormat = "test/%d/submission/%d/%s";
+    private static final String pathFormat = "test/%05d/submission/%09d/%s";
 
     private final String fileName;
 
