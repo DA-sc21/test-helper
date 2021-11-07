@@ -289,8 +289,8 @@ const PCScreenShare = (props) => {
     }
   
     if (viewer.peerConnectionStatsInterval) {
-        clearInterval(viewer.peerConnectionStatsInterval);
-        viewer.peerConnectionStatsInterval = null;
+      clearInterval(viewer.peerConnectionStatsInterval);
+      viewer.peerConnectionStatsInterval = null;
     }
   
     if (viewer.dataChannel) {
@@ -316,8 +316,7 @@ const PCScreenShare = (props) => {
 async function UploadVideoToS3(testId,studentId,video){
 
   let preSignedUrl="";
-  let baseUrl="http://api.testhelper.com"
-  testId=String(testId).padStart(5,"0")
+  let baseUrl="http://api.testhelper.com";
 
   await axios
     .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/upload-url')
