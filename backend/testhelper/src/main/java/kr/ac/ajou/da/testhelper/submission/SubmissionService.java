@@ -34,9 +34,7 @@ public class SubmissionService {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
-        String submissionPath = submissionType.resolveSubmissionPath(submission);
-
-        return fileService.getUploadUrl(submissionPath);
+        return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission));
     }
 
 }
