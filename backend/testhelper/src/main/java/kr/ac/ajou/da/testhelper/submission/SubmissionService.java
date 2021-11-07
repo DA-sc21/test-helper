@@ -43,9 +43,11 @@ public class SubmissionService {
     @Transactional
     public String getUploadUrlByTestIdAndStudentIdAndSubmissionType(Long testId, Long studentId, SubmissionType submissionType) {
 
-        Submission submission = this.getByTestIdAndStudentId(testId, studentId);
+        if(!submissionRepository.existsByTestIdAndStudentId(testId, studentId)){
+            throw new SubmissionNotFoundException();
+        }
 
-        String submissionPath = submissionType.resolveSubmissionPath(submission);
+        String submissionPath = submissionType.resolveSubmissionPath(testId, studentId);
 
         return fileService.getUploadUrl(submissionPath);
     }
