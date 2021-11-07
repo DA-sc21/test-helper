@@ -1,16 +1,26 @@
 version: "2"
 services:
   reverse-proxy:
+    image: nginx:latest
     container_name: reverse-proxy
-    build:
-      context: nginx/
-      dockerfile : Dockerfile
-    image: reverse-proxy:latest
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/nginx/ssl
+      - ./certbot/data:/var/www/certbot
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - data-server
       - front
+
+  certbot : 
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=/var/www/certbot --email jmchoi1225@ajou.ac.kr --agree-tos --no-eff-email -d testhelper.com -d api.testhelper.com
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/logs:/var/log/letsencrypt
+      - ./certbot/data:/var/www/certbot
 
   data-server:
     container_name: data-server
