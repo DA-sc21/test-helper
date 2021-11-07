@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
-import { Button } from 'react-bootstrap';
+import moment from 'moment';
+import { Button,Form } from 'react-bootstrap';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -28,7 +29,9 @@ const Master = (props) => {
   const pcView = useRef(null);
   const [isAudioShare, setIsAudioShare] = useState(false); //모바일 마이크 공유 여부
   const [isPcShare, setIsPcShare] = useState(false); //PC 화면 공유 여부
-  
+  let [Messages,setMessages]=useState("")
+  let [dataChannels,setdataChannels]=useState({})
+  let [peerconnections,setpeerconnections]=useState({})
   const master = {
     signalingClient: null,
     peerConnectionByClientId: {},
@@ -157,15 +160,17 @@ const Master = (props) => {
       const peerConnection = new RTCPeerConnection(configuration);
   
       master.peerConnectionByClientId[remoteClientId] = peerConnection;
-      
+      setpeerconnections(peerConnection)
       if (master.openDataChannel) {
         console.log(`Opened data channel with ${remoteClientId}`);
         master.dataChannelByClientId[remoteClientId] = peerConnection.createDataChannel('kvsDataChannel');
+        setdataChannels(peerConnection.createDataChannel('kvsDataChannel'))
         peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
-            const timestamp = new Date().toISOString();
-            const loggedMessage = `${timestamp} - from ${remoteClientId}: ${message.data}\n`;
+            console.log(message)
+            const loggedMessage = `${message.data}\n`;
             console.log(loggedMessage);
+            setMessages(loggedMessage)
             master.receivedMessages += loggedMessage;
           };
         };
@@ -284,26 +289,80 @@ const Master = (props) => {
            
   }
 
+  function sendMessage() {
+    console.log(dataChannels,peerconnections)
+    try {
+      const timestamp = moment().format("HH:mm:ss");
+      const loggedMessage = `${timestamp} Master: ${master.messageToSend}\n`;
+  
+      dataChannels.send(Messages+=loggedMessage);
+      // Messages+=master.messageToSend
+      setMessages(Messages)
+      console.log(`Message sent to viewer: ${master.messageToSend}`);
+    } catch (e) {
+        console.error('[MASTER] Send DataChannel: ', e.toString());
+    }
+  }
+
+  function updateState(key, value) {
+    master[key] = value;
+    var localKey = `kvs-widget-${key}`;
+    //console.log(`Setting ${localKey} = `, value);
+    localStorage.setItem(localKey, value);
+  }
+
+
   return (
     <div>
-      <div className="col-md-12" >
-        <video
-            className="return-view"
-            ref={remoteView}
-            style={{width: '100%', height: '280px'}}
-            autoPlay playsInline controls 
-        />
+      <video
+          className="return-view"
+          ref={remoteView}
+          style={{width: '100%', height: '280px'}}
+          autoPlay playsInline controls 
+      />
+      <video
+          className="return-view"
+          ref={pcView}
+          style={{width: '100%', height: '280px'}}
+          autoPlay playsInline controls 
+      />
+      <div className="row">
+        <div className="col-md-12">
+        {isPcShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
+        {isAudioShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '38px', height: '38px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
+        </div>
       </div>
-      <div>
-        <video
-            className="return-view"
-            ref={pcView}
-            style={{width: '100%', height: '280px'}}
-            autoPlay playsInline controls 
-        />
+      <div className="row">
+        <div className="col-md-10">
+          <Form.Control as="textarea" 
+            placeholder="메시지를 입력하세요."
+            id="messageToSend"
+            onChange={(e) => updateState('messageToSend', e.target.value)}
+            value={master.messageToSend} />
+          {/* <textarea
+            id="messageToSend"
+            label="DataChannel Message"
+            onChange={(e) => updateState('messageToSend', e.target.value)}
+            value={master.messageToSend} 
+          /> */}
+        </div>
+        <div className="col-md-2">
+          <Button id="startPlayer" variant="primary" onClick={sendMessage}>
+            전송
+          </Button>
+        </div>
       </div>
-      {isPcShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
-      {isAudioShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '38px', height: '38px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
+      <div className="row">
+        <div className="col-md-12">
+          <Form.Control
+            as="textarea"
+            id="receivedMessages"
+            label="received messages"
+            value={Messages}
+            disabled={true}
+            readOnly/>
+          </div>
+        </div>
     </div>
   );
 };

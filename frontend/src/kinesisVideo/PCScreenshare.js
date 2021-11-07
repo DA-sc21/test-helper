@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import AWS from "aws-sdk";
 import { store } from '@risingstack/react-easy-state';
 import { Button } from "react-bootstrap";
+import moment from 'moment';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -26,6 +27,9 @@ function onStatsReport(report) {
 const PCScreenShare = (props) => {
   const localView = useRef(null);
   const screenStream = useRef(null);
+  let [Messages,setMessages]=useState("")
+  let [dataChannels,setdataChannels]=useState({})
+  let [peerconnections,setpeerconnections]=useState({})
   const viewer = {
     signalingClient: null,
     dataChannel: null,
@@ -160,14 +164,17 @@ const PCScreenShare = (props) => {
     const resolution = (viewer.resolution === OPTIONS.TRAVERSAL.WIDESCREEN) ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
   
     viewer.peerConnection = new RTCPeerConnection(configuration);
+    setpeerconnections(viewer.peerConnection)
     if (viewer.openDataChannel) {
         console.log(`Opened data channel with MASTER.`);
+        
         viewer.dataChannel = viewer.peerConnection.createDataChannel('kvsDataChannel');
+        setdataChannels(viewer.dataChannel)
         viewer.peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
-            const timestamp = new Date().toISOString();
-            const loggedMessage = `${timestamp} - from MASTER: ${message.data}\n`;
-            console.log(loggedMessage);
+            console.log(message)
+            const loggedMessage = `${message.data}\n`;
+            setMessages( loggedMessage)
             viewer.receivedMessages += loggedMessage;
   
           };
@@ -284,6 +291,27 @@ const PCScreenShare = (props) => {
       viewer.dataChannel = null;
     }
   }
+  function sendMessage() {
+    console.log(viewer)
+    try {
+      const timestamp = moment().format("HH:mm:ss");
+      const loggedMessage = `${timestamp} Viewer: ${viewer.messageToSend}\n`;
+  
+      dataChannels.send(Messages+=loggedMessage);
+      // Messages+=viewer.messageToSend
+      setMessages(Messages)
+
+      console.log(`Message sent to master: ${viewer.messageToSend}`);
+    } catch (e) {
+        console.error('[viewer] Send DataChannel: ', e.toString());
+    }
+  }
+  
+  function updateState(key, value) {
+    viewer[key] = value;
+    var localKey = `kvs-widget-${key}`;
+    localStorage.setItem(localKey, value);
+  }
 
   return (
     <div>
@@ -296,6 +324,25 @@ const PCScreenShare = (props) => {
       />
       </div>
       <Button style={{float: 'right', marginRight: '30%'}} onClick={(e) => screenshare(props, e)}>화면 공유하기</Button>
+      <textarea
+          id="messageToSend"
+          label="DataChannel Message"
+          onChange={(e) => updateState('messageToSend', e.target.value)}
+          value={viewer.messageToSend} 
+        />
+        <br/><br/>
+        <Button id="startPlayer" variant="contained" color="primary" onClick={sendMessage}>
+        Send Message
+      </Button>
+      <br/><br/><br/>
+      <textarea
+          id="receivedMessages"
+          label="received messages"
+          value={Messages}
+          size='small'
+          disabled={true}
+          variant="outlined"
+          />
     </div>
   );
 };
