@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AWS from "aws-sdk";
 import { store } from '@risingstack/react-easy-state';
-import { Button } from "react-bootstrap";
+import { Button,Form } from "react-bootstrap";
 import moment from 'moment';
+import ChatList from '../professor/ChatList';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -324,25 +325,24 @@ const PCScreenShare = (props) => {
       />
       </div>
       <Button style={{float: 'right', marginRight: '30%'}} onClick={(e) => screenshare(props, e)}>화면 공유하기</Button>
-      <textarea
-          id="messageToSend"
-          label="DataChannel Message"
-          onChange={(e) => updateState('messageToSend', e.target.value)}
-          value={viewer.messageToSend} 
-        />
-        <br/><br/>
-        <Button id="startPlayer" variant="contained" color="primary" onClick={sendMessage}>
-        Send Message
-      </Button>
-      <br/><br/><br/>
-      <textarea
-          id="receivedMessages"
-          label="received messages"
-          value={Messages}
-          size='small'
-          disabled={true}
-          variant="outlined"
-          />
+      <div className="row mt-5 p-5">
+        <div className="col-md-3" ></div>
+        <div className="col-md-6" >
+          <ChatList id="receivedMessages" chat={Messages} role="Viewer"></ChatList>
+          <div className="input-group">
+            <Form.Control 
+              type="text" 
+              placeholder="메시지를 입력하세요."
+              size="lg"
+              id="messageToSend"
+              onChange={(e) => {updateState('messageToSend', e.target.value)}}
+              value={viewer.messageToSend} />
+            <Button id="startPlayer" variant="primary" onClick={sendMessage}>
+              전송
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

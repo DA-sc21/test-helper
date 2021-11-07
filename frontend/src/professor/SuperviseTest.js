@@ -6,6 +6,7 @@ import Loading from '../component/Loading';
 import Master from '../kinesisVideo/Master';
 import "./Chat.css"
 import $ from 'jquery';
+import ChatList from './ChatList';
 let baseUrl ="http://api.testhelper.com"
 
 function SuperviseTest(){
@@ -151,45 +152,18 @@ function StudentCard(props){
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <div className="row clearfix">
-            <div className="col-lg-12">
-                <div className="card chat-app">
-                    <div className="chat">
-                        <div className="chat-history">
-                            <ul className="m-b-0">
-                              {
-                              chat.split("\n").map((chat,index)=>{
-                                if (chat==="")return
-                                let temp=chat.split("!@#");
-                                let time=temp[0]
-                                let person=temp[1]
-                                let dialog=temp[2]
-                                return(
-                                <li className="clearfix" key={index}>
-                                  <div className={person==="Master"?"message-data text-right":"message-data"}>
-                                      <span className="message-data-time">{time}, {person}</span>
-                                  </div>
-                                  <div className={person==="Master"?" col-md-12 message other-message float-right":" col-md-12 message my-message"} > {dialog} </div>
-                                </li>)
-                              })
-                              }
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className="chat-message clearfix">
+          <ChatList chat={chat} role="Master"></ChatList>
+          <div className="chat-message clearfix">
             <div className="input-group mb-0">
-                <Form.Control size="lg" type="text" 
-                id={"MessageModal"+props.index} placeholder="메세지를 입력하세요." 
-                onChange={(e) => 
-                {
-                  $('#messageToSend'+props.index).val(e.target.value).trigger("change");
-                }}  />
-                <Button variant="primary" onClick={()=>sendMessage(props.index)} >전송</Button>
+              <Form.Control size="lg" type="text" 
+              id={"MessageModal"+props.index} placeholder="메세지를 입력하세요." 
+              onChange={(e) => 
+              {
+                $('#messageToSend'+props.index).val(e.target.value).trigger("change");
+              }}  />
+              <Button variant="primary" onClick={()=>sendMessage(props.index)} >전송</Button>
             </div>
-        </div>
+          </div>
         </Modal.Body>
       </Modal>
       </Card>

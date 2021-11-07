@@ -4,6 +4,7 @@ import moment from 'moment';
 import Moment from "react-moment"
 import 'moment/locale/ko';
 import { useInterval } from 'react-use';
+import TakingTest from './TakingTest';
 
 function TestStudentWaiting(props){
   let testInformations = ["id","name","startTime","endTime"]
@@ -20,7 +21,7 @@ function TestStudentWaiting(props){
   useInterval(() => {
     
     let currentTime = moment();
-    let testStartTime = moment("2021 10 31 18:07");
+    let testStartTime = moment("2021 11 07 19:38");
     // let testStartTime = moment(props.test.startTime);
     let duration = moment.duration(testStartTime.diff(currentTime));
     duration < 0 ? setStarted(true) :setStarted(false) 
@@ -37,9 +38,10 @@ function TestStudentWaiting(props){
     <div className="conatiner m-4 px-5"> 
       <div className="row">
         <div className="col-md-12 my-4">
-          <Button variant= "success" size="lg" disabled= {!started} >
+          <TakingTest started={started} data={props}></TakingTest>
+          {/* <Button variant= "success" size="lg" disabled= {!started} >
             시험장입장
-          </Button>
+          </Button> */}
         </div>
         <div className="col-md-12">
           <Table striped bordered hover size="sm">
