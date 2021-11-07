@@ -24,7 +24,6 @@ function onStatsReport(report) {
 
 const Viewer = (props) => {
   const localView = useRef(null);
-
   const viewer = {
     signalingClient: null,
     dataChannel: null,
@@ -42,10 +41,10 @@ const Viewer = (props) => {
 
   useEffect(() => {
     console.log(props);
-    startViewer(props);
+    startPlayerForViewer(props);
   }, []);
 
-  async function startViewer(props, e) {
+  async function startPlayerForViewer(props, e) {
     console.log("viewer credentials : ",props.credentials);
 
     // Create KVS client
@@ -161,6 +160,7 @@ const Viewer = (props) => {
             const loggedMessage = `${timestamp} - from MASTER: ${message.data}\n`;
             console.log(loggedMessage);
             viewer.receivedMessages += loggedMessage;
+  
           };
         };
     }
@@ -185,6 +185,7 @@ const Viewer = (props) => {
               viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
 
               localView.current.srcObject = viewer.localStream;
+              
           } catch (e) {
               console.error('[VIEWER] Could not find webcam');
               return;
@@ -203,6 +204,7 @@ const Viewer = (props) => {
       // When trickle ICE is enabled, send the offer now and then send ICE candidates as they are generated. Otherwise wait on the ICE candidates.
       if (viewer.useTrickleICE) {
           console.log('[VIEWER] Sending SDP offer');
+          
           viewer.signalingClient.sendSdpOffer(viewer.peerConnection.localDescription);
       }
       console.log('[VIEWER] Generating ICE candidates');
@@ -211,6 +213,7 @@ const Viewer = (props) => {
     viewer.signalingClient.on('sdpAnswer', async answer => {
       // Add the SDP answer to the peer connection
       console.log('[VIEWER] Received SDP answer');
+    
       await viewer.peerConnection.setRemoteDescription(answer);
     });
   
@@ -245,8 +248,9 @@ const Viewer = (props) => {
           if (!viewer.useTrickleICE) {
               console.log('[VIEWER] Sending SDP offer');
               viewer.signalingClient.sendSdpOffer(viewer.peerConnection.localDescription);
+              console.log(viewer.signalingClient);
           }
-        }
+      }
     });
   
     console.log('[VIEWER] Starting viewer connection');

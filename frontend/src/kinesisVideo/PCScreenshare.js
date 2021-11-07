@@ -49,7 +49,7 @@ const PCScreenShare = (props) => {
         //success
         stream.getVideoTracks()[0].addEventListener('ended', () => {
           console.log('screensharing has ended')
-          stopPlayerForViewer();
+          stopPlayerForViewer(); 
         });
         screenStream.current.srcObject = stream;
         viewer.localStream = stream;

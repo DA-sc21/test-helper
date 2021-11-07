@@ -211,6 +211,9 @@ const Master = (props) => {
               console.log("마이크 on");
               if(event.track.kind == "audio"){
                 setIsAudioShare(true);
+                let arr_audio = props.audio;
+                arr_audio[props.studentId.indexOf(parseInt(remoteClientId[2]))] = true;
+                props.changeAudio(arr_audio);
               }
             }
           }
@@ -218,14 +221,19 @@ const Master = (props) => {
 
       peerConnection.addEventListener("connectionstatechange", ev => {
         if(remoteClientId.indexOf('PC')!=-1){
+          let arr_pc = props.pc;
           switch(peerConnection.connectionState) {
             case "connected":
               setIsPcShare(true);
               console.log('pc connect');
+              arr_pc[props.studentId.indexOf(parseInt(remoteClientId[2]))] = true;
+              props.changePc(arr_pc);
               break;
             case "disconnected":
               setIsPcShare(false);
               console.log('pc connection disconnected');
+              arr_pc[props.studentId.indexOf(parseInt(remoteClientId[2]))] = false;
+              props.changePc(arr_pc);
             case "failed":
               setIsPcShare(false);
               console.log('pc connection failed');
@@ -233,6 +241,27 @@ const Master = (props) => {
             case "closed":
               setIsPcShare(false);
               console.log('pc connection closed');
+              break;
+          }
+        }
+        if(remoteClientId.indexOf('MO')!=-1){
+          let arr_audio = props.audio;
+          switch(peerConnection.connectionState) {
+            case "connected":
+              console.log('mobile connect');
+              break;
+            case "disconnected":
+              setIsAudioShare(false);
+              console.log('mobile connection disconnected');
+              arr_audio[props.studentId.indexOf(parseInt(remoteClientId[2]))] = false;
+              props.changeAudio(arr_audio);
+            case "failed":
+              setIsAudioShare(false);
+              console.log('mobile connection failed');
+              break;
+            case "closed":
+              setIsAudioShare(false);
+              console.log('mobile connection closed');
               break;
           }
         }
@@ -302,8 +331,8 @@ const Master = (props) => {
             autoPlay playsInline controls 
         />
       </div>
-      {isPcShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
-      {isAudioShare === true ? <img style ={{width: '40px', height: '40px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '38px', height: '38px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
+      {isPcShare === true ? <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
+      {isAudioShare === true ? <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
     </div>
   );
 };
