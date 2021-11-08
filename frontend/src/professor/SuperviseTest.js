@@ -14,12 +14,14 @@ function SuperviseTest(){
   let [testRooms,setTestRooms] = useState([])
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([])
+  let [submissions,setSubmissions] = useState([])
   let [loading,setLoading] = useState(false)
   let [toggled,setToggled]=useState(0)
   let {testId} = useParams()
   
   useEffect(()=>{
     getVerifications();
+    getSubmissions();
     createTestRooms();
   },[]);
 
@@ -28,6 +30,16 @@ function SuperviseTest(){
     .get(baseUrl+'/tests/'+testId+'/students/verification')
     .then((result)=>{ 
       setVerifications(result.data)
+      console.log(result.data)
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  async function getSubmissions(){
+    await axios
+    .get(baseUrl+'/tests/'+testId+'/submissions')
+    .then((result)=>{ 
+      setSubmissions(result.data)
       console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
@@ -53,18 +65,6 @@ function SuperviseTest(){
     setTestRooms(temp)
   }
 
-  function sortVerifications(inc,standard){
-    let temp = [...verifications].sort(function (a,b){
-      let value  = a[standard] > b[standard] ?  1 :  -1
-      return inc*value 
-    })
-    setVerifications(temp)
-    
-  }
-  function buttonCss(idx) {
-    return toggled===idx? "primary" : "outline-primary"  
-  }
-
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="conatiner p-3">
@@ -72,20 +72,14 @@ function SuperviseTest(){
         <div className="col-md-3 d-flex justify-content-start">
           <StudentsList verifications={verifications} ></StudentsList>
         </div>
-        <div className="col-md-9 d-flex justify-content-end">
-          <ButtonGroup className="" aria-label="Basic example">
-            <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortVerifications(1,"studentId")}}>학번순오름정렬</Button>
-            <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortVerifications(-1,"studentId")}}>학번순내림정렬</Button>
-          </ButtonGroup>
-        </div>
-        </div>
-        <div className="row mt-3">
-          {
-            verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} / >;
-            })
-          }
-        </div>
+      </div>
+      <div className="row mt-3">
+        {
+          verifications.map((verification,index)=>{
+            return <StudentCard className="" key={index} testId={testId} submission={submissions[index]} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} / >;
+          })
+        }
+      </div>
     </div> 
   )
 }
@@ -95,6 +89,10 @@ function StudentCard(props){
     "REJECTED" : "거절",
     "PENDING" : "보류",
     "SUCCESS" : "성공",
+  }
+  let submission_status_options={
+    "PENDING" : "제출전",
+    "DONE" : "제출완료",
   }
   const [show, setShow] = useState(false);
   let [chat,setchat]=useState("")
@@ -110,10 +108,10 @@ function StudentCard(props){
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>
           <hr />
           <Card.Text>
-            {props.verification.submissionId}(submissionId)
+            본인인증 : {verification_status_options[props.verification.verified]}
           </Card.Text>
           <Card.Text>
-            {verification_status_options[props.verification.verified]}
+            답안제출현황 : {submission_status_options[props.submission.submitted]}
           </Card.Text>
           <div className="row">
             {props.verification.verified==="SUCCESS"

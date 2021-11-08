@@ -16,13 +16,13 @@ function TestStudentIdentification(props){
     getimages("face",setface);
   },[]);
   
-  async function getimages(target,setfunc){
+  async function getimages(target,setImagepath){
     testId=String(testId).padStart(5,"0")
     
     await axios
       .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg')
       .then((result)=>{
-        setfunc(result.data)
+        setImagepath(result.data)
       })
       .catch(()=>{ console.log("실패") })
   
