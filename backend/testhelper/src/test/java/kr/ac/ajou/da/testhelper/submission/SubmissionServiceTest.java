@@ -55,6 +55,7 @@ class SubmissionServiceTest {
         submissionRepository = mock(SubmissionRepository.class);
         submissionMapper = mock(SubmissionMapper.class);
         fileService = mock(FileService.class);
+        submissionMapper = mock(SubmissionMapper.class);
         submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
 
         submissions.add(new Submission(1L, student, test, supervisedBy));
