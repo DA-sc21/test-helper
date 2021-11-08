@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 
-const SetViewer = () => {
+const SetViewer = (props) => {
   const [video, setVideo] = useState(false);
   const [audio, setAudio] = useState(false);
-
+  let credentials = props.location.state.credentials;
+  console.log("Setviewer credentials : ",credentials)
   let changeVideo = (e) => {
     setVideo(e.target.checked)
     console.log('카메라 공유 여부:', e.target.checked)
@@ -35,7 +36,22 @@ const SetViewer = () => {
         </div>
       </div>
 
-      <Button variant="primary"><Link to ={{pathname: "/tests/viewer", state:{sendVideo: video, sendAudio: audio, region: "", accessKey: "", secretAccessKey: "",  channelName: "", clientId: "", sessionToken: ""}}} style={{textDecorationLine: 'none', color: 'white'}}>설정 완료</Link></Button>
+      <Button variant="primary">
+        <Link to ={{
+          pathname: "/tests/viewer", 
+          state:{
+            sendVideo: video, 
+            sendAudio: audio, 
+            region: "us-east-2", 
+            accessKey: credentials.accessKeyId, 
+            secretAccessKey: credentials.secretAccessKey,  
+            channelName: "test", 
+            clientId: "MO", 
+            sessionToken: credentials.sessionToken}}} 
+          style={{textDecorationLine: 'none', color: 'white'}}>
+            설정 완료
+        </Link>
+      </Button>
 
     </div>
   );
