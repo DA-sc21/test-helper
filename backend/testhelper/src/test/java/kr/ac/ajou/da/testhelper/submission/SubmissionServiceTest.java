@@ -102,14 +102,14 @@ class SubmissionServiceTest {
     @Test
     void getUploadUrlByTestIdAndStudentIdAndSubmissionType_success() {
         //given
-        when(submissionRepository.existsByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(true);
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
         when(fileService.getUploadUrl(anyString())).thenReturn(this.uploadUrl);
 
         //when
         String uploadUrl = submissionService.getUploadUrlByTestIdAndStudentIdAndSubmissionType(test.getId(), student.getId(), submissionType);
 
         //then
-        verify(submissionRepository, times(1)).existsByTestIdAndStudentId(anyLong(), anyLong());
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
         // TODO : final object의 메소드가 호출되었는지 확인하는 방법 검토
         // verify(submissionType, times(1)).resolveSubmissionPath(anyLong(), anyLong());
         verify(fileService, times(1)).getUploadUrl(anyString());
@@ -120,7 +120,7 @@ class SubmissionServiceTest {
     @Test
     void getUploadUrlByTestIdAndStudentIdAndSubmissionType_submissionNotFound_thenThrow_SubmissionNotFoundException() {
         //given
-        when(submissionRepository.existsByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(false);
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
         //when
         assertThrows(SubmissionNotFoundException.class, ()->{
@@ -128,7 +128,7 @@ class SubmissionServiceTest {
         });
 
         //then
-        verify(submissionRepository, times(1)).existsByTestIdAndStudentId(anyLong(), anyLong());
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
         verify(fileService, never()).getUploadUrl(anyString());
     }
 }
