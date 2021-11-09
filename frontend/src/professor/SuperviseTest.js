@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal,Form} from 'react-bootstrap';
+import {ListGroup,Card, Button ,Offcanvas ,Image,ToastContainer,Badge ,Modal,Form, Toast} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
@@ -71,6 +71,11 @@ function SuperviseTest(){
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <StudentsList verifications={verifications} ></StudentsList>
+        </div>
+        <div className="position-relative" style={{ zIndex:100}}>
+          <ToastContainer position="top-end" className="p-3">
+            <ChattingAlert></ChattingAlert>
+          </ToastContainer>
         </div>
       </div>
       <div className="row mt-3">
@@ -242,6 +247,18 @@ function StudentsList(props) {
       </Offcanvas>
     </>
   );
+}
+function ChattingAlert(){
+  let [show,setShow] = useState(true)
+  return(
+    <Toast show={show} onClose={()=>{setShow(!show)}}>
+      <Toast.Header>
+        <strong className="me-auto">1번학생</strong>
+        <small className="text-muted">just now</small>
+      </Toast.Header>
+      <Toast.Body>감독관님 질문있습니다.</Toast.Body>
+    </Toast>
+)
 }
 
 export default SuperviseTest
