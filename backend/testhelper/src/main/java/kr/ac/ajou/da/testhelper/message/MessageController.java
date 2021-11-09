@@ -28,7 +28,7 @@ public class MessageController {
         
 //    private static String BOOT_TOPIC = "kafka-chatting";
 
-   @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
+//    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
     //// "url/app/message"로 들어오는 메시지를 "/topic/public"을 구독하고있는 사람들에게 송신
     @MessageMapping("/message/{testId}/{studentId}")//@MessageMapping works for WebSocket protocol communication. This defines the URL mapping.
     // @SendTo("/topic/public")//websocket subscribe topic& direct send
@@ -42,7 +42,7 @@ public class MessageController {
         receiver.receive(message, testId, studentId);
     }
 
-   @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
+//    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
     @RequestMapping("/history/{testId}/{studentId}")
     public List<MessageDto> getChattingHistory(@PathVariable String testId, @PathVariable String studentId) throws Exception {
     	log.info(testId);
