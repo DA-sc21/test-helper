@@ -33,7 +33,7 @@ class SubmissionTypeTest {
 
         //then
         assertEquals(
-                String.format("test/%05d/submission/%s/screen_share_video.mov",
+                String.format("test/%05d/submission/%s/screen_share_video.mp4",
                         submission.getTest().getId(), submission.getStudent().getStudentNumber()),
                 path);
     }
@@ -48,7 +48,7 @@ class SubmissionTypeTest {
 
         //then
         assertEquals(
-                String.format("test/%05d/submission/%s/mobile_cam_video.mov",
+                String.format("test/%05d/submission/%s/mobile_cam_video.mp4",
                         submission.getTest().getId(), submission.getStudent().getStudentNumber()),
                 path);
     }
