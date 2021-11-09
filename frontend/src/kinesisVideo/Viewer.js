@@ -18,69 +18,40 @@ const OPTIONS = {
   }
 };
 
-const state = store({
-  // These are config params set by the user:
-  accessKey: '',
-  secretAccessKey: '',
-  sessionToken: '',
-  region: '',
-  role: OPTIONS.ROLE.VIEWER,
-  channelName: '',
-  clientId: '',
-  endpoint: null,
-  //sendVideo: true,
-  //sendAudio: true,
-  openDataChannel: true,
-  resolution: OPTIONS.RESOLUTION.WIDESCREEN,
-  natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
-  useTrickleICE: false,
-  messageToSend: '',
-  playerIsStarted: false,
-  
-  // These are set when user starts video; a few of them are only used when you start the stream as MASTER:
-  signalingClient: null,
-  localStream: null,
-  localView: null,
-  remoteView: null,
-  zdataChannel: null,
-  peerConnectionStatsInterval: null,
-  peerConnectionByClientId: {},
-  dataChannelByClientId: [],
-  receivedMessages: '',
-});
-
 function onStatsReport(report) {
     // TODO: Publish stats
 }
 
 const Viewer = (props) => {
-  state.localView = useRef(null);
-  state.remoteView = useRef(null);
+  const localView = useRef(null);
+  const viewer = {
+    signalingClient: null,
+    dataChannel: null,
+    localStream: null,
+    peerConnectionStatsInterval: null,
+    peerConnection: null,
+    useTrickleICE: false,
+    openDataChannel: true,
+    endpoint: null,
+    role: OPTIONS.ROLE.VIEWER,
+    resolution: OPTIONS.RESOLUTION.WIDESCREEN,
+    natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
+    receivedMessages: '',
+  };
 
   useEffect(() => {
     console.log(props);
     startPlayerForViewer(props);
   }, []);
-  
-  return (
-    <div className="my-5" >
-      <video
-        className="w-100 output-view"
-        ref={state.localView}
-        autoPlay playsInline controls muted
-      />
-    </div>
-  );  
-};
 
-async function startPlayerForViewer(props, e) {
+  async function startPlayerForViewer(props, e) {
     console.log("viewer credentials : ",props.credentials);
 
     // Create KVS client
     console.log('Created KVS client...');
     const kinesisVideoClient = new AWS.KinesisVideo({
       region: props.region,
-      endpoint: state.endpoint || null,
+      endpoint: viewer.endpoint || null,
       correctClockSkew: true,
       accessKeyId: props.accessKey,
       secretAccessKey: props.secretAccessKey,
@@ -105,7 +76,7 @@ async function startPlayerForViewer(props, e) {
           ChannelARN: channelARN,
           SingleMasterChannelEndpointConfiguration: {
               Protocols: ['WSS','HTTPS'],
-              Role: state.role, //roleOption.MASTER
+              Role: viewer.role, //roleOption.VIEWER
           },
     })
     .promise();
@@ -118,10 +89,10 @@ async function startPlayerForViewer(props, e) {
   
     // Create Signaling Client
     console.log(`Creating signaling client...`);
-    state.signalingClient = new window.KVSWebRTC.SignalingClient({
+    viewer.signalingClient = new window.KVSWebRTC.SignalingClient({
       channelARN,
       channelEndpoint: endpointsByProtocol.WSS,
-      role: state.role, //roleOption.MASTER
+      role: viewer.role, //roleOption.VIEWER
       region: props.region,
       systemClockOffset: kinesisVideoClient.config.systemClockOffset,
       clientId: props.clientId,
@@ -151,12 +122,12 @@ async function startPlayerForViewer(props, e) {
       .promise();
     
     const iceServers = [];
-    if (state.natTraversal === OPTIONS.TRAVERSAL.STUN_TURN) {
+    if (viewer.natTraversal === OPTIONS.TRAVERSAL.STUN_TURN) {
       console.log('Getting STUN servers...');
       iceServers.push({ urls: `stun:stun.kinesisvideo.${props.region}.amazonaws.com:443` });
     }
     
-    if (state.natTraversal !== OPTIONS.TRAVERSAL.DISABLED) {
+    if (viewer.natTraversal !== OPTIONS.TRAVERSAL.DISABLED) {
       console.log('Getting TURN servers...');
       getIceServerConfigResponse.IceServerList.forEach(iceServer =>
         iceServers.push({
@@ -169,41 +140,39 @@ async function startPlayerForViewer(props, e) {
     
     const configuration = {
       iceServers,
-      iceTransportPolicy: (state.natTraversal === OPTIONS.TRAVERSAL.TURN_ONLY) ? 'relay' : 'all',
+      iceTransportPolicy: (viewer.natTraversal === OPTIONS.TRAVERSAL.TURN_ONLY) ? 'relay' : 'all',
     };
   
-    const resolution = (state.resolution === OPTIONS.TRAVERSAL.WIDESCREEN) ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
+    const resolution = (viewer.resolution === OPTIONS.TRAVERSAL.WIDESCREEN) ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
   
     const constraints = {
         video: props.sendVideo ? resolution : false,
         audio: props.sendAudio,
     };
   
-    state.peerConnection = new RTCPeerConnection(configuration);
-    if (state.openDataChannel) {
+    viewer.peerConnection = new RTCPeerConnection(configuration);
+    if (viewer.openDataChannel) {
         console.log(`Opened data channel with MASTER.`);
-        state.dataChannel = state.peerConnection.createDataChannel('kvsDataChannel');
-        state.peerConnection.ondatachannel = event => {
+        viewer.dataChannel = viewer.peerConnection.createDataChannel('kvsDataChannel');
+        viewer.peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
             const timestamp = new Date().toISOString();
             const loggedMessage = `${timestamp} - from MASTER: ${message.data}\n`;
             console.log(loggedMessage);
-            state.receivedMessages += loggedMessage;
+            viewer.receivedMessages += loggedMessage;
   
           };
         };
     }
   
     // Poll for connection stats
-    state.peerConnectionStatsInterval = setInterval(
+    viewer.peerConnectionStatsInterval = setInterval(
       () => {
-        state.peerConnection.getStats().then(onStatsReport);
+        viewer.peerConnection.getStats().then(onStatsReport);
       }, 1000
     );
   
-    /// REVIEW BELOW HERE
-  
-    state.signalingClient.on('open', async () => {
+    viewer.signalingClient.on('open', async () => {
       console.log('[VIEWER] Connected to signaling service');
   
       // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
@@ -211,11 +180,12 @@ async function startPlayerForViewer(props, e) {
       // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
       if (props.sendVideo || props.sendAudio) {
           try {
-              state.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-              console.log(state.localStream);
-              state.localStream.getTracks().forEach(track => state.peerConnection.addTrack(track, state.localStream));
+              viewer.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+              console.log(viewer.localStream);
+              viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
 
-              state.localView.current.srcObject = state.localStream;
+              localView.current.srcObject = viewer.localStream;
+              
           } catch (e) {
               console.error('[VIEWER] Could not find webcam');
               return;
@@ -224,75 +194,79 @@ async function startPlayerForViewer(props, e) {
   
       // Create an SDP offer to send to the master
       console.log('[VIEWER] Creating SDP offer');
-      await state.peerConnection.setLocalDescription(
-          await state.peerConnection.createOffer({
+      await viewer.peerConnection.setLocalDescription(
+          await viewer.peerConnection.createOffer({
               offerToReceiveAudio: true,
               offerToReceiveVideo: true,
           }),
       );
   
       // When trickle ICE is enabled, send the offer now and then send ICE candidates as they are generated. Otherwise wait on the ICE candidates.
-      if (state.useTrickleICE) {
+      if (viewer.useTrickleICE) {
           console.log('[VIEWER] Sending SDP offer');
-          state.signalingClient.sendSdpOffer(state.peerConnection.localDescription);
+          
+          viewer.signalingClient.sendSdpOffer(viewer.peerConnection.localDescription);
       }
       console.log('[VIEWER] Generating ICE candidates');
-  });
+    });
   
-  state.signalingClient.on('sdpAnswer', async answer => {
+    viewer.signalingClient.on('sdpAnswer', async answer => {
       // Add the SDP answer to the peer connection
       console.log('[VIEWER] Received SDP answer');
-      await state.peerConnection.setRemoteDescription(answer);
-  });
+    
+      await viewer.peerConnection.setRemoteDescription(answer);
+    });
   
-  state.signalingClient.on('iceCandidate', candidate => {
+    viewer.signalingClient.on('iceCandidate', candidate => {
       // Add the ICE candidate received from the MASTER to the peer connection
       console.log('[VIEWER] Received ICE candidate');
-      state.peerConnection.addIceCandidate(candidate);
-  });
+      viewer.peerConnection.addIceCandidate(candidate);
+    });
   
-  state.signalingClient.on('close', () => {
+    viewer.signalingClient.on('close', () => {
       console.log('[VIEWER] Disconnected from signaling channel');
-  });
+    });
   
-  state.signalingClient.on('error', error => {
+    viewer.signalingClient.on('error', error => {
       console.error('[VIEWER] Signaling client error: ', error);
-  });
+    });
   
-  // Send any ICE candidates to the other peer
-  state.peerConnection.addEventListener('icecandidate', ({ candidate }) => {
+    // Send any ICE candidates to the other peer
+    viewer.peerConnection.addEventListener('icecandidate', ({ candidate }) => {
       if (candidate) {
           console.log('[VIEWER] Generated ICE candidate');
   
           // When trickle ICE is enabled, send the ICE candidates as they are generated.
-          if (state.useTrickleICE) {
+          if (viewer.useTrickleICE) {
               console.log('[VIEWER] Sending ICE candidate');
-              state.signalingClient.sendIceCandidate(candidate);
+              viewer.signalingClient.sendIceCandidate(candidate);
           }
       } else {
           console.log('[VIEWER] All ICE candidates have been generated');
   
           // When trickle ICE is disabled, send the offer now that all the ICE candidates have ben generated.
-          if (!state.useTrickleICE) {
+          if (!viewer.useTrickleICE) {
               console.log('[VIEWER] Sending SDP offer');
-              state.signalingClient.sendSdpOffer(state.peerConnection.localDescription);
+              viewer.signalingClient.sendSdpOffer(viewer.peerConnection.localDescription);
+              console.log(viewer.signalingClient);
           }
       }
-  });
+    });
   
-  // As remote tracks are received, add them to the remote view
-  state.peerConnection.addEventListener('track', event => {
-      console.log('[VIEWER] Received remote track');
-      /*if (state.remoteView.current.srcObject) {
-          return;
-      }
-      state.remoteStream = event.streams[0];
-      state.remoteView.current.srcObject = state.remoteStream;*/
-  });
-  
-  console.log('[VIEWER] Starting viewer connection');
-  state.signalingClient.open();
+    console.log('[VIEWER] Starting viewer connection');
+    viewer.signalingClient.open();
     
 } 
+  
+  return (
+    <div className="my-5" >
+      <video
+        className="w-100 output-view"
+        ref={localView}
+        autoPlay playsInline controls muted
+      />
+    </div>
+  );  
+};
 
 export default Viewer;

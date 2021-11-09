@@ -3,18 +3,25 @@ import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
+import Master from '../kinesisVideo/Master';
 
 let baseUrl ="http://api.testhelper.com"
 
 function SuperviseTest(){
 
+  let [testRooms,setTestRooms] = useState([])
+  let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([])
   let [loading,setLoading] = useState(false)
   let [toggled,setToggled]=useState(0)
   let {testId} = useParams()
+  const [audio,setAudio] = useState([])
+  const [pc,setPc] = useState([])
+  const [studentId,setStudentId] = useState([])
   
   useEffect(()=>{
     getVerifications();
+    createTestRooms();
   },[]);
 
   async function getVerifications(){
@@ -22,9 +29,43 @@ function SuperviseTest(){
     .get(baseUrl+'/tests/'+testId+'/students/verification')
     .then((result)=>{ 
       setVerifications(result.data)
-      setLoading(true);
+      console.log(result.data)
+      getStudentId(result.data)
     })
     .catch(()=>{ console.log("실패") })
+  }
+
+  function getStudentId(arr){
+    let len = arr.length;
+    let temp = [];
+    let id = [];
+    for(let i=0; i<len; i++){
+      temp.push(false);
+      id.push(arr[i].studentId);
+    }
+    setAudio(temp);
+    setPc(temp);
+    setStudentId(id);
+  }
+
+  async function createTestRooms(){
+    await axios
+    .post(baseUrl+'/tests/'+testId+'/students/room')
+    .then((result)=>{
+      sortTestRooms(result.data.students)
+      setCredentials(result.data.credentials)
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  function sortTestRooms(arr){
+    let temp = []
+    let rooms = arr.map(data=>{
+      temp.push(data.roomId)
+    })
+    setLoading(true);
+    setTestRooms(temp)
   }
 
   function sortVerifications(inc,standard){
@@ -44,7 +85,7 @@ function SuperviseTest(){
     <div className="conatiner p-3">
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
-          <StudentsList verifications={verifications} ></StudentsList>
+          <StudentsList verifications={verifications} audio={audio} pc={pc}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ButtonGroup className="" aria-label="Basic example">
@@ -56,7 +97,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={audio} setAudio={setAudio} pc={pc} setPc={setPc} studentId={studentId} / >;
             })
           }
         </div>
@@ -70,12 +111,19 @@ function StudentCard(props){
     "PENDING" : "보류",
     "SUCCESS" : "성공",
   }
+  function changeAudio(data){
+    console.log("changeAudio 함수 호출");
+    props.setAudio(data);
+  }
+  function changePc(data){
+    console.log("changePc 함수 호출");
+    props.setPc(data);
+  }
   return(
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <video className="col-md-12" controls></video>
-          <video className="col-md-12" controls></video>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc}></Master>
         </div>
         <Card.Body>
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>
@@ -162,6 +210,8 @@ function StudentsList(props) {
                     <div className="row ">
                       <div className="col-md-6"> {verification.studentId} . 이름이 </div>
                       <div className="col-md-6 d-flex justify-content-end"> 
+                        {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
+                        {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />}
                         <Badge bg={verification_status_css[verification.verified]} className="mx-3">{verification_status_options[verification.verified]}</Badge>
                       </div>
                     </div>
