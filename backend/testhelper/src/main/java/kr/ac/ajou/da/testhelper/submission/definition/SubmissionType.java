@@ -3,8 +3,8 @@ package kr.ac.ajou.da.testhelper.submission.definition;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 
 public enum SubmissionType {
-    SCREEN_SHARE_VIDEO("screen_share_video.mov"),
-    ROOM_VIDEO("mobile_cam_video.mov");
+    SCREEN_SHARE_VIDEO("screen_share_video.mp4"),
+    ROOM_VIDEO("mobile_cam_video.mp4");
 
     private static final String pathFormat = "test/%05d/submission/%s/%s";
 
