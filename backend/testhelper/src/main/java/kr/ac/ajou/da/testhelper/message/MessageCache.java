@@ -26,5 +26,11 @@ public class MessageCache {
         this.chatHistoryCache.put(UUID.randomUUID(), chatObj); //uuid 중복될 확률 아주 아주 희박
     }
 
+    public List<MessageDto> get(String testId, String studentId) {
+        return chatHistoryCache.asMap().values().stream()
+        		.filter(t->t.getTestId().equals(testId) && t.getStudentId().equals(studentId))
+                .sorted(Comparator.comparing(MessageDto::getTimeStamp))
+                .collect(Collectors.toList());
+    }
 
 }
