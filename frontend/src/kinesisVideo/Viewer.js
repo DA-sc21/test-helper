@@ -35,7 +35,7 @@ const Viewer = (props) => {
     localStream: null,
     peerConnectionStatsInterval: null,
     peerConnection: null,
-    useTrickleICE: false,
+    useTrickleICE: true,
     openDataChannel: true,
     endpoint: null,
     role: OPTIONS.ROLE.VIEWER,

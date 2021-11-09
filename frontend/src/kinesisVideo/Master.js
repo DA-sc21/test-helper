@@ -41,7 +41,7 @@ const Master = (props) => {
     openDataChannel: true,
     resolution: OPTIONS.RESOLUTION.WIDESCREEN,
     natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
-    useTrickleICE: false,
+    useTrickleICE: true,
     receivedMessages: '',
   };
 
