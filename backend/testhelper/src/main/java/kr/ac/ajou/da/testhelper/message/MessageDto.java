@@ -17,6 +17,9 @@ public class MessageDto implements Serializable {
     private String fileName;
     private String rawData;
     
+    private String testId;
+    private String studentId;
+
     public MessageDto() {
     }
 
