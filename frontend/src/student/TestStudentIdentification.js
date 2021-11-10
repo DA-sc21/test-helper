@@ -2,9 +2,9 @@ import React ,{useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
+import {baseUrl} from "../component/baseUrl"
 
 function TestStudentIdentification(props){
-  let baseUrl ="http://api.testhelper.com"
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setface]= useState("");
@@ -47,7 +47,6 @@ function TestStudentIdentification(props){
   )
 }
 async function Identification(testId,studentId,setIdentificationResult){
-  let baseUrl ="http://api.testhelper.com"
   await axios
     .post(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification')
     .then((result)=>{
