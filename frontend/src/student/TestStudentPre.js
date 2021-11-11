@@ -46,6 +46,7 @@ function TestStudentPre(){
       setStudent(result.data.room.student)
       setTest(result.data.room.test)
       setLoading(true);
+      console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -68,8 +69,8 @@ function TestStudentPre(){
       </BrowserView>
       <MobileView> 
         { mobileAgreement === false ? 
-          <div style={{marginTop: '20%', marginLeft:'3%', marginRight: '3%'}}>
-            <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>안녕하세요. O O O 시험</p>
+          <div style={{marginTop: '16%', marginLeft:'3%', marginRight: '3%'}}>
+            <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>{test.name}</p>
             <p style={{marginBottom: '20%', fontSize: '20px', fontWeight: 'bold'}}>응시 환경 세팅 "모바일" 화면입니다.</p>
               <p style={{fontWeight: 'bold'}}>카메라 및 마이크 공유를 <span style={{ color: 'rgb(43, 73, 207)', fontWeight: 'bold'}}>모두 동의</span>한 후 설정완료 버튼을 클릭해주세요.</p>
               <div style={{marginTop: '15%'}}>
