@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import { BrowserView,MobileView } from 'react-device-detect';
 import Viewer from '../kinesisVideo/Viewer';
+import {baseUrl} from "../component/baseUrl"
 
 function TestStudentMobileSetting(props){
   let {testId, studentId} =useParams();
@@ -82,7 +83,6 @@ function capture(e,testId,studentId,setTarget,target){ //학생증&본인얼굴 
 async function UploadImageToS3(testId,studentId,img,target){
 
   let preSignedUrl="";
-  let baseUrl ="http://api.testhelper.com"
   testId=String(testId).padStart(5,"0")
 
   await axios
