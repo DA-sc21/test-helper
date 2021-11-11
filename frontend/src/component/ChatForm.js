@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import SockJsClient from "react-stomp";
 // import UsernameGenerator from "username-generator";
 import { TalkBox } from "react-talk";
@@ -10,28 +9,27 @@ import {
   ToastsStore,
   ToastsContainerPosition,
 } from "react-toasts";
+import ChatList from "./ChatList";
+import Loading from "./Loading";
 // import { Toast } from "react-bootstrap";
 
 let baseUrl ="http://api.testhelper.com"
 
-function Student() {
-  const { testId } = useParams();
+
+function ChatForm(props) {
+  let testId=props.testId
+  let chatRoomId=props.chatroom
   const wsSourceUrl = baseUrl+"/chatting";
   // const [randomUserName, setRandomUserName] = useState(
   //   UsernameGenerator.generateUsername("-")
   // );
-  const [randomUserName, setRandomUserName] = useState("학생");
+  const [randomUserName, setRandomUserName] = useState("Master");
   // const [randomUserId, setRandomUserId] = useState(randomstring.generate());
   const [randomUserId, setRandomUserId] = useState("testone");
   // const [sendURL, setSendURL] = useState("/message");
   const [clientConnected, setClientConnected] = useState(false);
   const [messages, setMessages] = useState();
   const [clientRef, setClientRef] = useState();
-  const [noticeShow, setNoticeShow] = useState(false);
-
-  const onClickNotice = () => {
-    setNoticeShow(!noticeShow);
-  };
 
   const onMessageReceive = (msg, topic) => {
     console.log(msg.message);
@@ -41,15 +39,16 @@ function Student() {
   };
 
   const sendMessage = (msg, selfMsg) => {
+    console.log(selfMsg)
     try {
       var send_message = {
         user: selfMsg.author,
         message: selfMsg.message,
         testId: testId,
-        studentId: "0",
+        studentId: chatRoomId,
       };
       clientRef.sendMessage(
-        "/app/message/" + testId + "/" + "0",
+        "/app/message/" + testId + "/" + chatRoomId,
         JSON.stringify(send_message)
       );
       return true;
@@ -58,58 +57,42 @@ function Student() {
     }
   };
 
-  const closeButton = ({ closeToast }) => (
-    <i className="material-icons" onClick={closeToast}>
-      delete
-    </i>
-  );
+  let [loading,setLoading] = useState(false)
 
   useEffect(() => {
     console.log("call history");
-    // setMessages([
-    //   {
-    //     message: "공지공지",
-    //     user: "reek-frozen",
-    //     timeStamp: 1636224892146,
-    //     fileName: null,
-    //     rawData: null,
-    //   },
-    //   {
-    //     message: "2번",
-    //     user: "impossibility-upper-class",
-    //     timeStamp: 1636224971243,
-    //     fileName: null,
-    //     rawData: null,
-    //   },
-    // ]);
-    axios
-      .get(baseUrl + "/history/" + testId + "/" + "0")
-      .then((response) => {
-        console.log(response);
-        setMessages(response.data);
-      });
+    getHistory();
   }, []);
 
+  async function getHistory(){
+    await axios
+      .get(baseUrl + "/history/" + testId + "/" + chatRoomId)
+      .then((response) => {
+        // console.log(response);
+        setMessages(response.data);
+        setLoading(true);
+      });
+  }
+  // if(!loading)return(<Loading></Loading>)
   return (
-    <div>
-      {messages && (
+    <div className="position-absolute top-50 end-0 ">
+      {!loading
+      ?<Loading></Loading>
+      :
+      <ChatList messages={messages} role={props.role} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage}></ChatList>
+    }
+      {/* {messages && (
         <TalkBox
           topic={"/topic/public/" + testId + "/0"}
+          // topic="/topic/public/${testId}/0"
           currentUserId={randomUserId}
           currentUser={randomUserName}
           messages={messages}
           onSendMessage={sendMessage}
           connected={clientConnected}
-          // style={{ display: noticeShow ? "block" : "none" }}
         />
-      )}
-
-      {/* <div onClick={onClickNotice}>공지사항 목록</div>
-
-      <div style={{ display: noticeShow ? "block" : "none" }}>
-        {messages && messages.map((message) => <li>{message.message}</li>)}
-      </div> */}
-
+      )} */}
+      
       <ToastsContainer
         position={ToastsContainerPosition.TOP_RIGHT}
         // autoClose={50000}
@@ -121,7 +104,7 @@ function Student() {
 
       <SockJsClient
         url={wsSourceUrl}
-        topics={["/topic/public/" + testId + "/" + "0"]}
+        topics={["/topic/public/" + testId + "/" + chatRoomId]}
         onMessage={onMessageReceive}
         ref={(client) => {
           setClientRef(client);
@@ -130,7 +113,7 @@ function Student() {
           setClientConnected(true);
         }}
         onDisconnect={() => {
-          clientConnected(false);
+          setClientConnected(false);
         }}
         debug={false}
         style={[{ width: "100%", height: "100%" }]}
@@ -139,4 +122,4 @@ function Student() {
   );
 }
 
-export default Student;
+export default ChatForm;

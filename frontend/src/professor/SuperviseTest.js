@@ -1,17 +1,19 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react-bootstrap';
+import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
+import ChatForm from '../component/ChatForm';
 
 let baseUrl ="http://api.testhelper.com"
 
 function SuperviseTest(){
-
+  
   let [verifications,setVerifications] = useState([])
   let [loading,setLoading] = useState(false)
-  let [toggled,setToggled]=useState(0)
   let {testId} = useParams()
+  let [toggled,setToggled]=useState(0)
+  let [showNotice,setShowNotice]=useState(false)
   
   useEffect(()=>{
     getVerifications();
@@ -47,10 +49,8 @@ function SuperviseTest(){
           <StudentsList verifications={verifications} ></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
-          <ButtonGroup className="" aria-label="Basic example">
-            <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortVerifications(1,"studentId")}}>학번순오름정렬</Button>
-            <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortVerifications(-1,"studentId")}}>학번순내림정렬</Button>
-          </ButtonGroup>
+          <Button className="mx-1" variant="primary" onClick={()=>{setShowNotice(!showNotice)}} >공지사항</Button>
+          {showNotice? <ChatForm testId={testId} role="Master" chatroom="0" ></ChatForm>  :null }
         </div>
         </div>
         <div className="row mt-3">
@@ -94,8 +94,7 @@ function StudentCard(props){
             : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
                 changeVerifications(props,true)}}>본인인증승인
               </Button> }
-            
-            <Button className="col-md-4" variant="success">채팅</Button>
+            <ChattingModal studentId={props.verification.studentId}></ChattingModal>
             <Button className="col-md-4" variant="danger">경고</Button>
           </div>
         </Card.Body>
@@ -109,6 +108,27 @@ function StudentCard(props){
     </div>
   )
 }
+
+function ChattingModal(props) {
+  let {testId} = useParams()
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Button className="col-md-4" variant="success" onClick={handleShow}>
+       채팅
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+      <ChatForm testId={testId} role="Master" chatroom={props.studentId}  ></ChatForm>
+      </Modal>
+    </>
+  );
+}
+
+
 async function changeVerifications(props,verified){
   let testId=props.testId
   let studentId=props.verification.studentId
