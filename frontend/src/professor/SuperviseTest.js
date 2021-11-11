@@ -4,8 +4,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
 import Master from '../kinesisVideo/Master';
-
-let baseUrl ="http://api.testhelper.com"
+import {baseUrl} from "../component/baseUrl"
 
 function SuperviseTest(){
 

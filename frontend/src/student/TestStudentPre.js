@@ -5,13 +5,13 @@ import axios from "axios";
 import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
 import Loading from '../component/Loading';
+import {baseUrl} from "../component/baseUrl"
 
 function TestStudentPre(){
   useEffect(()=>{
     getStudentRoom();
   },[]);
   
-  let baseUrl ="http://api.testhelper.com"
   let {testId, studentId} =useParams();
   let [room,setRoom]=useState();
   let [student,setStudent]=useState();
