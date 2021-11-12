@@ -3,13 +3,8 @@ import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
-<<<<<<< HEAD
 import Master from '../kinesisVideo/Master';
-
-let baseUrl ="http://api.testhelper.com"
-=======
 import {baseUrl} from "../component/baseUrl"
->>>>>>> 35cbfad260791c25954307d5776939fcdd3b0f52
 
 function SuperviseTest(){
 
