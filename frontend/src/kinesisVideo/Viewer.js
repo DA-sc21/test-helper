@@ -26,6 +26,7 @@ function onStatsReport(report) {
 }
 
 const Viewer = (props) => {
+  var options = {mimeType:'video/webm; codecs=vp9'};
   let {testId, studentId} = useParams();
   let videoRecoder = null;
   const localView = useRef(null);
@@ -187,9 +188,9 @@ const Viewer = (props) => {
       console.log('[VIEWER] Connected to signaling service');
       navigator.mediaDevices.getUserMedia(constraints)
       .then(function(stream) {
-      videoRecoder = new MediaRecorder(stream);
+      videoRecoder = new MediaRecorder(stream,options);
       videoRecoder.start(); //start recording video
-      console.log(videoRecoder.state);
+      console.log(videoRecoder);
       })
 
       // Get a stream from the webcam, add it to the peer connection, and display it in the local view.

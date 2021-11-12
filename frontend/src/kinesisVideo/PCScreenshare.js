@@ -45,13 +45,15 @@ const PCScreenShare = (props) => {
   };
 
   function screenshare(props, e){
+    var options = {mimeType:'video/webm; codecs=vp9'};
     navigator.mediaDevices.getDisplayMedia({
       audio: false, //audio 없음
       video: true
     }).then(function(stream){
         //success
-        const videoRecoder = new MediaRecorder(stream);
+        const videoRecoder = new MediaRecorder(stream,options);
         videoRecoder.start(); //start recording video
+        console.log(videoRecoder);
         stream.getVideoTracks()[0].addEventListener('ended', () => {
           console.log('pc screen sharing has ended');
           videoRecoder.stop(); //stop recording video
