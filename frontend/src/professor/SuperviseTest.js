@@ -12,8 +12,6 @@ function SuperviseTest(){
   let [verifications,setVerifications] = useState([])
   let [loading,setLoading] = useState(false)
   let {testId} = useParams()
-  let [toggled,setToggled]=useState(0)
-  let [showNotice,setShowNotice]=useState(false)
   
   useEffect(()=>{
     getVerifications();
@@ -29,18 +27,6 @@ function SuperviseTest(){
     .catch(()=>{ console.log("실패") })
   }
 
-  function sortVerifications(inc,standard){
-    let temp = [...verifications].sort(function (a,b){
-      let value  = a[standard] > b[standard] ?  1 :  -1
-      return inc*value 
-    })
-    setVerifications(temp)
-    
-  }
-  function buttonCss(idx) {
-    return toggled===idx? "primary" : "outline-primary"  
-  }
-
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="conatiner p-3">
@@ -49,8 +35,7 @@ function SuperviseTest(){
           <StudentsList verifications={verifications} ></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
-          <Button className="mx-1" variant="primary" onClick={()=>{setShowNotice(!showNotice)}} >공지사항</Button>
-          {showNotice? <ChatForm testId={testId} role="Master" chatroom="0" ></ChatForm>  :null }
+          <ChattingModal studentId="0"></ChattingModal>
         </div>
         </div>
         <div className="row mt-3">
@@ -117,12 +102,18 @@ function ChattingModal(props) {
 
   return (
     <>
-      <Button className="col-md-4" variant="success" onClick={handleShow}>
-       채팅
-      </Button>
-
+      {props.studentId==="0"
+        ?
+          <Button variant="success" onClick={handleShow}>
+          공지사항
+          </Button>
+        :
+          <Button className="col-md-4" variant="success" onClick={handleShow}>
+          채팅
+          </Button>
+      }
       <Modal show={show} onHide={handleClose}>
-      <ChatForm testId={testId} role="Master" chatroom={props.studentId}  ></ChatForm>
+        <ChatForm testId={testId} role="Master" chatroom={props.studentId}  ></ChatForm>
       </Modal>
     </>
   );

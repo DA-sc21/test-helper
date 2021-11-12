@@ -75,7 +75,7 @@ function ChatForm(props) {
   }
   // if(!loading)return(<Loading></Loading>)
   return (
-    <div className="position-absolute top-50 end-0 ">
+    <div className="position-absolute top-10 end-0 ">
       {!loading
       ?<Loading></Loading>
       :
