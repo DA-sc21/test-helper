@@ -12,7 +12,7 @@ import {
 } from "react-toasts";
 // import { Toast } from "react-bootstrap";
 
-let baseUrl ="http://api.testhelper.com"
+import {baseUrl} from "./component/baseUrl"
 
 function Student() {
   const { testId } = useParams();
