@@ -1,15 +1,27 @@
 version: "2"
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
-    build:
-      context: nginx/
-      dockerfile : Dockerfile
-    image: reverse-proxy:latest
-    ports:
-      - 80:80
-    depends_on:
-      - data-server
+  # reverse-proxy:
+  #   image: nginx:latest
+  #   container_name: reverse-proxy
+  #   volumes:
+  #     - ./nginx/conf.d:/etc/nginx/conf.d:ro
+  #     - ./certbot/conf:/etc/nginx/ssl:ro
+  #     - ./certbot/data:/var/www/certbot:ro
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - data-server
+  #     - front
+
+  # certbot : 
+  #   image: certbot/certbot:latest
+  #   command: certonly --webroot --webroot-path=/var/www/certbot -d test-helper.com -d api.test-helper.com --email jmchoi1225@ajou.ac.kr --agree-tos --no-eff-email
+  #   volumes:
+  #     - ./certbot/conf:/etc/letsencrypt:rw
+  #     - ./certbot/logs:/var/log/letsencrypt:rw
+  #     - ./certbot/data:/var/www/certbot:rw
+
   data-server:
     container_name: data-server
     build:
@@ -20,8 +32,7 @@ services:
       - AWS_PROFILE=test-helper
     ports:
       - 8081:8081
-    expose:
-      - 8081
+    
     environment:
       - AWS_PROFILE=test-helper
     volumes:
@@ -40,15 +51,3 @@ services:
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
-
-  ai-server:
-    container_name: ai-server
-    build:
-      context: AI/
-      dockerfile: Dockerfile
-    environment:
-      - AWS_PROFILE=test-helper
-    ports:
-      - 5000:5000
-    volumes:
-      - ~/.aws/:/root/.aws:ro
