@@ -6,6 +6,8 @@ import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
 import Loading from '../component/Loading';
 import NavBarStudent from '../component/NavBarStudent';
+import ChatAlarm from '../component/ChatAlarm';
+import "../component/Chat.css"
 
 function TestStudentPre(){
   useEffect(()=>{

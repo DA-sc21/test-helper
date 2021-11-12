@@ -37,14 +37,14 @@ function SuperviseTest(){
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
         </div>
-        </div>
-        <div className="row mt-3">
-          {
-            verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} / >;
-            })
-          }
-        </div>
+      </div>
+      <div className="row mt-3">
+        {
+          verifications.map((verification,index)=>{
+            return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} / >;
+          })
+        }
+      </div>
     </div> 
   )
 }
@@ -97,8 +97,8 @@ function StudentCard(props){
 function ChattingModal(props) {
   let {testId} = useParams()
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  let [newMessages,setNewMessages] =useState([])
 
   return (
     <>
@@ -112,9 +112,7 @@ function ChattingModal(props) {
           채팅
           </Button>
       }
-      <Modal show={show} onHide={handleClose}>
-        <ChatForm testId={testId} role="Master" chatroom={props.studentId}  ></ChatForm>
-      </Modal>
+        <ChatForm testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages}   ></ChatForm>
     </>
   );
 }
