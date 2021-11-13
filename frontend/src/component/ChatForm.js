@@ -7,7 +7,7 @@ import axios from "axios";
 import ChatList from "./ChatList";
 import Loading from "./Loading";
 
-import {baseUrl} from "./component/baseUrl"
+import {baseUrl} from "./baseUrl"
 
 function ChatForm(props) {
   let testId=props.testId

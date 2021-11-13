@@ -63,9 +63,9 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      sortTestRooms(result.data.students)
       setCredentials(result.data.credentials)
       console.log(result.data);
+      setLoading(true)
     })
     .catch(()=>{ console.log("실패") })
   }
