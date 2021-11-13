@@ -6,15 +6,14 @@ import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
 import Loading from '../component/Loading';
 import NavBarStudent from '../component/NavBarStudent';
-import ChatAlarm from '../component/ChatAlarm';
 import "../component/Chat.css"
+import {baseUrl} from "../component/baseUrl"
 
 function TestStudentPre(){
   useEffect(()=>{
     getStudentRoom();
   },[]);
   
-  let baseUrl ="http://api.testhelper.com"
   let {testId, studentId} =useParams();
   let [room,setRoom]=useState();
   let [student,setStudent]=useState();
@@ -112,6 +111,8 @@ function TestStudentPre(){
           credentials={credentials}
           student={student}
           room={room}
+          video={video}
+          audio={audio}
         />
     </div>
   )

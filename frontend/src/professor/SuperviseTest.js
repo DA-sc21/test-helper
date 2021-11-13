@@ -4,25 +4,68 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
 import ChatFormPro from '../component/ChatFormPro';
-
-let baseUrl ="http://api.testhelper.com"
+import Master from '../kinesisVideo/Master';
+import {baseUrl} from "../component/baseUrl"
 
 function SuperviseTest(){
-  
-  let [verifications,setVerifications] = useState([])
-  let [loading,setLoading] = useState(false)
-  let {testId} = useParams()
+
+  let [testRooms,setTestRooms] = useState([]);
+  let [credentials,setCredentials] = useState();
+  let [verifications,setVerifications] = useState([]);
+  let [loading,setLoading] = useState(false);
+  let [toggled,setToggled]=useState(0);
+  let {testId} = useParams();
+  const [studentId,setStudentId] = useState([]);
+  const shareState = {
+    audio: [],
+    pc: [],
+  };
   
   useEffect(()=>{
     getVerifications();
+    createTestRooms();
   },[]);
+
+  function changeAudioState(id,value){
+    shareState.audio[id]=value;
+    console.log(shareState.audio, shareState.pc);
+  }
+  function changePcState(id,value){
+    shareState.pc[id]=value;
+    console.log(shareState.audio, shareState.pc);
+  }
 
   async function getVerifications(){
     await axios
     .get(baseUrl+'/tests/'+testId+'/students/verification')
     .then((result)=>{ 
       setVerifications(result.data)
-      setLoading(true);
+      console.log(result.data)
+      getStudentId(result.data)
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  function getStudentId(arr){
+    let len = arr.length;
+    let temp = [];
+    let id = [];
+    for(let i=0; i<len; i++){
+      temp.push(false);
+      id.push(arr[i].studentId);
+    }
+    shareState.audio=temp;
+    shareState.pc=temp;
+    setStudentId(id);
+  }
+
+  async function createTestRooms(){
+    await axios
+    .post(baseUrl+'/tests/'+testId+'/students/room')
+    .then((result)=>{
+      sortTestRooms(result.data.students)
+      setCredentials(result.data.credentials)
+      console.log(result.data);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -32,18 +75,18 @@ function SuperviseTest(){
     <div className="conatiner p-3">
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
-          <StudentsList verifications={verifications} ></StudentsList>
+          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
         </div>
-      </div>
-      <div className="row mt-3">
-        {
-          verifications.map((verification,index)=>{
-            return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} / >;
-          })
-        }
+        <div className="row mt-3">
+          {
+            verifications.map((verification,index)=>{
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} / >;
+            })
+          }
+        </div>
       </div>
     </div> 
   )
@@ -55,12 +98,17 @@ function StudentCard(props){
     "PENDING" : "보류",
     "SUCCESS" : "성공",
   }
+  function changeAudio(id,value){
+    props.changeAudioState(id,value);
+  }
+  function changePc(id,value){
+    props.changePcState(id,value);
+  }
   return(
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <video className="col-md-12" controls></video>
-          <video className="col-md-12" controls></video>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc}></Master>
         </div>
         <Card.Body>
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>
@@ -171,6 +219,8 @@ function StudentsList(props) {
                     <div className="row ">
                       <div className="col-md-6"> {verification.studentId} . 이름이 </div>
                       <div className="col-md-6 d-flex justify-content-end"> 
+                        {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
+                        {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />}
                         <Badge bg={verification_status_css[verification.verified]} className="mx-3">{verification_status_options[verification.verified]}</Badge>
                       </div>
                     </div>
