@@ -3,7 +3,7 @@ import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal } from
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
-import ChatForm from '../component/ChatForm';
+import ChatFormPro from '../component/ChatFormPro';
 
 let baseUrl ="http://api.testhelper.com"
 
@@ -97,7 +97,7 @@ function StudentCard(props){
 function ChattingModal(props) {
   let {testId} = useParams()
   const [show, setShow] = useState(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => setShow(!show);
   let [newMessages,setNewMessages] =useState([])
 
   return (
@@ -112,7 +112,7 @@ function ChattingModal(props) {
           채팅
           </Button>
       }
-        <ChatForm testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages}   ></ChatForm>
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatFormPro>
     </>
   );
 }

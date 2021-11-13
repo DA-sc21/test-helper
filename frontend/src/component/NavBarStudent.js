@@ -31,11 +31,11 @@ function NavBarStudent(){
       <ChatForm testId={testId} role="Viewer" chatroom="0" show={showNotice} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
       <ChatForm testId={testId} role="Viewer" chatroom={studentId} show={showChat} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
       <ToastContainer className="p-3 chatAlarmContainer positionTop" position="top-center">
-        {newMessages.map((message,index)=>{
+        {
+          newMessages.map((message,index)=>{
           let chatroom=message.chatroom
-          console.log(message,chatroom)
           return(
-          <ChatAlarm key={index} newMessage={message} chatroom={chatroom} ></ChatAlarm>
+          <ChatAlarm key={index} newMessages={newMessages} newMessage={message} chatroom={chatroom} setNewMessages={setNewMessages} ></ChatAlarm>
           )
         })}
       </ToastContainer>

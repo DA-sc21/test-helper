@@ -10,7 +10,7 @@ import Loading from "./Loading";
 let baseUrl ="http://api.testhelper.com"
 
 
-function ChatForm(props) {
+function ChatFormPro(props) {
   let testId=props.testId
   let chatRoomId=props.chatroom
   const wsSourceUrl = baseUrl+"/chatting";
@@ -78,7 +78,7 @@ function ChatForm(props) {
   }
   // if(!loading)return(<Loading></Loading>)
   return (
-    <div className={props.show?"position-absolute top-10 end-0":"position-absolute top-10 end-0 d-none"}>
+    <div className={props.show?"position-absolute top-100 end-0":"position-absolute top-10 end-0 d-none"}>
       {!loading
       ?<Loading></Loading>
       :
@@ -105,4 +105,4 @@ function ChatForm(props) {
   );
 }
 
-export default ChatForm;
+export default ChatFormPro;
