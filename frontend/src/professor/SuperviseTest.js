@@ -5,6 +5,9 @@ import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
 import Master from '../kinesisVideo/Master';
 import {baseUrl} from "../component/baseUrl"
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './toastify.css';
 
 function SuperviseTest(){
 
@@ -90,12 +93,34 @@ function SuperviseTest(){
     return toggled===idx? "primary" : "outline-primary"  
   }
 
+  const notify = () => toast.warn('ㅇㅇㅇ 학생의 손이'+ '\n' +'화면에서 벗어났습니다.', {
+    position: "bottom-right",
+    transition: Slide,
+    autoClose: false,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    });
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="conatiner p-3">
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
+          <Button variant="secondary" style={{marginLeft: "3%"}} onClick={notify}>두손 미인식 알림</Button>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            style={{ width: "350px" }}
+          />
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ButtonGroup className="" aria-label="Basic example">
