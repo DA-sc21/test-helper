@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
+import { Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -265,8 +267,57 @@ const Viewer = (props) => {
         ref={localView}
         autoPlay playsInline controls muted
       />
+      <Button variant="secondary" onClick={(e) => setTimeout(function() {
+        capture(e); }, 3000)}>캡쳐
+      </Button>
+      <br />
+      <img id="image" width="200" height="100"/>
     </div>
   );  
 };
+
+function capture(e){ //두손 사진 캡쳐 제출
+  navigator.mediaDevices.getUserMedia({ video: true })
+  .then(mediaStream => {
+      // Do something with the stream.
+      const track = mediaStream.getVideoTracks()[0];
+      let imageCapture = new ImageCapture(track);
+
+      imageCapture.takePhoto()
+      .then(blob => {console.log(blob); //blob=캡쳐이미지
+        const url = window.URL.createObjectURL(blob); 
+        document.getElementById("image").src = url;
+        checkHandDetection(blob);
+        // var url1 = URL.createObjectURL(blob);
+        // var a = document.createElement("a");
+        // document.body.appendChild(a);
+        // a.href = url1;
+        // a.download = "result.png";
+        // a.click();
+      })
+      .catch(error => console.log(error));
+  })
+}
+
+async function checkHandDetection(blob){
+  let form = new FormData();
+  form.append('hand_img', blob);
+  const config = {
+    header: {'content-type': 'multipart/form-data'}
+  }
+
+  await axios
+  .post('http://localhost:5000/hand-detection', form, config)
+  .then((result)=>{
+    console.log(result);
+    if(result.data.result === true){
+      alert("두 손 미인식 결과 : true");
+    }
+    else{
+      alert("두 손 미인식 결과 : false");
+    }
+  })
+  .catch(()=>{ console.log("hand detection 실패") })
+} 
 
 export default Viewer;
