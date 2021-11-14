@@ -4,10 +4,10 @@ import axios from 'axios';
 import moment from "moment";
 import { useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
+import {baseUrl} from "../component/baseUrl"
 
 function Tests(){
 
-  let baseUrl ="http://api.testhelper.com"
   let [testDatas,setTestData] = useState([])
   let [loading,setLoading] = useState(false)
 

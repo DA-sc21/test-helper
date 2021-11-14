@@ -4,25 +4,35 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
 import Master from '../kinesisVideo/Master';
-
-let baseUrl ="http://api.testhelper.com"
+import {baseUrl} from "../component/baseUrl"
 
 function SuperviseTest(){
 
-  let [testRooms,setTestRooms] = useState([])
+  let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
-  let [verifications,setVerifications] = useState([])
-  let [loading,setLoading] = useState(false)
-  let [toggled,setToggled]=useState(0)
-  let {testId} = useParams()
-  const [audio,setAudio] = useState([])
-  const [pc,setPc] = useState([])
-  const [studentId,setStudentId] = useState([])
+  let [verifications,setVerifications] = useState([]);
+  let [loading,setLoading] = useState(false);
+  let [toggled,setToggled]=useState(0);
+  let {testId} = useParams();
+  const [studentId,setStudentId] = useState([]);
+  const shareState = {
+    audio: [],
+    pc: [],
+  };
   
   useEffect(()=>{
     getVerifications();
     createTestRooms();
   },[]);
+
+  function changeAudioState(id,value){
+    shareState.audio[id]=value;
+    console.log(shareState.audio, shareState.pc);
+  }
+  function changePcState(id,value){
+    shareState.pc[id]=value;
+    console.log(shareState.audio, shareState.pc);
+  }
 
   async function getVerifications(){
     await axios
@@ -43,8 +53,8 @@ function SuperviseTest(){
       temp.push(false);
       id.push(arr[i].studentId);
     }
-    setAudio(temp);
-    setPc(temp);
+    shareState.audio=temp;
+    shareState.pc=temp;
     setStudentId(id);
   }
 
@@ -85,7 +95,7 @@ function SuperviseTest(){
     <div className="conatiner p-3">
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
-          <StudentsList verifications={verifications} audio={audio} pc={pc}></StudentsList>
+          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ButtonGroup className="" aria-label="Basic example">
@@ -97,7 +107,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={audio} setAudio={setAudio} pc={pc} setPc={setPc} studentId={studentId} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} / >;
             })
           }
         </div>
@@ -111,13 +121,11 @@ function StudentCard(props){
     "PENDING" : "보류",
     "SUCCESS" : "성공",
   }
-  function changeAudio(data){
-    console.log("changeAudio 함수 호출");
-    props.setAudio(data);
+  function changeAudio(id,value){
+    props.changeAudioState(id,value);
   }
-  function changePc(data){
-    console.log("changePc 함수 호출");
-    props.setPc(data);
+  function changePc(id,value){
+    props.changePcState(id,value);
   }
   return(
     <div className="col-md-6 mb-5">

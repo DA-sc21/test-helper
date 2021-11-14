@@ -1,7 +1,6 @@
 package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.course.Course;
-import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
@@ -129,7 +128,7 @@ class SubmissionServiceTest {
         when(submissionRepository.existsByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(false);
 
         //when
-        assertThrows(SubmissionNotFoundException.class, ()->{
+        assertThrows(SubmissionNotFoundException.class, () -> {
             submissionService.getUploadUrlByTestIdAndStudentIdAndSubmissionType(test.getId(), student.getId(), submissionType);
         });
 
