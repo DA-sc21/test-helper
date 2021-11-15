@@ -1,12 +1,11 @@
 package kr.ac.ajou.da.testhelper.test.room;
 
-import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.definition.DeviceType;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.submission.SubmissionService;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
-import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.room.dto.RoomDto;
 import kr.ac.ajou.da.testhelper.test.room.dto.StudentRoomDto;
 import kr.ac.ajou.da.testhelper.test.room.exception.RoomNotFoundException;
@@ -15,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,26 +31,17 @@ class TestRoomServiceTest {
     @Mock
     private TestRoomManagingService testRoomManagingService;
 
-    private final Course course = new Course(1L, "name");
-    private final Student student = new Student(1L, "name", "201820000", "email@ajou.ac.kr");
-    private final kr.ac.ajou.da.testhelper.test.Test test = new kr.ac.ajou.da.testhelper.test.Test(1L,
-            TestType.MID,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            course);
-    private final Long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, supervisedBy);
-    private final List<Submission> submissions = new ArrayList<>();
+    private final kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+    private final Student student = DummyFactory.createStudent();
+    private final long supervisedBy = DummyFactory.createAssistant().getId();
+    private final Submission submission = DummyFactory.createSubmission();
+    private final List<Submission> submissions = DummyFactory.createSubmissions();
 
     @BeforeEach
     void init() {
         this.submissionService = mock(SubmissionService.class);
         this.testRoomManagingService = mock(TestRoomManagingService.class);
         this.testRoomService = new TestRoomService(submissionService, testRoomManagingService);
-
-        this.submissions.add(new Submission(1L, student, test, supervisedBy));
-        this.submissions.add(new Submission(2L, student, test, supervisedBy));
-        this.submissions.add(new Submission(3L, student, test, supervisedBy));
     }
 
     @Test
@@ -142,7 +130,7 @@ class TestRoomServiceTest {
 
         assertEquals(submissions.size(), rooms.size());
 
-        if(rooms.size() > 0){
+        if (rooms.size() > 0) {
             Submission submission = submissions.get(0);
             StudentRoomDto room = rooms.get(0);
             assertEquals(submission.resolveRoomId(), room.getRoomId());

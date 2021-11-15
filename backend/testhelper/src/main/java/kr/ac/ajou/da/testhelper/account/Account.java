@@ -31,6 +31,18 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AccountRole role;
 
+    public Account(Long id) {
+        this.id = id;
+    }
+
+    public Account(Long id, String name, String email, String password, AccountRole role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role.name()));

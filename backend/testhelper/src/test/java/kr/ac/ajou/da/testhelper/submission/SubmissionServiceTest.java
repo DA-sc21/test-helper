@@ -1,18 +1,15 @@
 package kr.ac.ajou.da.testhelper.submission;
 
-import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
-import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +29,11 @@ class SubmissionServiceTest {
     @Mock
     private FileService fileService;
 
-
-    private final Course course = new Course(1L, "name");
-    private final kr.ac.ajou.da.testhelper.test.Test test = new kr.ac.ajou.da.testhelper.test.Test(1L,
-            TestType.MID,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            course);
-    private final Student student = new Student(1L, "name", "201820000", "email@ajou.ac.kr");
-    private final long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, supervisedBy);
-    private final List<Submission> submissions = new LinkedList<>();
+    private final kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+    private final Student student = DummyFactory.createStudent();
+    private final long supervisedBy = DummyFactory.createAssistant().getId();
+    private final Submission submission = DummyFactory.createSubmission();
+    private final List<Submission> submissions = DummyFactory.createSubmissions();
 
     private final SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
 
@@ -56,8 +47,6 @@ class SubmissionServiceTest {
         fileService = mock(FileService.class);
         submissionMapper = mock(SubmissionMapper.class);
         submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
-
-        submissions.add(new Submission(1L, student, test, supervisedBy));
     }
 
     @Test
