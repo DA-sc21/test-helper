@@ -17,6 +17,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @Getter
 @Setter(value = AccessLevel.PRIVATE)
+@Entity
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
