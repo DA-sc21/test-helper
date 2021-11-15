@@ -267,14 +267,25 @@ const Viewer = (props) => {
         ref={localView}
         autoPlay playsInline controls muted
       />
-      <Button variant="secondary" onClick={(e) => setTimeout(function() {
-        capture(e); }, 3000)}>캡쳐
+      <Button variant="secondary" onClick={(e) => startCapture(e)}>Start
+      </Button>
+      <Button variant="dark" onClick={(e) => stopCapture(e)}>End
       </Button>
       <br />
       <img id="image" width="200" height="100"/>
     </div>
   );  
 };
+
+var captureId = null;
+
+function startCapture(e){
+  captureId=setInterval(capture, 3000);
+}
+
+function stopCapture(e){
+  clearInterval(captureId);
+}
 
 function capture(e){ //두손 사진 캡쳐 제출
   navigator.mediaDevices.getUserMedia({ video: true })
@@ -288,12 +299,6 @@ function capture(e){ //두손 사진 캡쳐 제출
         const url = window.URL.createObjectURL(blob); 
         document.getElementById("image").src = url;
         checkHandDetection(blob);
-        // var url1 = URL.createObjectURL(blob);
-        // var a = document.createElement("a");
-        // document.body.appendChild(a);
-        // a.href = url1;
-        // a.download = "result.png";
-        // a.click();
       })
       .catch(error => console.log(error));
   })
