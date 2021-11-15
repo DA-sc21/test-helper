@@ -7,6 +7,7 @@ function TakingTest(props) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     console.log(props.data)
+    
     // let id = props.data.room.device + props.data.student.id;
 
     return (
@@ -21,9 +22,13 @@ function TakingTest(props) {
             <Button>채팅하기</Button>
           </Modal.Header>
           <Modal.Body>
-              <Problems></Problems>
+            {props.ended?
+							<div>시험이 종료되었습니다. 답안 제출을 진행해주세요</div>
+            :<Problems></Problems>
+            }
           </Modal.Body>
           <Modal.Footer>
+            시험 종료 시간인 {props.endTime} 까지 {props.remainEndTime.hours}시간 {props.remainEndTime.minutes}분 {props.remainEndTime.seconds}초 남았습니다.{props.ended}
             <Button variant="secondary" onClick={handleClose}>
               시험종료
             </Button>
