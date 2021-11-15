@@ -8,10 +8,9 @@ services:
     image: data-server:latest
     environment :
       - AWS_PROFILE=test-helper
-    ports : 
+      - ENV_PROFILE=${PROFILE}
+    ports:
       - 8081:8081
-    environment:
-      - AWS_PROFILE=test-helper
     volumes:
       - ~/.aws/:/root/.aws:ro
     
