@@ -1,8 +1,9 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react-bootstrap';
+import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
+import ChatFormPro from '../component/ChatFormPro';
 import Master from '../kinesisVideo/Master';
 import {baseUrl} from "../component/baseUrl"
 
@@ -62,32 +63,11 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      sortTestRooms(result.data.students)
       setCredentials(result.data.credentials)
       console.log(result.data);
+      setLoading(true)
     })
     .catch(()=>{ console.log("실패") })
-  }
-
-  function sortTestRooms(arr){
-    let temp = []
-    let rooms = arr.map(data=>{
-      temp.push(data.roomId)
-    })
-    setLoading(true);
-    setTestRooms(temp)
-  }
-
-  function sortVerifications(inc,standard){
-    let temp = [...verifications].sort(function (a,b){
-      let value  = a[standard] > b[standard] ?  1 :  -1
-      return inc*value 
-    })
-    setVerifications(temp)
-    
-  }
-  function buttonCss(idx) {
-    return toggled===idx? "primary" : "outline-primary"  
   }
 
   if(!loading)return(<Loading></Loading>)
@@ -98,11 +78,7 @@ function SuperviseTest(){
           <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
-          <ButtonGroup className="" aria-label="Basic example">
-            <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortVerifications(1,"studentId")}}>학번순오름정렬</Button>
-            <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortVerifications(-1,"studentId")}}>학번순내림정렬</Button>
-          </ButtonGroup>
-        </div>
+          <ChattingModal studentId="0"></ChattingModal>
         </div>
         <div className="row mt-3">
           {
@@ -111,6 +87,7 @@ function SuperviseTest(){
             })
           }
         </div>
+      </div>
     </div> 
   )
 }
@@ -150,8 +127,7 @@ function StudentCard(props){
             : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
                 changeVerifications(props,true)}}>본인인증승인
               </Button> }
-            
-            <Button className="col-md-4" variant="success">채팅</Button>
+            <ChattingModal studentId={props.verification.studentId}></ChattingModal>
             <Button className="col-md-4" variant="danger">경고</Button>
           </div>
         </Card.Body>
@@ -165,6 +141,31 @@ function StudentCard(props){
     </div>
   )
 }
+
+function ChattingModal(props) {
+  let {testId} = useParams()
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(!show);
+  let [newMessages,setNewMessages] =useState([])
+
+  return (
+    <>
+      {props.studentId==="0"
+        ?
+          <Button variant="success" onClick={handleShow}>
+          공지사항
+          </Button>
+        :
+          <Button className="col-md-4" variant="success" onClick={handleShow}>
+          채팅
+          </Button>
+      }
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatFormPro>
+    </>
+  );
+}
+
+
 async function changeVerifications(props,verified){
   let testId=props.testId
   let studentId=props.verification.studentId
