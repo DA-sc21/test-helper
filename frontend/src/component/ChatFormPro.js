@@ -6,8 +6,7 @@ import { TalkBox } from "react-talk";
 import axios from "axios";
 import ChatList from "./ChatList";
 import Loading from "./Loading";
-
-let baseUrl ="http://api.testhelper.com"
+import {baseUrl} from "./baseUrl";
 
 
 function ChatFormPro(props) {
@@ -106,3 +105,4 @@ function ChatFormPro(props) {
 }
 
 export default ChatFormPro;
+
