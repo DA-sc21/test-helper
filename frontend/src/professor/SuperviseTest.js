@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
 
 function SuperviseTest(){
-
+  let [studentName,setStudentName] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
@@ -66,10 +66,11 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
+      getStudentName(result.data.students);
       sortTestRooms(result.data.students);
       setCredentials(result.data.credentials);
       console.log(result.data);
-      setLoading(true)
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -77,10 +78,18 @@ function SuperviseTest(){
   function sortTestRooms(arr){
     let temp = []
     let rooms = arr.map(data=>{
-      temp.push(data.roomId)
+      temp.push(data.roomId);
     })
     setLoading(true);
-    setTestRooms(temp)
+    setTestRooms(temp);
+  }
+
+  function getStudentName(arr){
+    let temp = []
+    let rooms = arr.map(data=>{
+      temp.push(data.student.name);
+    })
+    setStudentName(temp);
   }
 
   function sortVerifications(inc,standard){
@@ -92,7 +101,7 @@ function SuperviseTest(){
     
   }
 
-  const notify = () => toast.warn('ㅇㅇㅇ 학생의 손이'+ '\n' +'화면에서 벗어났습니다.', {
+  const notify = (name) => toast.warn(`${name} 학생의 손이 화면에서 벗어났습니다.`, {
     position: "bottom-right",
     transition: Slide,
     autoClose: false,
@@ -126,7 +135,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify}/ >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify} studentName={studentName}/ >;
             })
           }
         </div>
@@ -149,7 +158,7 @@ function StudentCard(props){
   }
 
   function pushHandDetetionNotice(){
-    props.notify();
+    props.notify(props.studentName[props.index]);
   }
   
   return(
