@@ -8,7 +8,7 @@ import Master from '../kinesisVideo/Master';
 import {baseUrl} from "../component/baseUrl"
 
 function SuperviseTest(){
-
+  let [studentInfo,setStudentInfo] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
@@ -63,27 +63,38 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      setCredentials(result.data.credentials)
+      sortTestRooms(result.data.students);
+      setStudentInfo(result.data.students);
+      setCredentials(result.data.credentials);
       console.log(result.data);
-      setLoading(true)
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
 
+  function sortTestRooms(arr){
+    let temp = []
+    let rooms = arr.map(data=>{
+      temp.push(data.roomId);
+    })
+    setLoading(true);
+    setTestRooms(temp);
+  }
+
   if(!loading)return(<Loading></Loading>)
   return(
-    <div className="conatiner p-3">
+    <div className="conatiner p-3" style={{backgroundColor:"#E8F5FF"}}>
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
-          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
+          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
         </div>
-        <div className="row mt-3">
+        <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo}/ >;
             })
           }
         </div>
@@ -106,12 +117,12 @@ function StudentCard(props){
   }
   return(
     <div className="col-md-6 mb-5">
-      <Card >
+      <Card style={{borderColor: "white", padding: "3%", backgroundColor:"white", borderRadius: "20px", boxShadow: "3px 3px 3px #dcdcdc"}}>
         <div className="row">
           <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc}></Master>
         </div>
         <Card.Body>
-          <Card.Title>{props.verification.studentId}번 학생</Card.Title>
+          <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
           <hr />
           <Card.Text>
             {props.verification.submissionId}(submissionId)
@@ -152,7 +163,7 @@ function ChattingModal(props) {
     <>
       {props.studentId==="0"
         ?
-          <Button variant="success" onClick={handleShow}>
+          <Button variant="success" onClick={handleShow} style={{marginRight: "2.5%"}}>
           공지사항
           </Button>
         :
@@ -202,13 +213,13 @@ function StudentsList(props) {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        전체 학생 현항
+      <Button style={{backgroundColor: "#506EA5"}} onClick={handleShow}>
+        전체 학생 현황
       </Button>
 
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>전체 학생 본인 인증 현항</Offcanvas.Title>
+          <Offcanvas.Title>전체 학생 본인 인증 현황</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
             <ListGroup variant="flush">
@@ -217,7 +228,7 @@ function StudentsList(props) {
                 return (
                   <ListGroup.Item key={index}>
                     <div className="row ">
-                      <div className="col-md-6"> {verification.studentId} . 이름이 </div>
+                      <div className="col-md-6">{index+1}. {props.studentInfo[index].student.name}</div>
                       <div className="col-md-6 d-flex justify-content-end"> 
                         {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
                         {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />}
