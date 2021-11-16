@@ -66,7 +66,8 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      setCredentials(result.data.credentials)
+      sortTestRooms(result.data.students);
+      setCredentials(result.data.credentials);
       console.log(result.data);
       setLoading(true)
     })
@@ -100,7 +101,7 @@ function SuperviseTest(){
     pauseOnHover: false,
     draggable: true,
     progress: undefined,
-    });
+  });
 
   if(!loading)return(<Loading></Loading>)
   return(
@@ -108,7 +109,6 @@ function SuperviseTest(){
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
-          <Button variant="secondary" style={{marginLeft: "3%"}} onClick={notify}>두손 미인식 알림</Button>
           <ToastContainer
             position="bottom-right"
             autoClose={false}
@@ -126,7 +126,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify}/ >;
             })
           }
         </div>
@@ -147,11 +147,16 @@ function StudentCard(props){
   function changePc(id,value){
     props.changePcState(id,value);
   }
+
+  function pushHandDetetionNotice(){
+    props.notify();
+  }
+  
   return(
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc}></Master>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc} pushHandDetetionNotice={pushHandDetetionNotice}></Master>
         </div>
         <Card.Body>
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>

@@ -3,9 +3,6 @@ import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
-import 'react-toastify/dist/ReactToastify.css';
-// import '../professor/toastify.css';
-import { ToastContainer, toast, Slide } from 'react-toastify';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -50,6 +47,70 @@ const Viewer = (props) => {
     console.log(props);
     startPlayerForViewer(props);
   }, []);
+  
+  var captureId = null;
+  
+  function startCapture(e){
+    captureId=setInterval(capture, 3000);
+  }
+  
+  function stopCapture(e){
+    clearInterval(captureId);
+  }
+  
+  function capture(e){ //두손 사진 캡쳐 제출
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(mediaStream => {
+        // Do something with the stream.
+        const track = mediaStream.getVideoTracks()[0];
+        let imageCapture = new ImageCapture(track);
+  
+        imageCapture.takePhoto()
+        .then(blob => {console.log(blob); //blob=캡쳐이미지
+          const url = window.URL.createObjectURL(blob); 
+          document.getElementById("image").src = url;
+          checkHandDetection(blob);
+        })
+        .catch(error => console.log(error));
+    })
+  }
+  
+  async function checkHandDetection(blob){
+    let form = new FormData();
+    form.append('hand_img', blob);
+    const config = {
+      header: {'content-type': 'multipart/form-data'}
+    }
+  
+    await axios
+    .post('http://localhost:5000/hand-detection', form, config)
+    .then((result)=>{
+      console.log(result);
+      if(result.data.result === true){
+        console.log(cnt, "true");
+      }
+      else{
+        cnt+=1;
+        if(cnt === 2){
+          console.log(cnt, "false");
+          sendMessage();
+          cnt=0;
+        }
+      }
+    })
+    .catch(()=>{ console.log("hand detection 실패") })
+  } 
+
+  function sendMessage() {
+    if (viewer.dataChannel) {
+      try {
+        viewer.dataChannel.send("HandDetection_False");
+        console.log("Message sent to master: HandDetection_False");
+      } catch (e) {
+          console.error('[VIEWER] Send DataChannel: ', e.toString());
+      }
+    }
+  }
 
   async function startPlayerForViewer(props, e) {
     console.log("viewer credentials : ",props.credentials);
@@ -278,92 +339,8 @@ const Viewer = (props) => {
       </Button>
       <br />
       <img id="image" width="200" height="100"/>
-      <ToastContainer
-            position="bottom-right"
-            autoClose={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            // style={{ width: "350px" }}
-          />
     </div>
   );  
 };
-
-const notify = () => toast.warn('ㅇㅇㅇ 학생의 손이'+ '\n' +'화면에서 벗어났습니다.', {
-  position: "bottom-right",
-  transition: Slide,
-  autoClose: false,
-  hideProgressBar: false,
-  closeOnClick: false,
-  pauseOnHover: false,
-  draggable: true,
-  progress: undefined,
-});
-
-var captureId = null;
-
-function startCapture(e){
-  captureId=setInterval(capture, 3000);
-}
-
-function stopCapture(e){
-  clearInterval(captureId);
-}
-
-function capture(e){ //두손 사진 캡쳐 제출
-  navigator.mediaDevices.getUserMedia({ video: true })
-  .then(mediaStream => {
-      // Do something with the stream.
-      const track = mediaStream.getVideoTracks()[0];
-      let imageCapture = new ImageCapture(track);
-
-      imageCapture.takePhoto()
-      .then(blob => {console.log(blob); //blob=캡쳐이미지
-        const url = window.URL.createObjectURL(blob); 
-        document.getElementById("image").src = url;
-        checkHandDetection(blob);
-      })
-      .catch(error => console.log(error));
-  })
-}
-
-async function checkHandDetection(blob){
-  let form = new FormData();
-  form.append('hand_img', blob);
-  const config = {
-    header: {'content-type': 'multipart/form-data'}
-  }
-
-  await axios
-  .post('http://localhost:5000/hand-detection', form, config)
-  .then((result)=>{
-    console.log(result);
-    if(result.data.result === true){
-      console.log(cnt, "true");
-      // cnt+=1;
-      // if(cnt === 2){
-      //   console.log(cnt, "true");
-      // // alert("두 손 미인식 결과 : true");
-      // notify();
-      // cnt=0;
-      // }
-    }
-    else{
-      cnt+=1;
-      if(cnt === 2){
-        console.log(cnt, "false");
-      notify();
-      cnt=0;
-      }
-      // cnt=0;
-      // console.log(cnt, "false");
-      // alert("두 손 미인식 결과 : false");
-    }
-  })
-  .catch(()=>{ console.log("hand detection 실패") })
-} 
 
 export default Viewer;

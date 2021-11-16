@@ -166,6 +166,10 @@ const Master = (props) => {
             const timestamp = new Date().toISOString();
             const loggedMessage = `${timestamp} - from ${remoteClientId}: ${message.data}\n`;
             console.log(loggedMessage);
+            console.log(message.data);
+            if(message.data==="HandDetection_False"){
+              props.pushHandDetetionNotice();
+            }
             master.receivedMessages += loggedMessage;
           };
         };
