@@ -27,6 +27,10 @@ spring:
 mybatis: #Mybatis 설정
   mapper-locations: mapper/**/*.xml
 
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
 --- #local 환경
 spring:
   profiles: local
