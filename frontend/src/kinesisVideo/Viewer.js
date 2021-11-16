@@ -1,9 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
-import { Button } from "react-bootstrap";
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -26,8 +23,6 @@ function onStatsReport(report) {
 }
 
 const Viewer = (props) => {
-  let {testId, studentId} = useParams();
-  let videoRecoder = null;
   const localView = useRef(null);
   const viewer = {
     signalingClient: null,
@@ -48,12 +43,6 @@ const Viewer = (props) => {
     console.log(props);
     startPlayerForViewer(props);
   }, []);
-
-  const handleVideoData = (e) => {
-    const { data } = e;
-    console.log(data);
-    UploadVideoToS3(testId,studentId,data);
-  };
 
   async function startPlayerForViewer(props, e) {
     console.log("viewer credentials : ",props.credentials);
@@ -185,13 +174,7 @@ const Viewer = (props) => {
   
     viewer.signalingClient.on('open', async () => {
       console.log('[VIEWER] Connected to signaling service');
-      navigator.mediaDevices.getUserMedia(constraints)
-      .then(function(stream) {
-      videoRecoder = new MediaRecorder(stream);
-      videoRecoder.start(); //start recording video
-      console.log(videoRecoder.state);
-      })
-
+  
       // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
       // If no video/audio needed, no need to request for the sources. 
       // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
@@ -273,43 +256,8 @@ const Viewer = (props) => {
     console.log('[VIEWER] Starting viewer connection');
     viewer.signalingClient.open();
     
-  }
+} 
   
-  function stopPlayerForViewer(e) {
-    
-    videoRecoder.stop(); //stop recording video
-    videoRecoder.addEventListener("dataavailable",handleVideoData);
-
-    console.log('[VIEWER] Stopping viewer connection');
-    if (viewer.signalingClient) {
-      viewer.signalingClient.close();
-      viewer.signalingClient = null;
-    }
-  
-    if (viewer.peerConnection) {
-      viewer.peerConnection.close();
-      viewer.peerConnection = null;
-    }
-  
-    if (viewer.localStream) {
-      viewer.localStream.getTracks().forEach(track => track.stop());
-      viewer.localStream = null;
-    }
-  
-    if (viewer.peerConnectionStatsInterval) {
-      clearInterval(viewer.peerConnectionStatsInterval);
-      viewer.peerConnectionStatsInterval = null;
-    }
-    
-    if (viewer.localView) {
-      viewer.localView.srcObject = null;
-    }
-
-    if (viewer.dataChannel) {
-      viewer.dataChannel = null;
-    }
-  }
-
   return (
     <div className="my-5" >
       <video
@@ -317,30 +265,8 @@ const Viewer = (props) => {
         ref={localView}
         autoPlay playsInline controls muted
       />
-      <Button onClick={(e) => stopPlayerForViewer(e)}>녹화 중지</Button>
     </div>
   );  
 };
-
-async function UploadVideoToS3(testId,studentId,video){
-  let preSignedUrl="";
-  let baseUrl="http://api.testhelper.com";
-
-  await axios
-    .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/ROOM_VIDEO/upload-url')
-    .then((result)=>{
-      preSignedUrl=result.data.uploadUrl;
-      console.log(preSignedUrl);
-    })
-    .catch(()=>{ console.log("실패") })
-   
-  await axios
-    .put(preSignedUrl,video)
-    .then((result)=>{
-      console.log("모바일 카메라 녹화 영상 저장 성공")
-    })
-    .catch(()=>{ console.log("저장 실패") })
-  
-}
 
 export default Viewer;

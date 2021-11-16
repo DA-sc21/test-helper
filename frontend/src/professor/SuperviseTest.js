@@ -1,27 +1,39 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge } from 'react-bootstrap';
+import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
+import ChatFormPro from '../component/ChatFormPro';
 import Master from '../kinesisVideo/Master';
 import {baseUrl} from "../component/baseUrl"
 
 function SuperviseTest(){
 
-  let [testRooms,setTestRooms] = useState([])
+  let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
-  let [verifications,setVerifications] = useState([])
-  let [loading,setLoading] = useState(false)
-  let [toggled,setToggled]=useState(0)
-  let {testId} = useParams()
-  const [audio,setAudio] = useState([])
-  const [pc,setPc] = useState([])
-  const [studentId,setStudentId] = useState([])
+  let [verifications,setVerifications] = useState([]);
+  let [loading,setLoading] = useState(false);
+  let [toggled,setToggled]=useState(0);
+  let {testId} = useParams();
+  const [studentId,setStudentId] = useState([]);
+  const shareState = {
+    audio: [],
+    pc: [],
+  };
   
   useEffect(()=>{
     getVerifications();
     createTestRooms();
   },[]);
+
+  function changeAudioState(id,value){
+    shareState.audio[id]=value;
+    console.log(shareState.audio, shareState.pc);
+  }
+  function changePcState(id,value){
+    shareState.pc[id]=value;
+    console.log(shareState.audio, shareState.pc);
+  }
 
   async function getVerifications(){
     await axios
@@ -42,8 +54,8 @@ function SuperviseTest(){
       temp.push(false);
       id.push(arr[i].studentId);
     }
-    setAudio(temp);
-    setPc(temp);
+    shareState.audio=temp;
+    shareState.pc=temp;
     setStudentId(id);
   }
 
@@ -51,32 +63,11 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      sortTestRooms(result.data.students)
       setCredentials(result.data.credentials)
       console.log(result.data);
+      setLoading(true)
     })
     .catch(()=>{ console.log("실패") })
-  }
-
-  function sortTestRooms(arr){
-    let temp = []
-    let rooms = arr.map(data=>{
-      temp.push(data.roomId)
-    })
-    setLoading(true);
-    setTestRooms(temp)
-  }
-
-  function sortVerifications(inc,standard){
-    let temp = [...verifications].sort(function (a,b){
-      let value  = a[standard] > b[standard] ?  1 :  -1
-      return inc*value 
-    })
-    setVerifications(temp)
-    
-  }
-  function buttonCss(idx) {
-    return toggled===idx? "primary" : "outline-primary"  
   }
 
   if(!loading)return(<Loading></Loading>)
@@ -84,22 +75,19 @@ function SuperviseTest(){
     <div className="conatiner p-3">
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
-          <StudentsList verifications={verifications} audio={audio} pc={pc}></StudentsList>
+          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
-          <ButtonGroup className="" aria-label="Basic example">
-            <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortVerifications(1,"studentId")}}>학번순오름정렬</Button>
-            <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortVerifications(-1,"studentId")}}>학번순내림정렬</Button>
-          </ButtonGroup>
-        </div>
+          <ChattingModal studentId="0"></ChattingModal>
         </div>
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={audio} setAudio={setAudio} pc={pc} setPc={setPc} studentId={studentId} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} / >;
             })
           }
         </div>
+      </div>
     </div> 
   )
 }
@@ -110,13 +98,11 @@ function StudentCard(props){
     "PENDING" : "보류",
     "SUCCESS" : "성공",
   }
-  function changeAudio(data){
-    console.log("changeAudio 함수 호출");
-    props.setAudio(data);
+  function changeAudio(id,value){
+    props.changeAudioState(id,value);
   }
-  function changePc(data){
-    console.log("changePc 함수 호출");
-    props.setPc(data);
+  function changePc(id,value){
+    props.changePcState(id,value);
   }
   return(
     <div className="col-md-6 mb-5">
@@ -141,8 +127,7 @@ function StudentCard(props){
             : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
                 changeVerifications(props,true)}}>본인인증승인
               </Button> }
-            
-            <Button className="col-md-4" variant="success">채팅</Button>
+            <ChattingModal studentId={props.verification.studentId}></ChattingModal>
             <Button className="col-md-4" variant="danger">경고</Button>
           </div>
         </Card.Body>
@@ -156,6 +141,31 @@ function StudentCard(props){
     </div>
   )
 }
+
+function ChattingModal(props) {
+  let {testId} = useParams()
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(!show);
+  let [newMessages,setNewMessages] =useState([])
+
+  return (
+    <>
+      {props.studentId==="0"
+        ?
+          <Button variant="success" onClick={handleShow}>
+          공지사항
+          </Button>
+        :
+          <Button className="col-md-4" variant="success" onClick={handleShow}>
+          채팅
+          </Button>
+      }
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatFormPro>
+    </>
+  );
+}
+
+
 async function changeVerifications(props,verified){
   let testId=props.testId
   let studentId=props.verification.studentId

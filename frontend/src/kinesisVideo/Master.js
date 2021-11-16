@@ -211,9 +211,7 @@ const Master = (props) => {
               console.log("마이크 on");
               if(event.track.kind == "audio"){
                 setIsAudioShare(true);
-                let arr_audio = props.audio;
-                arr_audio[props.studentId.indexOf(parseInt(remoteClientId[2]))] = true;
-                props.changeAudio(arr_audio);
+                props.changeAudio(props.studentId.indexOf(parseInt(remoteClientId[2])), true);
               }
             }
           }
@@ -226,14 +224,12 @@ const Master = (props) => {
             case "connected":
               setIsPcShare(true);
               console.log('pc connect');
-              arr_pc[props.studentId.indexOf(parseInt(remoteClientId[2]))] = true;
-              props.changePc(arr_pc);
+              props.changePc(props.studentId.indexOf(parseInt(remoteClientId[2])), true);
               break;
             case "disconnected":
               setIsPcShare(false);
               console.log('pc connection disconnected');
-              arr_pc[props.studentId.indexOf(parseInt(remoteClientId[2]))] = false;
-              props.changePc(arr_pc);
+              props.changePc(props.studentId.indexOf(parseInt(remoteClientId[2])), false);
             case "failed":
               setIsPcShare(false);
               console.log('pc connection failed');
@@ -253,8 +249,7 @@ const Master = (props) => {
             case "disconnected":
               setIsAudioShare(false);
               console.log('mobile connection disconnected');
-              arr_audio[props.studentId.indexOf(parseInt(remoteClientId[2]))] = false;
-              props.changeAudio(arr_audio);
+              props.changeAudio(props.studentId.indexOf(parseInt(remoteClientId[2])), false);
             case "failed":
               setIsAudioShare(false);
               console.log('mobile connection failed');
@@ -331,8 +326,8 @@ const Master = (props) => {
             autoPlay playsInline controls 
         />
       </div>
-      {isPcShare === true ? <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
-      {isAudioShare === true ? <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '35px', height: '35px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
+      {isPcShare === true ? <img style ={{width: '30px', height: '30px', float: 'right', marginRight: '3%'}} src="/img/pc_on.png" /> : <img style ={{width: '30px', height: '30px', float: 'right', marginRight: '3%'}} src="/img/pc_off.png" />}
+      {isAudioShare === true ? <img style ={{width: '30px', height: '30px', float: 'right', marginRight: '3%'}} src="/img/audio_on.png" /> : <img style ={{width: '30px', height: '30px', float: 'right', marginRight: '3%'}} src="/img/audio_off.png" />}
     </div>
   );
 };
