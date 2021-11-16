@@ -10,12 +10,14 @@ function TestStudentMobileSetting(props){
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
-  let credentials=props.credentials
-  let room=props.room
-  let studentNum=props.student.studentNumber
-  let video=props.video
-  let audio=props.audio
-  let id=props.room.device+props.student.id
+  let credentials=props.credentials;
+  let room=props.room;
+  let studentNum=props.student.studentNumber;
+  let video=props.video;
+  let audio=props.audio;
+  let id=props.room.device+props.student.id;
+  let startTime=props.test.startTime;
+  let endTime=props.test.endTime;
   console.log(props)
   return(
     <div className="m-4"> 
@@ -28,6 +30,8 @@ function TestStudentMobileSetting(props){
         <Viewer 
           testId ={testId}
           studentId={studentId}
+          startTime={startTime}
+          endTime={endTime}
           sendVideo={video}
           sendAudio={audio}
           region= "us-east-2" 

@@ -3,6 +3,8 @@ import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
+import moment from 'moment';
+import { useInterval } from 'react-use';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -24,9 +26,9 @@ function onStatsReport(report) {
     // TODO: Publish stats
 }
 
-var cnt = 0;
-
 const Viewer = (props) => {
+  let cnt = 0;
+  let captureId = null;
   const localView = useRef(null);
   const viewer = {
     signalingClient: null,
@@ -47,8 +49,22 @@ const Viewer = (props) => {
     console.log(props);
     startPlayerForViewer(props);
   }, []);
-  
-  var captureId = null;
+
+  useInterval(() => {
+    let currentTime = moment(); //현재 시간
+    let testStartTime = moment(props.startTime);
+    let testEndTime = moment(props.endTime);
+    // let testStartTime = moment("2021 11 16 23:59");//테스트
+    // let testEndTime = moment("2021 11 17 00:00");//테스트
+    let startTimeDifference = moment.duration(testStartTime.diff(currentTime)).seconds();
+    let endTimeDifference = moment.duration(testEndTime.diff(currentTime)).seconds();
+    if(startTimeDifference===0){
+      startCapture();
+    }
+    if(endTimeDifference===0){
+      stopCapture();
+    }
+  }, 1000);
   
   function startCapture(e){
     captureId=setInterval(capture, 3000);
@@ -67,8 +83,6 @@ const Viewer = (props) => {
   
         imageCapture.takePhoto()
         .then(blob => {console.log(blob); //blob=캡쳐이미지
-          const url = window.URL.createObjectURL(blob); 
-          document.getElementById("image").src = url;
           checkHandDetection(blob);
         })
         .catch(error => console.log(error));
@@ -81,12 +95,14 @@ const Viewer = (props) => {
     const config = {
       header: {'content-type': 'multipart/form-data'}
     }
-  
+ 
     await axios
-    .post('http://localhost:5000/hand-detection', form, config)
+    // .post('http://localhost:5000/hand-detection', form, config) //local test
+    .post('https://ai.test-helper.com/hand-detection', form, config)
     .then((result)=>{
       console.log(result);
       if(result.data.result === true){
+        cnt=0;
         console.log(cnt, "true");
       }
       else{
@@ -333,12 +349,12 @@ const Viewer = (props) => {
         ref={localView}
         autoPlay playsInline controls muted
       />
-      <Button variant="secondary" onClick={(e) => startCapture(e)}>Start
+      {/* <Button variant="secondary" onClick={(e) => startCapture(e)}>Start
       </Button>
       <Button variant="dark" onClick={(e) => stopCapture(e)}>End
       </Button>
       <br />
-      <img id="image" width="200" height="100"/>
+      <img id="image" width="200" height="100"/> */}
     </div>
   );  
 };
