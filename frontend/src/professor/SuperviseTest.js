@@ -15,6 +15,7 @@ function SuperviseTest(){
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
+  let [submissions,setSubmissions] = useState([])
   let [loading,setLoading] = useState(false);
   let [toggled,setToggled]=useState(0);
   let {testId} = useParams();
@@ -26,6 +27,7 @@ function SuperviseTest(){
   
   useEffect(()=>{
     getVerifications();
+    getSubmissions();
     createTestRooms();
   },[]);
 
@@ -45,6 +47,16 @@ function SuperviseTest(){
       setVerifications(result.data)
       console.log(result.data)
       getStudentId(result.data)
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  async function getSubmissions(){
+    await axios
+    .get(baseUrl+'/tests/'+testId+'/submissions')
+    .then((result)=>{ 
+      setSubmissions(result.data)
+      console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -135,7 +147,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify} studentName={studentName}/ >;
+              return <StudentCard className="" key={index} testId={testId} submission={submissions[index]} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify} studentName={studentName}/ >;
             })
           }
         </div>
@@ -149,6 +161,10 @@ function StudentCard(props){
     "REJECTED" : "거절",
     "PENDING" : "보류",
     "SUCCESS" : "성공",
+  }
+  let submission_status_options={
+    "PENDING" : "제출전",
+    "DONE" : "제출완료",
   }
   function changeAudio(id,value){
     props.changeAudioState(id,value);
@@ -174,7 +190,10 @@ function StudentCard(props){
             {props.verification.submissionId}(submissionId)
           </Card.Text>
           <Card.Text>
-            {verification_status_options[props.verification.verified]}
+          본인인증 : {verification_status_options[props.verification.verified]}
+          </Card.Text>
+          <Card.Text>
+          답안제출현황 : {submission_status_options[props.submission.submitted]}
           </Card.Text>
           <div className="row">
             {props.verification.verified==="SUCCESS"
