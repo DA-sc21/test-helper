@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup,Card, Button ,Offcanvas ,Image,ButtonGroup,Badge ,Modal } from 'react-bootstrap';
+import {ListGroup, Card, Button, Offcanvas, Image, ButtonGroup, Badge, Modal, Accordion} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Loading from '../component/Loading';
@@ -104,6 +104,9 @@ function SuperviseTest(){
 }
 
 function StudentCard(props){
+  let {testId} = useParams();
+  let [studentCard,setStudentCard] = useState("");
+  let [face,setface] = useState("");
   let verification_status_options={
     "REJECTED" : "거절",
     "PENDING" : "보류",
@@ -114,6 +117,20 @@ function StudentCard(props){
   }
   function changePc(id,value){
     props.changePcState(id,value);
+  }
+  function getIdentificationImgae(e){
+    getimages("student_card",setStudentCard);
+    getimages("face",setface);
+  }
+  async function getimages(target,setfunc){
+    testId=String(testId).padStart(5,"0");
+    let studentNum=props.studentInfo[props.index].student.studentNumber;
+    await axios
+      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg')
+      .then((result)=>{
+        setfunc(result.data);
+      })
+      .catch(()=>{ console.log("실패") })
   }
   return(
     <div className="col-md-6 mb-5">
@@ -144,8 +161,15 @@ function StudentCard(props){
         </Card.Body>
         <Card.Footer>
           <div className="row">
-            <Image className="col-md-5" src="https://cdn.pixabay.com/photo/2016/10/04/13/05/name-1714231_1280.png" />
-            <Image className="col-md-7" src="https://cdn.pixabay.com/photo/2018/10/02/11/13/girl-3718526_1280.jpg" />
+          <Accordion>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"0", outline:"0", fontWeight:"bold", marginLeft:"0%"}} onClick={(e)=>getIdentificationImgae(e)}>본인인증 사진</Button></Accordion.Header>
+                <Accordion.Body>
+                  <Image className="col-md-5" style={{height:"270px", width:"290px", marginRight:"1.5%"}} src={studentCard} />
+                  <Image className="col-md-5" style={{height:"270px", width:"290px", marginLeft:"1.5%"}} src={face} />
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
           </div>
         </Card.Footer>
       </Card>
