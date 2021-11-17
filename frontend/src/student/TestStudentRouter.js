@@ -74,7 +74,10 @@ function TestStudentRouter (props){
             credentials={credentials}
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
-            setTabCompleted={setTabCompleted} />
+            setTabCompleted={setTabCompleted} 
+            student={student}
+            room={room}
+            />
         }
       />
       <Route exact path={path+"/setting"}
