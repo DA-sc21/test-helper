@@ -89,7 +89,7 @@ const Viewer = (props) => {
         imageCapture.takePhoto()
         .then(blob => {console.log(blob); //blob=캡쳐이미지
           Compress.imageFileResizer(
-            file, // the file from input
+            blob, // the file from input
             640, // width
             480, // height
             "JPG", // compress format WEBP, JPEG, PNG
