@@ -6,9 +6,12 @@ import Loading from '../component/Loading';
 import ChatFormPro from '../component/ChatFormPro';
 import Master from '../kinesisVideo/Master';
 import {baseUrl} from "../component/baseUrl"
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './toastify.css';
 
 function SuperviseTest(){
-
+  let [studentName,setStudentName] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
@@ -63,12 +66,51 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      setCredentials(result.data.credentials)
+      getStudentName(result.data.students);
+      sortTestRooms(result.data.students);
+      setCredentials(result.data.credentials);
       console.log(result.data);
-      setLoading(true)
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
+
+  function sortTestRooms(arr){
+    let temp = []
+    let rooms = arr.map(data=>{
+      temp.push(data.roomId);
+    })
+    setLoading(true);
+    setTestRooms(temp);
+  }
+
+  function getStudentName(arr){
+    let temp = []
+    let rooms = arr.map(data=>{
+      temp.push(data.student.name);
+    })
+    setStudentName(temp);
+  }
+
+  function sortVerifications(inc,standard){
+    let temp = [...verifications].sort(function (a,b){
+      let value  = a[standard] > b[standard] ?  1 :  -1
+      return inc*value 
+    })
+    setVerifications(temp)
+    
+  }
+
+  const notify = (name) => toast.warn(`${name} 학생의 손이 화면에서 벗어났습니다.`, {
+    position: "bottom-right",
+    transition: Slide,
+    autoClose: false,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+  });
 
   if(!loading)return(<Loading></Loading>)
   return(
@@ -76,6 +118,16 @@ function SuperviseTest(){
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc}></StudentsList>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            style={{ width: "350px" }}
+          />
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
@@ -83,7 +135,7 @@ function SuperviseTest(){
         <div className="row mt-3">
           {
             verifications.map((verification,index)=>{
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} / >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify} studentName={studentName}/ >;
             })
           }
         </div>
@@ -104,11 +156,16 @@ function StudentCard(props){
   function changePc(id,value){
     props.changePcState(id,value);
   }
+
+  function pushHandDetetionNotice(){
+    props.notify(props.studentName[props.index]);
+  }
+  
   return(
     <div className="col-md-6 mb-5">
       <Card >
         <div className="row">
-          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc}></Master>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc} pushHandDetetionNotice={pushHandDetetionNotice}></Master>
         </div>
         <Card.Body>
           <Card.Title>{props.verification.studentId}번 학생</Card.Title>
