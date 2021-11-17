@@ -5,6 +5,8 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import moment from 'moment';
 import { useInterval } from 'react-use';
+import 'moment/locale/ko';
+import Compress from "react-image-file-resizer";
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -27,6 +29,8 @@ function onStatsReport(report) {
 }
 
 const Viewer = (props) => {
+  moment.locale('ko')
+
   let cnt = 0;
   let captureId = null;
   const localView = useRef(null);
@@ -84,7 +88,20 @@ const Viewer = (props) => {
   
         imageCapture.takePhoto()
         .then(blob => {console.log(blob); //blob=캡쳐이미지
-          checkHandDetection(blob);
+          Compress.imageFileResizer(
+            file, // the file from input
+            640, // width
+            480, // height
+            "JPG", // compress format WEBP, JPEG, PNG
+            70, // quality
+            0, // rotation
+            (uri) => {
+              checkHandDetection(uri)
+              console.log(uri);
+              // You upload logic goes here
+            },
+            "base64" // blob or base64 default base64
+          );
         })
         .catch(error => console.log(error));
     })
