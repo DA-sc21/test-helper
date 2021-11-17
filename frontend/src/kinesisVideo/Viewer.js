@@ -349,12 +349,6 @@ const Viewer = (props) => {
         ref={localView}
         autoPlay playsInline controls muted
       />
-      {/* <Button variant="secondary" onClick={(e) => startCapture(e)}>Start
-      </Button>
-      <Button variant="dark" onClick={(e) => stopCapture(e)}>End
-      </Button>
-      <br />
-      <img id="image" width="200" height="100"/> */}
     </div>
   );  
 };
