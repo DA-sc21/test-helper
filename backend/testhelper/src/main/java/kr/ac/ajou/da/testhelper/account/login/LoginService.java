@@ -42,4 +42,10 @@ public class LoginService {
         authReq.setDetails(SecurityContextHolder.getContext().getAuthentication().getDetails());
         return authReq;
     }
+
+    public void logout() {
+
+        SecurityContextHolder.clearContext();
+
+    }
 }

@@ -4,6 +4,7 @@ import kr.ac.ajou.da.testhelper.account.dto.LoginReqDto;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,5 +20,13 @@ public class LoginController {
 
         return ResponseEntity.ok().body(BooleanResponse.of(true));
 
+    }
+
+    @DeleteMapping("/sessions")
+    public ResponseEntity<BooleanResponse> logout(){
+
+        loginService.logout();
+
+        return ResponseEntity.ok().body(BooleanResponse.of(true));
     }
 }
