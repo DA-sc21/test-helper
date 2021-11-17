@@ -39,7 +39,7 @@ public class SubmissionController {
                                                                   @PathVariable Long studentId,
                                                                   @RequestBody PutSubmissionConsentedReqDto reqDto) {
 
-        return ResponseEntity.ok().body(new BooleanResponse(
+        return ResponseEntity.ok().body(BooleanResponse.of(
                 submissionService.updateConsentedByTestIdAndStudentId(testId, studentId, reqDto.getConsented())));
     }
 }

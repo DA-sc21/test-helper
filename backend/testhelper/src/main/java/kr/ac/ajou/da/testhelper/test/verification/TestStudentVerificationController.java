@@ -6,7 +6,6 @@ import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerification
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +33,7 @@ public class TestStudentVerificationController {
                                                                       @PathVariable Long studentId,
                                                                       @RequestBody GetTestStudentVerificationReqDto reqDto) {
 
-        return ResponseEntity.ok().body(new BooleanResponse(testStudentVerificationService.update(testId, studentId, reqDto.getVerified())));
+        return ResponseEntity.ok().body(BooleanResponse.of(testStudentVerificationService.update(testId, studentId, reqDto.getVerified())));
 
     }
     

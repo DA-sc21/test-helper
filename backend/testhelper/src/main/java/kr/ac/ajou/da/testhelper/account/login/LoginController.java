@@ -17,7 +17,7 @@ public class LoginController {
 
         loginService.login(reqDto);
 
-        return ResponseEntity.ok().body(new BooleanResponse(true));
+        return ResponseEntity.ok().body(BooleanResponse.of(true));
 
     }
 }
