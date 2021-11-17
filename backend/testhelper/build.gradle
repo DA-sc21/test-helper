@@ -64,6 +64,10 @@ dependencies {
 
 }
 
+bootRun{
+	systemProperties System.properties
+}
+
 test {
 	testLogging {
 		events "PASSED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
