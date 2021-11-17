@@ -13,13 +13,18 @@ function TestStudentMobileSetting(props){
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
+
+  let credentials=props.credentials;
+  let room=props.room;
+  let studentNum=props.student.studentNumber;
+  let video=props.video;
+  let audio=props.audio;
+  let id=props.room.device+props.student.id;
+  let startTime=props.test.startTime;
+  let endTime=props.test.endTime;
+  console.log(props)
+
   let [capture_1,setCapture_1]= useState("");
-  let credentials=props.credentials
-  let room=props.room
-  let studentNum=props.student.studentNumber
-  let video=props.video
-  let audio=props.audio
-  let id=props.room.device+props.student.id
   let [ended,setEnded]=useState(false)
   console.log(ended)
 
@@ -33,6 +38,7 @@ function TestStudentMobileSetting(props){
     durationEndTime < 0 ? setEnded(true) :setEnded(false) 
   }, 1000);
 
+
   return(
     <div className="m-4"> 
       <BrowserView>
@@ -44,6 +50,8 @@ function TestStudentMobileSetting(props){
         <Viewer 
           testId ={testId}
           studentId={studentId}
+          startTime={startTime}
+          endTime={endTime}
           sendVideo={video}
           sendAudio={audio}
           region= "us-east-2" 
