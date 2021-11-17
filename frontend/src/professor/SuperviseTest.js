@@ -210,9 +210,6 @@ function StudentCard(props){
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
           <hr />
           <Card.Text>
-            {props.verification.submissionId}(submissionId)
-          </Card.Text>
-          <Card.Text>
           본인인증 : {verification_status_options[props.verification.verified]}
           </Card.Text>
           <Card.Text>
