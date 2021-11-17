@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import moment from 'moment';
 import { useInterval } from 'react-use';
+import 'moment/locale/ko';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -27,6 +28,8 @@ function onStatsReport(report) {
 }
 
 const Viewer = (props) => {
+  moment.locale('ko')
+
   let cnt = 0;
   let captureId = null;
   const localView = useRef(null);
