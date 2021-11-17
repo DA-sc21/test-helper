@@ -5,13 +5,15 @@ import axios from "axios";
 import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
 import Loading from '../component/Loading';
+import NavBarStudent from '../component/NavBarStudent';
+import "../component/Chat.css"
+import {baseUrl} from "../component/baseUrl"
 
 function TestStudentPre(){
   useEffect(()=>{
     getStudentRoom();
   },[]);
   
-  let baseUrl ="http://api.testhelper.com"
   let {testId, studentId} =useParams();
   let [room,setRoom]=useState();
   let [student,setStudent]=useState();
@@ -52,7 +54,8 @@ function TestStudentPre(){
   
   if(!loading)return(<Loading></Loading>)
   return(
-    <div>
+    <div className="position-relative">
+      <NavBarStudent></NavBarStudent>
       <BrowserView> 
         <Nav variant="tabs" >
           {
@@ -108,6 +111,8 @@ function TestStudentPre(){
           credentials={credentials}
           student={student}
           room={room}
+          video={video}
+          audio={audio}
         />
     </div>
   )
