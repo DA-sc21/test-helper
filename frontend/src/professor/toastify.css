@@ -1,0 +1,9 @@
+.Toastify__toast--warning {
+    border: 3px solid rgba(255, 255, 255, 0);
+    background: rgb(255, 237, 179);
+    color: black;
+    font-size: 18px;
+    font-family: Georgia, "Malgun Gothic", serif;
+    padding: 5%;
+    margin-bottom: 2%;
+  }
