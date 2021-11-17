@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Button , Modal } from 'react-bootstrap'
 import { Problems } from './Problems';
+import SubmitAnswer from './SubmitAnswer';
 
 function TakingTest(props) {
     const [show, setShow] = useState(false);
@@ -23,7 +24,7 @@ function TakingTest(props) {
           </Modal.Header>
           <Modal.Body>
             {props.ended?
-							<div>시험이 종료되었습니다. 답안 제출을 진행해주세요</div>
+            <SubmitAnswer></SubmitAnswer>
             :<Problems></Problems>
             }
           </Modal.Body>
