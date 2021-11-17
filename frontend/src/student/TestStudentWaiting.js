@@ -7,6 +7,8 @@ import { useInterval } from 'react-use';
 import TakingTest from './TakingTest';
 
 function TestStudentWaiting(props){
+  moment.locale('ko')
+
   let testInformations = ["id","name","startTime","endTime"]
   let startTime = props.test.startTime
   startTime = moment(startTime).format("YYYY-MM-DD dd HH:mm:ss")
