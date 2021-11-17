@@ -14,19 +14,17 @@ function TestStudentMobileSetting(props){
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
 
-  let credentials=props.credentials;
-  let room=props.room;
-  let studentNum=props.student.studentNumber;
-  let video=props.video;
-  let audio=props.audio;
-  let id=props.room.device+props.student.id;
+  let [capture_1,setCapture_1]= useState("");
+  let credentials=props.credentials
+  let room=props.room
+  let studentNum=props.student.studentNumber
+  let video=props.video
+  let audio=props.audio
+  let id=props.room.device+props.student.id
+  let [ended,setEnded]=useState(false)
   let startTime=props.test.startTime;
   let endTime=props.test.endTime;
-  console.log(props)
 
-  let [capture_1,setCapture_1]= useState("");
-  let [ended,setEnded]=useState(false)
-  console.log(ended)
 
   useInterval(() => {
     let currentTime = moment();
