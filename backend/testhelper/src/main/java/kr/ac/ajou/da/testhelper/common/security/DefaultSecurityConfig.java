@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -19,13 +21,22 @@ public class DefaultSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AccountService accountService;
 
     @Bean
-    public PasswordEncoder noopPasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(accountService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+        return authenticationProvider;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountService).passwordEncoder(noopPasswordEncoder());
+        auth.userDetailsService(accountService).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -45,7 +56,7 @@ public class DefaultSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/sessions").anonymous()
+                .antMatchers(HttpMethod.POST, "/sessions").permitAll()
                 .anyRequest().authenticated();
     }
 }
