@@ -16,7 +16,6 @@ class TestTest {
         //when
         test.updateStatus(TestStatus.ENDED);
 
-
         //then
         assertEquals(TestStatus.ENDED, test.getStatus());
 
