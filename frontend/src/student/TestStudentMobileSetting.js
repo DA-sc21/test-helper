@@ -16,13 +16,20 @@ function TestStudentMobileSetting(props){
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
 
+<<<<<<< HEAD
+=======
+  let credentials=props.credentials;
+  let room=props.room;
+  let studentNum=props.student.studentNumber;
+  let video=props.video;
+  let audio=props.audio;
+  let id=props.room.device+props.student.id;
+  let startTime=props.test.startTime;
+  let endTime=props.test.endTime;
+  console.log(props)
+
+>>>>>>> b6e74d0478dc32c264053b77cdd3e2f91ced239c
   let [capture_1,setCapture_1]= useState("");
-  let credentials=props.credentials
-  let room=props.room
-  let studentNum=props.student.studentNumber
-  let video=props.video
-  let audio=props.audio
-  let id=props.room.device+props.student.id
   let [ended,setEnded]=useState(false)
   let startTime=props.test.startTime;
   let endTime=props.test.endTime;
