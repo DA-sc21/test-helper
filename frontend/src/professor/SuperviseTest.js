@@ -18,7 +18,6 @@ function SuperviseTest(props){
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
-  let [submissions,setSubmissions] = useState([])
   let [loading,setLoading] = useState(false);
   let [toggled,setToggled]=useState(0);
   let {testId} = useParams();
@@ -53,17 +52,6 @@ function SuperviseTest(props){
     .catch(()=>{ console.log("실패") })
   }
 
-  async function getSubmissions(){
-    await axios
-    .get(baseUrl+'/tests/'+testId+'/submissions')
-    .then((result)=>{ 
-      setSubmissions(result.data)
-      console.log(result.data)
-      setLoading(true);
-    })
-    .catch(()=>{ console.log("실패") })
-  }
-
   function getStudentId(arr){
     let len = arr.length;
     let temp = [];
@@ -86,8 +74,7 @@ function SuperviseTest(props){
       setStudentInfo(result.data.students);
       setCredentials(result.data.credentials);
       console.log(result.data);
-      getSubmissions();
-      // setLoading(true);
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -153,17 +140,18 @@ function SuperviseTest(props){
             draggable
             style={{ width: "350px" }}
           />
-          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo}></StudentsList>
+          <StudentsList audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo} testId={testId}></StudentsList>
+          <AnswerSheetSubmissionList studentInfo={studentInfo} testId={testId}></AnswerSheetSubmissionList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
-          <Button style={{marginRight:"3%", backgroundColor:"#4f5764", borderColor:"#4f5764"}} onClick={(e)=> exitTest(e)}>종료</Button>
+          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641"}} onClick={(e)=> exitTest(e)}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
           {
             verifications.map((verification,index)=>{
 
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} submission={submissions[index]} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
 
             })
           }
@@ -220,12 +208,6 @@ function StudentCard(props){
         <Card.Body>
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
           <hr />
-          {/* <Card.Text>
-          본인인증 : {verification_status_options[props.verification.verified]}
-          </Card.Text> */}
-          <Card.Text>
-          답안제출현황 : {submission_status_options[props.submission.submitted]}
-          </Card.Text>
           <div className="row">
             {props.verification.verified==="SUCCESS"
             ? <Button className="col-md-4" variant="primary" onClick={()=>{
@@ -300,9 +282,14 @@ async function changeVerifications(props,verified){
 }
 
 function StudentsList(props) {
+  console.log(props)
+  let [verifications,setVerifications] = useState([]);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setShow(true);
+    getVerifications();
+  }
   let verification_status_options={
     "REJECTED" : "거절",
     "PENDING" : "보류",
@@ -313,21 +300,30 @@ function StudentsList(props) {
     "PENDING" : "warning",
     "SUCCESS" : "success",
   }
+  async function getVerifications(){
+    await axios
+    .get(baseUrl+'/tests/'+props.testId+'/students/verification')
+    .then((result)=>{ 
+      setVerifications(result.data);
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
 
   return (
     <>
-      <Button style={{backgroundColor: "#506EA5"}} onClick={handleShow}>
+      <Button style={{backgroundColor: "#506EA5", borderColor:"#506EA5"}} onClick={handleShow}>
         전체 학생 현황
       </Button>
 
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>전체 학생 본인 인증 현황</Offcanvas.Title>
+          <Offcanvas.Title>전체 학생 본인인증 현황</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
             <ListGroup variant="flush">
             {
-              props.verifications.map((verification,index)=>{
+              verifications.map((verification,index)=>{
                 return (
                   <ListGroup.Item key={index}>
                     <div className="row ">
@@ -336,6 +332,66 @@ function StudentsList(props) {
                         {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
                         {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />}
                         <Badge bg={verification_status_css[verification.verified]} className="mx-3">{verification_status_options[verification.verified]}</Badge>
+                      </div>
+                    </div>
+                  </ListGroup.Item>
+                )
+              })
+            }
+            </ListGroup>
+        </Offcanvas.Body>
+      </Offcanvas>
+    </>
+  );
+}
+
+function AnswerSheetSubmissionList(props) {
+  console.log(props);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    getSubmissions();
+  }
+  let [submissions,setSubmissions] = useState([]);
+  let submission_status_options={
+    "PENDING" : "제출전",
+    "DONE" : "제출완료",
+  }
+  let submission_status_css={
+    "PENDING" : "secondary",
+    "DONE" : "primary",
+  }
+  async function getSubmissions(){
+    await axios
+    .get(baseUrl+'/tests/'+props.testId+'/submissions')
+    .then((result)=>{ 
+      setSubmissions(result.data);
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  return (
+    <>
+      <Button style={{backgroundColor: "#4f596d", borderColor:"#4f596d", marginLeft:"3%"}} onClick={handleShow}>
+        답안 제출 현황
+      </Button>
+
+      <Offcanvas show={show} onHide={handleClose} style={{width:"350px"}}>
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>답안 제출 현황</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+            <ListGroup variant="flush">
+            {
+              submissions.map((submissions,index)=>{
+                return (
+                  <ListGroup.Item key={index}>
+                    <div className="row ">
+                      <div className="col-md-6">{index+1}. {props.studentInfo[index].student.name}</div>
+                      <div className="col-md-6 d-flex justify-content-end"> 
+                        <Badge bg={submission_status_css[submissions.submitted]} className="mx-3">{submission_status_options[submissions.submitted]}</Badge>
                       </div>
                     </div>
                   </ListGroup.Item>
