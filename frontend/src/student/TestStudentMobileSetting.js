@@ -10,6 +10,8 @@ import moment from 'moment';
 import 'moment/locale/ko';
 
 function TestStudentMobileSetting(props){
+  moment.locale('ko')
+
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");

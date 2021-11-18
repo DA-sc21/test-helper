@@ -5,8 +5,10 @@ import moment from "moment";
 import { useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
 import {baseUrl} from "../component/baseUrl"
+import 'moment/locale/ko';
 
 function Tests(){
+  moment.locale('ko')
 
   let [testDatas,setTestData] = useState([])
   let [loading,setLoading] = useState(false)
