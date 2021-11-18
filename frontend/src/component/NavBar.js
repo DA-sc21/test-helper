@@ -17,7 +17,6 @@ function NavBar(){
             <Nav.Link as = {Link} to="/" > Home </Nav.Link>
             <Nav.Link as = {Link} to="/tests" > 시험목록 </Nav.Link>
             <Nav.Link as = {Link} to="/tests/1/students/1" >1번대학생시험준비(완료 후 navbar에선 삭제예정)</Nav.Link>
-            <Nav.Link as = {Link} to="/kinesis" >kinesis 테스트</Nav.Link>
             <NavDropdown title="Link" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>

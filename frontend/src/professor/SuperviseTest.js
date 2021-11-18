@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import {ListGroup, Card, Button, Offcanvas, Image, ButtonGroup, Badge, Modal, Accordion} from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
 import ChatFormPro from '../component/ChatFormPro';
 import Master from '../kinesisVideo/Master';
@@ -9,9 +9,10 @@ import {baseUrl} from "../component/baseUrl"
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
+import moment from "moment";
 
-function SuperviseTest(){
-
+function SuperviseTest(props){
+  let history = useHistory();
   let [studentName,setStudentName] = useState([]);
   let [studentInfo,setStudentInfo] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
@@ -29,7 +30,6 @@ function SuperviseTest(){
   
   useEffect(()=>{
     getVerifications();
-    getSubmissions();
     createTestRooms();
   },[]);
 
@@ -59,6 +59,7 @@ function SuperviseTest(){
     .then((result)=>{ 
       setSubmissions(result.data)
       console.log(result.data)
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -85,7 +86,8 @@ function SuperviseTest(){
       setStudentInfo(result.data.students);
       setCredentials(result.data.credentials);
       console.log(result.data);
-      setLoading(true);
+      getSubmissions();
+      // setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -95,7 +97,6 @@ function SuperviseTest(){
     let rooms = arr.map(data=>{
       temp.push(data.roomId);
     })
-    setLoading(true);
     setTestRooms(temp);
   }
 
@@ -146,11 +147,11 @@ function SuperviseTest(){
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
+          <Button style={{marginRight:"3%", backgroundColor:"#4f5764", borderColor:"#4f5764"}} onClick={(e)=>history.push("/tests")}>나가기</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
           {
             verifications.map((verification,index)=>{
-
 
               return <StudentCard className="" key={index} testId={testId} verification = {verification} submission={submissions[index]} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
 
@@ -231,7 +232,7 @@ function StudentCard(props){
           <div className="row">
           <Accordion>
             <Accordion.Item eventKey="0">
-              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"0", outline:"0", fontWeight:"bold", marginLeft:"0%"}} onClick={(e)=>getIdentificationImgae(e)}>본인인증 사진</Button></Accordion.Header>
+              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"#61dafb00", outline:"0", fontWeight:"bold", width:"100%", textAlign:"left"}} onClick={(e)=>getIdentificationImgae(e)}>본인인증 사진</Button></Accordion.Header>
                 <Accordion.Body>
                   <Image className="col-md-5" style={{height:"270px", width:"290px", marginRight:"1.5%"}} src={studentCard} />
                   <Image className="col-md-5" style={{height:"270px", width:"290px", marginLeft:"1.5%"}} src={face} />
