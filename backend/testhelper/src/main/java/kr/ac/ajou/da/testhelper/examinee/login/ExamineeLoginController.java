@@ -1,7 +1,7 @@
-package kr.ac.ajou.da.testhelper.account.login;
+package kr.ac.ajou.da.testhelper.examinee.login;
 
-import kr.ac.ajou.da.testhelper.account.login.dto.LoginReqDto;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.examinee.login.dto.ExamineeLoginReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
-    private final LoginService loginService;
+public class ExamineeLoginController {
+    private final ExamineeLoginService examineeLoginService;
 
     @PostMapping("/sessions")
-    public ResponseEntity<BooleanResponse> login(LoginReqDto reqDto){
+    public ResponseEntity<BooleanResponse> login(ExamineeLoginReqDto reqDto){
 
-        loginService.login(reqDto);
+        examineeLoginService.login(reqDto);
 
         return ResponseEntity.ok().body(BooleanResponse.of(true));
 
@@ -25,7 +25,7 @@ public class LoginController {
     @DeleteMapping("/sessions")
     public ResponseEntity<BooleanResponse> logout(){
 
-        loginService.logout();
+        examineeLoginService.logout();
 
         return ResponseEntity.ok().body(BooleanResponse.of(true));
     }

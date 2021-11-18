@@ -1,4 +1,4 @@
-package kr.ac.ajou.da.testhelper.account.dto;
+package kr.ac.ajou.da.testhelper.account.login.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

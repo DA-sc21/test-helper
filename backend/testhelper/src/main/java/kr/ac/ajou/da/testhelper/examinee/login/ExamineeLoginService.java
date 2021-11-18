@@ -1,7 +1,8 @@
-package kr.ac.ajou.da.testhelper.account.login;
+package kr.ac.ajou.da.testhelper.examinee.login;
 
 import kr.ac.ajou.da.testhelper.account.login.dto.LoginReqDto;
-import kr.ac.ajou.da.testhelper.account.login.exception.FailedToLoginException;
+import kr.ac.ajou.da.testhelper.examinee.login.dto.ExamineeLoginReqDto;
+import kr.ac.ajou.da.testhelper.examinee.login.exception.FailedToLoginExamineeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LoginService {
+public class ExamineeLoginService {
 
     private final AuthenticationProvider authenticationProvider;
 
-    public void login(LoginReqDto reqDto) {
+    public void login(ExamineeLoginReqDto reqDto) {
 
         log.info("Logging in : {}", reqDto.getUsername());
 
@@ -33,7 +34,7 @@ public class LoginService {
 
         } catch (AuthenticationException ex) {
             log.info("Login Failed : {}", reqDto.getUsername());
-            throw new FailedToLoginException();
+            throw new FailedToLoginExamineeException();
         }
     }
 
