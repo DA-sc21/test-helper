@@ -31,9 +31,9 @@ public class Test {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @Column(nullable = false)
+    @Column(name = "test_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private TestStatus testStatus = TestStatus.CREATE;
+    private TestStatus status = TestStatus.CREATE;
 
     //private String problem;
 
@@ -55,5 +55,9 @@ public class Test {
 
     public String resolveName() {
         return String.format("%s %s", course.getName(), testType.getName());
+    }
+
+    public void updateStatus(TestStatus status) {
+        setStatus(status);
     }
 }

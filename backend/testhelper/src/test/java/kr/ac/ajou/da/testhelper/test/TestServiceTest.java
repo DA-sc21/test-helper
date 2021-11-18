@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +30,8 @@ class TestServiceTest {
     private kr.ac.ajou.da.testhelper.test.Test test = new kr.ac.ajou.da.testhelper.test.Test(
             1L,
             TestType.MID,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            LocalDateTime.of(2021,1,1,0,0),
+            LocalDateTime.of(2021,1,1,12,0),
             course
     );
 
@@ -63,5 +64,18 @@ class TestServiceTest {
         });
 
         //then
+    }
+
+    @Test
+    void updateStatus_ENDED_success() {
+        //given
+        when(testRepository.findById(anyLong())).thenReturn(Optional.of(test));
+
+        //when
+        testService.updateStatus(this.test.getId(), TestStatus.ENDED);
+
+        //then
+        assertEquals(TestStatus.ENDED, this.test.getStatus());
+
     }
 }
