@@ -153,4 +153,19 @@ class TestRoomServiceTest {
             );
         }
     }
+
+    @Test
+    void deleteRoomsForStudents_success() {
+
+        //given
+        when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
+
+        //when
+        testRoomService.deleteRoomsForStudents(test.getId(), supervisedBy);
+
+        //then
+        verify(submissionService, times(1)).getByTestIdAndSupervisedBy(anyLong(), anyLong());
+        verify(testRoomManagingService, times(submissions.size())).deleteRoom(anyString());
+
+    }
 }
