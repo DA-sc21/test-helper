@@ -128,6 +128,16 @@ function SuperviseTest(props){
     progress: undefined,
   });
 
+  async function exitTest(e){
+    history.push('/tests');
+    await axios
+    .post(baseUrl+'/tests/'+testId+'/ENDED')
+    .then((result)=>{
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="conatiner p-3" style={{backgroundColor:"#E8F5FF"}}>
@@ -147,7 +157,7 @@ function SuperviseTest(props){
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
-          <Button style={{marginRight:"3%", backgroundColor:"#4f5764", borderColor:"#4f5764"}} onClick={(e)=>history.push("/tests")}>나가기</Button>
+          <Button style={{marginRight:"3%", backgroundColor:"#4f5764", borderColor:"#4f5764"}} onClick={(e)=> exitTest(e)}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
           {
@@ -210,9 +220,9 @@ function StudentCard(props){
         <Card.Body>
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
           <hr />
-          <Card.Text>
+          {/* <Card.Text>
           본인인증 : {verification_status_options[props.verification.verified]}
-          </Card.Text>
+          </Card.Text> */}
           <Card.Text>
           답안제출현황 : {submission_status_options[props.submission.submitted]}
           </Card.Text>
