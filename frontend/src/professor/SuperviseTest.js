@@ -11,8 +11,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
 
 function SuperviseTest(){
-  let [studentInfo,setStudentInfo] = useState([]);
+
   let [studentName,setStudentName] = useState([]);
+  let [studentInfo,setStudentInfo] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
@@ -79,10 +80,9 @@ function SuperviseTest(){
     await axios
     .post(baseUrl+'/tests/'+testId+'/students/room')
     .then((result)=>{
-      sortTestRooms(result.data.students);
-      setStudentInfo(result.data.students);
       getStudentName(result.data.students);
       sortTestRooms(result.data.students);
+      setStudentInfo(result.data.students);
       setCredentials(result.data.credentials);
       console.log(result.data);
       setLoading(true);
@@ -132,7 +132,6 @@ function SuperviseTest(){
     <div className="conatiner p-3" style={{backgroundColor:"#E8F5FF"}}>
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
-          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo}></StudentsList>
           <ToastContainer
             position="bottom-right"
             autoClose={false}
@@ -143,6 +142,7 @@ function SuperviseTest(){
             draggable
             style={{ width: "350px" }}
           />
+          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo}></StudentsList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
@@ -151,7 +151,8 @@ function SuperviseTest(){
           {
             verifications.map((verification,index)=>{
 
-              return <StudentCard className="" key={index} testId={testId} submission={submissions[index]} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} notify={notify} studentName={studentName} studentInfo={studentInfo}/ >;
+
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} submission={submissions[index]} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
 
             })
           }
@@ -181,6 +182,10 @@ function StudentCard(props){
     props.changePcState(id,value);
   }
 
+  function pushHandDetetionNotice(){
+    props.notify(props.studentName[props.index]);
+  }
+  
   function getIdentificationImgae(e){
     getimages("student_card",setStudentCard);
     getimages("face",setface);
@@ -195,11 +200,6 @@ function StudentCard(props){
       })
       .catch(()=>{ console.log("실패") })
   }
-
-  function pushHandDetetionNotice(){
-    props.notify(props.studentName[props.index]);
-  }
-  
   return(
     <div className="col-md-6 mb-5">
       <Card style={{borderColor: "white", padding: "3%", backgroundColor:"white", borderRadius: "20px", boxShadow: "3px 3px 3px #dcdcdc"}}>
@@ -209,9 +209,6 @@ function StudentCard(props){
         <Card.Body>
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
           <hr />
-          <Card.Text>
-            {props.verification.submissionId}(submissionId)
-          </Card.Text>
           <Card.Text>
           본인인증 : {verification_status_options[props.verification.verified]}
           </Card.Text>
