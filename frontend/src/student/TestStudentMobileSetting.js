@@ -5,18 +5,40 @@ import axios from 'axios';
 import { BrowserView,MobileView } from 'react-device-detect';
 import Viewer from '../kinesisVideo/Viewer';
 import {baseUrl} from "../component/baseUrl"
+import { useInterval } from 'react-use';
+import moment from 'moment';
+import 'moment/locale/ko';
 
 function TestStudentMobileSetting(props){
+  moment.locale('ko')
+
   let {testId, studentId} =useParams();
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
+
+  let [capture_1,setCapture_1]= useState("");
   let credentials=props.credentials
   let room=props.room
   let studentNum=props.student.studentNumber
   let video=props.video
   let audio=props.audio
   let id=props.room.device+props.student.id
-  console.log(props)
+  let [ended,setEnded]=useState(false)
+  let startTime=props.test.startTime;
+  let endTime=props.test.endTime;
+
+
+  useInterval(() => {
+    let currentTime = moment();
+    // let testStartTime = moment("2021 10 31 18:07");//테스트용
+    let testStartTime = moment(props.test.startTime);
+    // let testEndTime = moment("2021 11 16 23:11");//테스트용
+    let testEndTime = moment(props.test.endTime);
+    let durationEndTime = moment.duration(testEndTime.diff(currentTime));
+    durationEndTime < 0 ? setEnded(true) :setEnded(false) 
+  }, 1000);
+
+
   return(
     <div className="m-4"> 
       <BrowserView>
@@ -28,6 +50,8 @@ function TestStudentMobileSetting(props){
         <Viewer 
           testId ={testId}
           studentId={studentId}
+          startTime={startTime}
+          endTime={endTime}
           sendVideo={video}
           sendAudio={audio}
           region= "us-east-2" 
@@ -37,30 +61,73 @@ function TestStudentMobileSetting(props){
           clientId = {id} 
           sessionToken = {credentials.sessionToken} />
         <div className="container">
+          {!ended?
           <div className="row">
-            <Button 
-              className="col-5" 
-              variant="primary" 
-              onClick =
-                {(e) => capture(e,testId,studentNum,setStudentCard,"student_card")
-                }>학생증사진등록
-            </Button>
-            <div className="col-2"></div>
-            <Button 
-              className="col-5" 
-              variant="danger" 
-              onClick =
-                {(e) => capture(e,testId,studentNum,setFace,"face")
-                }>얼굴사진등록
-            </Button>
-          </div>
+          <Button 
+            className="col-5" 
+            variant="primary" 
+            onClick =
+              {(e) => capture(e,testId,studentNum,setStudentCard,"student_card")
+              }>학생증사진등록
+          </Button>
+          <div className="col-2"></div>
+          <Button 
+            className="col-5" 
+            variant="danger" 
+            onClick =
+              {(e) => capture(e,testId,studentNum,setFace,"face")
+              }>얼굴사진등록
+          </Button>
         </div>
+        :
+        <div className="row">
+          <Button 
+            className="col-5" 
+            variant="warning" 
+            onClick =
+              {(e) => capture(e,testId,studentNum,setCapture_1,"capture_1")
+              }>답안지전면캡쳐
+          </Button>
+          <div className="col-2">
+            <input type="file" accept="image/*" capture="camera" id="camera" className="d-none" />
+          </div>
+          <Button 
+            className="col-5" 
+            variant="success" 
+            onClick =
+              {(e) => {
+               
+                let camera=document.querySelector("#camera")
+                let frame=document.querySelector("#frame")
+                camera.addEventListener("change",function(e){
+                  let file=e.target.files[0];
+                  UploadImageToS3(testId,studentNum,file,"answer_1")
+                  frame.src=URL.createObjectURL(file)})
+                camera.click();
+                }
+                
+              }>답안지후면카메라사진
+          </Button>
+        </div>
+        }
+          
+        </div>
+        {!ended?
         <div className="row mt-5">
           <div>사진 재등록을 원하신다면 버튼을 다시 누르시면 됩니다.</div>
           <img src={studentCard} className="image col-5" alt="studentCard"></img>
           <div className="col-2"></div>
           <img src={face} className="image col-5" alt="face"></img>
         </div>
+        :
+         <div className="row mt-5">
+          <div>사진 재등록을 원하신다면 버튼을 다시 누르시면 됩니다.</div>
+          <img src={capture_1} className="image col-5" alt="capture_1"></img>
+          <div className="col-2"></div>
+          <img id="frame" className="image col-5" alt="camera"></img>
+        </div>
+        }
+
       </MobileView>
     </div>
   )

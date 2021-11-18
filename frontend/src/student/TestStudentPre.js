@@ -5,6 +5,8 @@ import axios from "axios";
 import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
 import Loading from '../component/Loading';
+import NavBarStudent from '../component/NavBarStudent';
+import "../component/Chat.css"
 import {baseUrl} from "../component/baseUrl"
 
 function TestStudentPre(){
@@ -53,7 +55,8 @@ function TestStudentPre(){
   
   if(!loading)return(<Loading></Loading>)
   return(
-    <div>
+    <div className="position-relative">
+      <NavBarStudent></NavBarStudent>
       <BrowserView> 
         <Nav variant="tabs" >
           {

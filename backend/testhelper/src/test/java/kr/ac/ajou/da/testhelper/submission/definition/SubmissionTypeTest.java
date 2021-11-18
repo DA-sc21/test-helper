@@ -1,7 +1,6 @@
 package kr.ac.ajou.da.testhelper.submission.definition;
 
 import kr.ac.ajou.da.testhelper.course.Course;
-import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
@@ -21,7 +20,7 @@ class SubmissionTypeTest {
             course);
     private final Student student = new Student(1L, "name", "201820000", "email@ajou.ac.kr");
     private final long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, VerificationStatus.PENDING, supervisedBy);
+    private final Submission submission = new Submission(1L, student, test, supervisedBy);
 
     @Test
     void resolveSubmissionPath_SubmissionTypeScreenShareVideo() {

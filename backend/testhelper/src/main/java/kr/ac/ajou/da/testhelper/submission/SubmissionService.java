@@ -4,6 +4,8 @@ import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
