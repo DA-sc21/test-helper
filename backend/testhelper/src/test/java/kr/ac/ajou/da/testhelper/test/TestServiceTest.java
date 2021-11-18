@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.account.Account;
+import kr.ac.ajou.da.testhelper.account.AccountMapper;
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
@@ -28,11 +29,20 @@ class TestServiceTest {
     @Mock
     private TestRoomService testRoomService;
 
+    @Mock
+    private TestsMapper testsMapper;
+
+    @Mock
+    private AccountMapper accountMapper;
+
     @BeforeEach
     private void init() {
         testRepository = mock(TestRepository.class);
         testRoomService = mock(TestRoomService.class);
-        testService = new TestService(testRepository, testRoomService);
+        testsMapper = mock(TestsMapper.class);
+        accountMapper = mock(AccountMapper.class);
+
+        testService = new TestService(testRepository, testRoomService, testsMapper, accountMapper);
     }
 
     @Test
