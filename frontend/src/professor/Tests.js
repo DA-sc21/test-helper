@@ -5,8 +5,10 @@ import moment from "moment";
 import { useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
 import {baseUrl} from "../component/baseUrl"
+import 'moment/locale/ko';
 
 function Tests(){
+  moment.locale('ko')
 
   let [testDatas,setTestData] = useState([])
   let [loading,setLoading] = useState(false)
@@ -89,7 +91,12 @@ function TestCard(props){
           </Card.Text>
           <div className="row">
             <Button className="col-md-4" variant="primary">문제출제</Button>
-            <Button className="col-md-4" variant="danger" onClick={()=>{history.push("/tests/"+props.test.id+"/supervise")}}>시험감독</Button>
+            <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
+              pathname: "/tests/"+props.test.id+"/supervise",
+              state: {
+                testStartTime: props.test.start_time,
+                testEndTime: props.test.end_time
+                }})}}>시험감독</Button>
             <Button className="col-md-4" variant="success">채점하기</Button>
           </div>
         </Card.Body>

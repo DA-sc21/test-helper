@@ -1,6 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
+import { Button } from 'react-bootstrap';
+import axios from 'axios';
+import moment from 'moment';
+import { useInterval } from 'react-use';
+import 'moment/locale/ko';
+import Compress from "react-image-file-resizer";
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -23,6 +29,10 @@ function onStatsReport(report) {
 }
 
 const Viewer = (props) => {
+  moment.locale('ko')
+
+  let cnt = 0;
+  let captureId = null;
   const localView = useRef(null);
   const viewer = {
     signalingClient: null,
@@ -38,11 +48,103 @@ const Viewer = (props) => {
     natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
     receivedMessages: '',
   };
+  const [dataChannel,setDataChannel] = useState();
 
   useEffect(() => {
     console.log(props);
     startPlayerForViewer(props);
   }, []);
+
+  useInterval(() => {
+    let currentTime = moment(); //현재 시간
+    let testStartTime = moment(props.startTime);
+    let testEndTime = moment(props.endTime);
+    // let testStartTime = moment("2021 11 17 22:53");//테스트
+    // let testEndTime = moment("2021 11 17 22:55");//테스트
+    let startTimeDifference = moment.duration(testStartTime.diff(currentTime)).seconds();
+    let endTimeDifference = moment.duration(testEndTime.diff(currentTime)).seconds();
+    if(startTimeDifference===0){
+      startCapture();
+    }
+    if(endTimeDifference===0){
+      stopCapture();
+    }
+  }, 1000);
+  
+  function startCapture(e){
+    captureId=setInterval(capture, 3000);
+  }
+  
+  function stopCapture(e){
+    clearInterval(captureId);
+  }
+  
+  function capture(e){ //두손 사진 캡쳐 제출
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(mediaStream => {
+        // Do something with the stream.
+        const track = mediaStream.getVideoTracks()[0];
+        let imageCapture = new ImageCapture(track);
+  
+        imageCapture.takePhoto()
+        .then(blob => {console.log(blob); //blob=캡쳐이미지
+          Compress.imageFileResizer(
+            blob, // the file from input
+            640, // width
+            480, // height
+            "JPG", // compress format WEBP, JPEG, PNG
+            70, // quality
+            0, // rotation
+            (uri) => {
+              checkHandDetection(uri)
+              console.log(uri);
+              // You upload logic goes here
+            },
+            "base64" // blob or base64 default base64
+          );
+        })
+        .catch(error => console.log(error));
+    })
+  }
+  
+  async function checkHandDetection(blob){
+    let form = new FormData();
+    form.append('hand_img', blob);
+    const config = {
+      header: {'content-type': 'multipart/form-data'}
+    }
+ 
+    await axios
+    // .post('http://localhost:5000/hand-detection', form, config) //local test
+    .post('https://ai.test-helper.com/hand-detection', form, config)
+    .then((result)=>{
+      console.log(result);
+      if(result.data.result === true){
+        cnt=0;
+        console.log(cnt, "true");
+      }
+      else{
+        cnt+=1;
+        if(cnt === 2){
+          console.log(cnt, "false");
+          sendMessage();
+          cnt=0;
+        }
+      }
+    })
+    .catch(()=>{ console.log("hand detection 실패") })
+  } 
+
+  function sendMessage() {
+    if (dataChannel) {
+      try {
+        dataChannel.send("HandDetection_False");
+        console.log("Message sent to master: HandDetection_False");
+      } catch (e) {
+          console.error('[VIEWER] Send DataChannel: ', e.toString());
+      }
+    }
+  }
 
   async function startPlayerForViewer(props, e) {
     console.log("viewer credentials : ",props.credentials);
@@ -154,6 +256,7 @@ const Viewer = (props) => {
     if (viewer.openDataChannel) {
         console.log(`Opened data channel with MASTER.`);
         viewer.dataChannel = viewer.peerConnection.createDataChannel('kvsDataChannel');
+        setDataChannel(viewer.dataChannel);
         viewer.peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
             const timestamp = new Date().toISOString();
