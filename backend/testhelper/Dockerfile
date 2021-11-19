@@ -7,4 +7,4 @@ COPY settings.gradle .
 COPY src src
 RUN chmod +x ./gradlew
 
-ENTRYPOINT ["./gradlew","bootRun"]
+ENTRYPOINT ["./gradlew","bootRun", "--args='--spring.profiles.active=${ENV_PROFILE}'"]

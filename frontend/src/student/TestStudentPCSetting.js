@@ -2,6 +2,7 @@ import React from 'react'
 import PCScreenShare from '../kinesisVideo/PCScreenshare'
 
 function TestStudentPCSetting(props){
+  let id = props.room.device + props.student.id;
   console.log(props)
   return(
     <div className="m-4 p-4">
@@ -11,8 +12,8 @@ function TestStudentPCSetting(props){
         accessKey={props.credentials.accessKeyId}
         secretAccessKey={props.credentials.secretAccessKey}
         sessionToken= {props.credentials.sessionToken }
-        channelName="" 
-        clientId=""
+        channelName={props.room.id} 
+        clientId={id}
       />
     </div>
   )

@@ -5,13 +5,15 @@ import axios from "axios";
 import { BrowserView, MobileView } from 'react-device-detect';
 import TestStudentRouter from './TestStudentRouter';
 import Loading from '../component/Loading';
+import NavBarStudent from '../component/NavBarStudent';
+import "../component/Chat.css"
+import {baseUrl} from "../component/baseUrl"
 
 function TestStudentPre(){
   useEffect(()=>{
     getStudentRoom();
   },[]);
   
-  let baseUrl ="http://api.testhelper.com"
   let {testId, studentId} =useParams();
   let [room,setRoom]=useState();
   let [student,setStudent]=useState();
@@ -46,13 +48,15 @@ function TestStudentPre(){
       setStudent(result.data.room.student)
       setTest(result.data.room.test)
       setLoading(true);
+      console.log(result.data);
     })
     .catch(()=>{ console.log("실패") })
   }
   
   if(!loading)return(<Loading></Loading>)
   return(
-    <div>
+    <div className="position-relative">
+      <NavBarStudent></NavBarStudent>
       <BrowserView> 
         <Nav variant="tabs" >
           {
@@ -69,23 +73,9 @@ function TestStudentPre(){
       <MobileView> 
         { mobileAgreement === false ? 
           <div style={{marginTop: '20%', marginLeft:'3%', marginRight: '3%'}}>
-            <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>안녕하세요. O O O 시험</p>
-            <p style={{marginBottom: '20%', fontSize: '20px', fontWeight: 'bold'}}>응시 환경 세팅 "모바일" 화면입니다.</p>
-              <p style={{fontWeight: 'bold'}}>카메라 및 마이크 공유를 <span style={{ color: 'rgb(43, 73, 207)', fontWeight: 'bold'}}>모두 동의</span>한 후 설정완료 버튼을 클릭해주세요.</p>
-              <div style={{marginTop: '15%'}}>
-                <p style={{fontWeight: 'bold'}}>모바일 카메라 공유</p>
-                <div>
-                  <input type="checkbox" checked={video} onChange={(e) => changeVideo(e)}></input>
-                  <label>동의</label>
-                </div>
-              </div>
-              <div style={{marginTop: '10%', marginBottom: '20%'}}>
-                <p style={{fontWeight: 'bold'}}>모바일 마이크 공유</p>
-                <div>
-                  <input type="checkbox" checked={audio} onChange={(e) => changeAudio(e)}></input>
-                  <label> 동의</label>
-                </div>
-              </div>
+            <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>{test.name}</p>
+            <p style={{marginBottom: '25%', fontSize: '20px', fontWeight: 'bold'}}>응시 환경 세팅 "모바일" 화면입니다.</p>
+              <p style={{fontWeight: 'bold', marginBottom:"20%"}}>화상회의 입장 시 카메라 및 마이크 공유를 <br/><span style={{ color: 'rgb(43, 73, 207)', fontWeight: 'bold'}}>모두 동의</span> 해주세요.</p>
             <Button 
               onClick={()=>{ 
                 console.log('Button clicked')
@@ -93,7 +83,7 @@ function TestStudentPre(){
                 history.push("/tests/"+testId+"/students/"+studentId+"/mobilesetting")
               }} 
               className="btn btn-primary" >
-              화상 회의 입장
+              화상회의 입장
             </Button> 
           </div>
           : null
@@ -108,6 +98,8 @@ function TestStudentPre(){
           credentials={credentials}
           student={student}
           room={room}
+          video={true}
+          audio={true}
         />
     </div>
   )

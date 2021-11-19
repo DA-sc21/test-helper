@@ -1,17 +1,5 @@
 version: "2"
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
-    build:
-      context: nginx/
-      dockerfile : Dockerfile
-    image: reverse-proxy:latest
-    ports:
-      - 80:80
-    depends_on:
-      - data-server
-      - front
-
   data-server:
     container_name: data-server
     build:
@@ -20,12 +8,9 @@ services:
     image: data-server:latest
     environment :
       - AWS_PROFILE=test-helper
+      - ENV_PROFILE=${PROFILE:-prod}
     ports:
       - 8081:8081
-    expose:
-      - 8081
-    environment:
-      - AWS_PROFILE=test-helper
     volumes:
       - ~/.aws/:/root/.aws:ro
     

@@ -4,6 +4,8 @@ import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -43,13 +45,9 @@ public class SubmissionService {
     @Transactional
     public String getUploadUrlByTestIdAndStudentIdAndSubmissionType(Long testId, Long studentId, SubmissionType submissionType) {
 
-        if (!submissionRepository.existsByTestIdAndStudentId(testId, studentId)) {
-            throw new SubmissionNotFoundException();
-        }
+        Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
-        String submissionPath = submissionType.resolveSubmissionPath(testId, studentId);
-
-        return fileService.getUploadUrl(submissionPath);
+        return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission));
     }
 
 
