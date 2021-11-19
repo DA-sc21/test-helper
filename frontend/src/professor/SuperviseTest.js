@@ -119,7 +119,7 @@ function SuperviseTest(){
   const notify = (name) => toast.warn(`${name} 학생의 손이 화면에서 벗어났습니다.`, {
     position: "bottom-right",
     transition: Slide,
-    autoClose: false,
+    autoClose: 15000,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: false,
@@ -134,7 +134,8 @@ function SuperviseTest(){
         <div className="col-md-3 d-flex justify-content-start">
           <ToastContainer
             position="bottom-right"
-            autoClose={false}
+            autoClose={15000}
+            hideProgressBar={false}
             newestOnTop={false}
             closeOnClick={false}
             rtl={false}
