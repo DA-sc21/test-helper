@@ -145,7 +145,7 @@ function SuperviseTest(props){
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0"></ChattingModal>
-          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641"}} onClick={(e)=> exitTest(e)}>종료</Button>
+          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={(e)=> exitTest(e)}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
           {
@@ -248,7 +248,7 @@ function ChattingModal(props) {
     <>
       {props.studentId==="0"
         ?
-          <Button variant="success" onClick={handleShow} style={{marginRight: "2.5%"}}>
+          <Button onClick={handleShow} style={{marginRight: "2.5%", backgroundColor:"#d2d6df", borderColor:"#d2d6df", color:"black", fontWeight:"bold", boxShadow:"2px 2px 2px #57575775"}}>
           공지사항
           </Button>
         :
@@ -312,7 +312,7 @@ function StudentsList(props) {
 
   return (
     <>
-      <Button style={{backgroundColor: "#506EA5", borderColor:"#506EA5"}} onClick={handleShow}>
+      <Button style={{backgroundColor: "#506EA5", borderColor:"#506EA5", boxShadow:"2px 2px 2px #57575775"}} onClick={handleShow}>
         전체 학생 현황
       </Button>
 
@@ -374,7 +374,7 @@ function AnswerSheetSubmissionList(props) {
 
   return (
     <>
-      <Button style={{backgroundColor: "#4f596d", borderColor:"#4f596d", marginLeft:"3%"}} onClick={handleShow}>
+      <Button style={{backgroundColor: "#4f596d", borderColor:"#4f596d", marginLeft:"3%", boxShadow:"2px 2px 2px #57575775"}} onClick={handleShow}>
         답안 제출 현황
       </Button>
 
