@@ -169,10 +169,11 @@ const Master = (props) => {
               if(time===0){
                 props.pushHandDetetionNotice();
                 time = Math.floor(Date.now() / 1000);
+                console.log(time)
               }
               else{
-                if((Math.floor(Date.now() / 1000)-time > 15)){
-                  props.pushHandDetetionNotice();
+                if((Math.floor(Date.now() / 1000)-time >= 40)){
+                  // console.log(time,Math.floor(Date.now() / 1000), Math.floor(Date.now() / 1000)-time)
                   time=0;
                 }
               }
