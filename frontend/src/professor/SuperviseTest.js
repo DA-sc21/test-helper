@@ -118,7 +118,7 @@ function SuperviseTest(props){
   async function exitTest(e){
     history.push('/tests');
     await axios
-    .post(baseUrl+'/tests/'+testId+'/ENDED')
+    .put(baseUrl+'/tests/'+testId+'/status?status=ENDED')
     .then((result)=>{
       console.log(result.data);
     })
