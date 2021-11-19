@@ -36,14 +36,22 @@ public class TestRoomService {
     }
 
     @Transactional
-    public List<StudentRoomDto> createRoomsForStudents(Long testId, Long supevisedBy) {
+    public List<StudentRoomDto> createRoomsForStudents(Long testId, Long supervisedBy) {
 
-        List<Submission> submissions = submissionService.getByTestIdAndSupervisedBy(testId, supevisedBy);
+        List<Submission> submissions = submissionService.getByTestIdAndSupervisedBy(testId, supervisedBy);
 
         submissions.forEach(submission -> testRoomManagingService.createRoom(submission.resolveRoomId()));
 
         return submissions.stream()
                 .map(StudentRoomDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteRoomsForStudents(Long testId, Long supervisedBy) {
+
+        List<Submission> submissions = submissionService.getByTestIdAndSupervisedBy(testId, supervisedBy);
+
+        submissions.forEach(submission -> testRoomManagingService.deleteRoom(submission.resolveRoomId()));
     }
 }
