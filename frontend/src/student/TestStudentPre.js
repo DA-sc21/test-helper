@@ -10,9 +10,6 @@ import "../component/Chat.css"
 import {baseUrl} from "../component/baseUrl"
 
 function TestStudentPre(){
-  useEffect(()=>{
-    getStudentRoom();
-  },[]);
   
   let {testId, studentId} =useParams();
   let [room,setRoom]=useState();
@@ -23,7 +20,8 @@ function TestStudentPre(){
   let [loading,setLoading] = useState(false)
   let [video, setVideo] = useState(false);
   let [audio, setAudio] = useState(false);
-  let [tabCompleted,setTabCompleted]=useState([false,false,false,false,false])
+  let [consented,setConsented]=useState(false)
+  let [tabCompleted,setTabCompleted]=useState([consented,false,false,false,""])
   let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
   let history = useHistory()
@@ -39,10 +37,15 @@ function TestStudentPre(){
     console.log('마이크 공유 여부:', e.target.checked)
   }
 
+  useEffect(()=>{
+    getStudentRoom();
+  },[]);
+  
   async function getStudentRoom(){
     await axios
     .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
     .then((result)=>{ 
+      setConsented(result.data.consented)
       setCredentials(result.data.credentials)
       setRoom(result.data.room)
       setStudent(result.data.room.student)
