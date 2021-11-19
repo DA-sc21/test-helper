@@ -16,6 +16,8 @@ function TestStudentRouter (props){
   let credentials=props.credentials
   let student=props.student
   let room=props.room
+  let video=props.video
+  let audio=props.audio
 
   return (
     <>
@@ -35,7 +37,9 @@ function TestStudentRouter (props){
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
             setTabCompleted={setTabCompleted}
-            credentials={credentials} />
+            credentials={credentials}
+            student={student}
+            room={room} />
         }
       />
       <Route exact path={path+"/mobilesetting"}
@@ -47,7 +51,9 @@ function TestStudentRouter (props){
             setTabCompleted={setTabCompleted}
             credentials={credentials} 
             student={student}
-            room={room}/>
+            room={room}
+            video={video}
+            audio={audio} />
         }
       />
       <Route exact path={path+"/identification"}
@@ -68,7 +74,10 @@ function TestStudentRouter (props){
             credentials={credentials}
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
-            setTabCompleted={setTabCompleted} />
+            setTabCompleted={setTabCompleted} 
+            student={student}
+            room={room}
+            />
         }
       />
       <Route exact path={path+"/setting"}

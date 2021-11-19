@@ -52,7 +52,16 @@ dependencies {
 	// web client
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	
+	// chatting
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'com.google.guava:guava:23.0'
 
+}
+
+bootRun{
+	systemProperties System.properties
 }
 
 test {
