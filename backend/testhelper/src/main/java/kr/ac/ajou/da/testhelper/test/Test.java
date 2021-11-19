@@ -3,6 +3,7 @@ package kr.ac.ajou.da.testhelper.test;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
+import kr.ac.ajou.da.testhelper.test.exception.CannotEndTestBeforeEndTimeException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +32,9 @@ public class Test {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @Column(nullable = false)
+    @Column(name = "test_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private TestStatus testStatus = TestStatus.CREATE;
+    private TestStatus status = TestStatus.CREATE;
 
     //private String problem;
 
@@ -55,5 +56,18 @@ public class Test {
 
     public String resolveName() {
         return String.format("%s %s", course.getName(), testType.getName());
+    }
+
+    public void updateStatus(TestStatus status) {
+
+        if(isEndingTestBeforeEndTime(status)){
+            throw new CannotEndTestBeforeEndTimeException();
+        }
+
+        setStatus(status);
+    }
+
+    private boolean isEndingTestBeforeEndTime(TestStatus status) {
+        return TestStatus.ENDED.equals(status) && LocalDateTime.now().isBefore(endTime);
     }
 }
