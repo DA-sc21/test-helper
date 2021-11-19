@@ -59,8 +59,8 @@ const Viewer = (props) => {
     let currentTime = moment(); //현재 시간
     let testStartTime = moment(props.startTime);
     let testEndTime = moment(props.endTime);
-    // let testStartTime = moment("2021 11 17 22:53");//테스트
-    // let testEndTime = moment("2021 11 17 22:55");//테스트
+    // let testStartTime = moment("2021 11 19 21:39");//테스트
+    // let testEndTime = moment("2021 11 19 21:45");//테스트
     let startTimeDifference = moment.duration(testStartTime.diff(currentTime)).seconds();
     let endTimeDifference = moment.duration(testEndTime.diff(currentTime)).seconds();
     if(startTimeDifference===0){
