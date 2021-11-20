@@ -8,8 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -55,7 +55,7 @@ public class Examinee implements UserDetails {
     @SneakyThrows
     public static String resolvePassword(Long examineeId, Long studentId, Long testId) {
         String password = String.format("%d %d %d", examineeId, studentId, testId);
-        return Arrays.toString(MessageDigest.getInstance("MD5").digest(password.getBytes()));
+        return DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(password.getBytes()));
     }
 
     @Override

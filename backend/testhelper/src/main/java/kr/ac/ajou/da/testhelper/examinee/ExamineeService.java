@@ -19,10 +19,10 @@ public class ExamineeService implements UserDetailsService {
         Long testId = Long.parseLong(tokens[0]);
         Long studentId = Long.parseLong(tokens[1]);
 
-        examineeRepository.findByTestIdAndStudentId(testId, studentId)
-                .orElseThrow(()-> new UsernameNotFoundException(username));
+        Examinee examinee = examineeRepository.findByTestIdAndStudentId(testId, studentId)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return null;
+        return examinee;
     }
 
 }

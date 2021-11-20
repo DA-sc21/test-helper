@@ -1,6 +1,6 @@
 package kr.ac.ajou.da.testhelper.examinee.login;
 
-import kr.ac.ajou.da.testhelper.account.login.dto.LoginReqDto;
+import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.examinee.login.dto.ExamineeLoginReqDto;
 import kr.ac.ajou.da.testhelper.examinee.login.exception.FailedToLoginExamineeException;
 import lombok.RequiredArgsConstructor;
@@ -18,28 +18,30 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ExamineeLoginService {
 
-    private final AuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider examineeAuthenticationProvider;
 
     public void login(ExamineeLoginReqDto reqDto) {
 
-        log.info("Logging in : {}", reqDto.getUsername());
+        log.info("Logging in : Test = {} Student = {}", reqDto.getTestId(), reqDto.getStudentId());
 
         Authentication authReq = resolveAuthenticationReqDto(reqDto);
 
         try {
 
-            Authentication newAuthentication = authenticationProvider.authenticate(authReq);
+            Authentication newAuthentication = examineeAuthenticationProvider.authenticate(authReq);
 
             SecurityContextHolder.getContext().setAuthentication(newAuthentication);
 
         } catch (AuthenticationException ex) {
-            log.info("Login Failed : {}", reqDto.getUsername());
+            log.info("Login Failed : Test = {} Student = {}", reqDto.getTestId(), reqDto.getStudentId());
             throw new FailedToLoginExamineeException();
         }
     }
 
-    private Authentication resolveAuthenticationReqDto(LoginReqDto reqDto) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(reqDto.getUsername(), reqDto.getPassword());
+    private Authentication resolveAuthenticationReqDto(ExamineeLoginReqDto reqDto) {
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(
+                Examinee.resolveUsername(reqDto.getStudentId(), reqDto.getTestId()),
+                reqDto.getPassword());
         authReq.setDetails(SecurityContextHolder.getContext().getAuthentication().getDetails());
         return authReq;
     }

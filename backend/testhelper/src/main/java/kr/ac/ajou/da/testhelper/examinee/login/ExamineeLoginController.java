@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExamineeLoginController {
     private final ExamineeLoginService examineeLoginService;
 
-    @PostMapping("/sessions")
+    @PostMapping("examinee/sessions")
     public ResponseEntity<BooleanResponse> login(ExamineeLoginReqDto reqDto){
 
         examineeLoginService.login(reqDto);
@@ -22,7 +22,7 @@ public class ExamineeLoginController {
 
     }
 
-    @DeleteMapping("/sessions")
+    @DeleteMapping("examinee/sessions")
     public ResponseEntity<BooleanResponse> logout(){
 
         examineeLoginService.logout();
