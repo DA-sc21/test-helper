@@ -59,4 +59,13 @@ public class SubmissionService {
 
         return true;
     }
+
+    @Transactional
+	public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, String submitted) {
+    	Submission submission = getByTestIdAndStudentId(testId, studentId);
+    	
+    	submission.updateSubmitted(submitted);
+    	
+		return true;
+	}
 }
