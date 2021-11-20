@@ -46,8 +46,8 @@ function Tests(){
   return(
     <div className="container mt-3 p-2">
       <ButtonGroup aria-label="Basic example">
-        <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>id순오름정렬</Button>
-        <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>id순내림정렬</Button>
+        <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>생성빠른순정렬</Button>
+        <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button>
         <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
         <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
       </ButtonGroup>
