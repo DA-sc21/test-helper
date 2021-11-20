@@ -64,10 +64,11 @@ function Tests(){
 
 function TestCard(props){
   let test_status_options={
-    "CREATE" : "문제생성중",
-    "PROBLEM" : "실시대기중",
-    "MARK" : "채점중",
-    "FINISH" : "채점완료",
+    "CREATE" : "시험 생성중",
+    "IN_PROGRESS" : "시험 진행중",
+    "ENDED" : "시험 종료",
+    "MARK" : "시험 채점중",
+    "GRADED" : "점수 전송 완료",
   }
   let history = useHistory()
 
