@@ -2,6 +2,8 @@ package kr.ac.ajou.da.testhelper.test.room;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.aws.credentials.AWSTemporaryCredentialService;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsExaminee;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
 import kr.ac.ajou.da.testhelper.definition.DeviceType;
 import kr.ac.ajou.da.testhelper.test.Test;
 import kr.ac.ajou.da.testhelper.test.TestService;
@@ -31,6 +33,7 @@ public class TestRoomController {
     // 감독관 시험 실시 준비
     // POST /tests/{testId}/room를 변경
     @PostMapping("/tests/{testId}/students/room")
+    @IsProctor
     public ResponseEntity<PostTestStudentRoomResDto> postTestStudentRoom(@PathVariable Long testId) {
 
         Account supervisedBy = new Account(1L);
@@ -47,6 +50,7 @@ public class TestRoomController {
     //대학생 시험 대기실 입장
     // GET /tests/{testID}/rooms을 변경
     @GetMapping("/tests/{testID}/students/{studentID}/room")
+    @IsExaminee
     public ResponseEntity<GetTestStudentRoomResDto> getTestStudentRoom(@PathVariable Long testID,
                                                                        @PathVariable Long studentID,
                                                                        @ApiIgnore Device device) {

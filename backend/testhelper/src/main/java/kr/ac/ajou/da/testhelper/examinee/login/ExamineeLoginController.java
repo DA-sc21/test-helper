@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.examinee.login;
 
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsExaminee;
 import kr.ac.ajou.da.testhelper.examinee.login.dto.ExamineeLoginReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ExamineeLoginController {
     }
 
     @DeleteMapping("examinee/sessions")
+    @IsExaminee
     public ResponseEntity<BooleanResponse> logout(){
 
         examineeLoginService.logout();

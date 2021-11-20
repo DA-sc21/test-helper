@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.account.login;
 
 import kr.ac.ajou.da.testhelper.account.login.dto.LoginReqDto;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ public class LoginController {
     }
 
     @DeleteMapping("/sessions")
+    @IsAccount
     public ResponseEntity<BooleanResponse> logout(){
 
         loginService.logout();

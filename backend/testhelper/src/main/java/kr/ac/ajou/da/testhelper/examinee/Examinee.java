@@ -44,7 +44,7 @@ public class Examinee implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("STUDENT"));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_EXAMINEE"));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsExaminee;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionUploadUrlResDto;
 import kr.ac.ajou.da.testhelper.submission.dto.PutSubmissionConsentedReqDto;
@@ -19,12 +21,14 @@ public class SubmissionController {
     private final SubmissionService submissionService;
 
     @GetMapping("/tests/{testId}/submissions")
+    @IsProctor
     public List<HashMap<String, Object>> getSubmissionStatus(@PathVariable int testId,
                                                              @RequestParam(required = false, defaultValue = "0") int studentId) throws SQLException {
         return submissionService.getSubmissionStatus(testId, studentId);
     }
 
     @GetMapping("/tests/{testId}/students/{studentId}/submissions/{submissionType}/upload-url")
+    @IsExaminee
     public ResponseEntity<GetSubmissionUploadUrlResDto> getSubmissionUploadUrl(@PathVariable Long testId,
                                                                                @PathVariable Long studentId,
                                                                                @PathVariable SubmissionType submissionType) {
@@ -35,6 +39,7 @@ public class SubmissionController {
     }
 
     @PutMapping("/tests/{testId}/students/{studentId}/submissions/consented")
+    @IsExaminee
     public ResponseEntity<BooleanResponse> putSubmissionConsented(@PathVariable Long testId,
                                                                   @PathVariable Long studentId,
                                                                   @RequestBody PutSubmissionConsentedReqDto reqDto) {
