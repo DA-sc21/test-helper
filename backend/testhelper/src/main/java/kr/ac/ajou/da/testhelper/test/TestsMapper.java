@@ -1,13 +1,13 @@
-package kr.ac.ajou.da.testhelper.tests;
-
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
+package kr.ac.ajou.da.testhelper.test;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 
 @Mapper
 @Repository
