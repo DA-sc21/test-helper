@@ -4,6 +4,7 @@ import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionUploadUrlResDto;
 import kr.ac.ajou.da.testhelper.submission.dto.PutSubmissionConsentedReqDto;
+import kr.ac.ajou.da.testhelper.submission.dto.PutSubmissionSubmittedReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,4 +43,14 @@ public class SubmissionController {
         return ResponseEntity.ok().body(new BooleanResponse(
                 submissionService.updateConsentedByTestIdAndStudentId(testId, studentId, reqDto.getConsented())));
     }
+    
+    @PutMapping("/tests/{testId}/students/{studentId}/submissions/submitted")
+    public ResponseEntity<BooleanResponse> putSubmissionSubmitted(@PathVariable Long testId,
+                                                                  @PathVariable Long studentId,
+                                                                  @RequestBody PutSubmissionSubmittedReqDto reqDto) {
+
+        return ResponseEntity.ok().body(new BooleanResponse(
+                submissionService.updateSubmittedByTestIdAndStudentId(testId, studentId, reqDto.getSubmitted())));
+    }
+    
 }
