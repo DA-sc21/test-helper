@@ -16,21 +16,18 @@ function NavBarStudent(){
           <Navbar.Brand as = {Link} to="/">Test Helper</Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
-          <Navbar.Text className="mx-2">
-            000학생, 반갑습니다.
-            </Navbar.Text>
           </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text className="mx-2">
             </Navbar.Text>
-            <Button className="mx-1" variant="primary" onClick={()=>{setShowNotice(!showNotice)}} >공지사항</Button>
-            <Button className="mx-1" variant="primary" onClick={()=>{setShowChat(!showChat)}} >채팅하기</Button>
+            <Button className="mx-1" variant="primary" onClick={()=>{setShowNotice(!showNotice);setNewMessages([])}} style={{zIndex:2000}} >공지사항</Button>
+            <Button className="mx-1" variant="primary" onClick={()=>{setShowChat(!showChat);setNewMessages([])}} style={{zIndex:2000}} >채팅하기</Button>
           </Navbar.Collapse>
         </Container>
       </Navbar>
       <ChatForm testId={testId} role="Viewer" chatroom="0" show={showNotice} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
       <ChatForm testId={testId} role="Viewer" chatroom={studentId} show={showChat} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
-      <ToastContainer className="p-3 chatAlarmContainer positionTop" position="top-center">
+      <ToastContainer className="p-3 chatAlarmContainer positionTop" position="top-center" style={{zIndex:2000}}>
         {
           newMessages.map((message,index)=>{
           let chatroom=message.chatroom

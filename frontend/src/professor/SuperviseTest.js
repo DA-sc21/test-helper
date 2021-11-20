@@ -1,5 +1,6 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup, Card, Button, Offcanvas, Image, ButtonGroup, Badge, Modal, Accordion} from 'react-bootstrap';
+import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion } from 'react-bootstrap';
+import {ToastContainer as ToastContainerB} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
@@ -10,6 +11,7 @@ import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
 import moment from "moment";
+import ChatAlarm from '../component/ChatAlarm';
 
 function SuperviseTest(props){
   let history = useHistory();
@@ -145,7 +147,7 @@ function SuperviseTest(props){
           <AnswerSheetSubmissionList studentInfo={studentInfo} testId={testId}></AnswerSheetSubmissionList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
-          <ChattingModal studentId="0"></ChattingModal>
+          <ChattingModal studentId="0" cheating={false}></ChattingModal>
           <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={(e)=> exitTest(e)}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
@@ -217,8 +219,8 @@ function StudentCard(props){
             : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
                 changeVerifications(props,true)}}>본인인증승인
               </Button> }
-            <ChattingModal studentId={props.verification.studentId}></ChattingModal>
-            <Button className="col-md-4" variant="danger">경고</Button>
+            <ChattingModal studentId={props.verification.studentId} cheating={false}></ChattingModal>
+            <ChattingModal studentId={props.verification.studentId} cheating={true}></ChattingModal>
           </div>
         </Card.Body>
         <Card.Footer>
@@ -253,11 +255,25 @@ function ChattingModal(props) {
           공지사항
           </Button>
         :
+          props.cheating?
+          <Button className="col-md-4" variant="danger" onClick={handleShow}>
+          부정행위경고
+          </Button>
+          :
           <Button className="col-md-4" variant="success" onClick={handleShow}>
           채팅
           </Button>
       }
-        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatFormPro>
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
+        <ToastContainerB className="p-3 chatAlarmContainer positionTop" position="top-center">
+          {
+            newMessages.map((message,index)=>{
+            let chatroom=message.chatroom
+            return(
+            <ChatAlarm key={index} newMessages={newMessages} newMessage={message} chatroom={chatroom} setNewMessages={setNewMessages} ></ChatAlarm>
+            )
+          })}
+        </ToastContainerB>
     </>
   );
 }
