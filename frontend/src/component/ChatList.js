@@ -5,7 +5,7 @@ import { Form , Button } from 'react-bootstrap';
 export default function ChatList(props){
   return(
     <div className="row">
-      <div className="chatcard chat-app">
+      <div className="chatcard chat-app" style={{boxShadow:"3px 3px 3px #57575775"}}>
         <div className="chat">
           <div className="chat-room p-3">{props.notice?"공지사항":"채팅하기"}</div>
           <div className="chat-history">

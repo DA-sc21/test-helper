@@ -24,6 +24,7 @@ function onStatsReport(report) {
 }
 
 const Master = (props) => {
+  let time = 0;
   const remoteView = useRef(null);
   const pcView = useRef(null);
   const [isAudioShare, setIsAudioShare] = useState(false); //모바일 마이크 공유 여부
@@ -163,10 +164,20 @@ const Master = (props) => {
         master.dataChannelByClientId[remoteClientId] = peerConnection.createDataChannel('kvsDataChannel');
         peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
-            const timestamp = new Date().toISOString();
-            const loggedMessage = `${timestamp} - from ${remoteClientId}: ${message.data}\n`;
-            console.log(loggedMessage);
-            master.receivedMessages += loggedMessage;
+            console.log(message.data);
+            if(message.data==="HandDetection_False"){
+              if(time===0){
+                props.pushHandDetetionNotice();
+                time = Math.floor(Date.now() / 1000);
+                console.log(time)
+              }
+              else{
+                if((Math.floor(Date.now() / 1000)-time >= 40)){
+                  // console.log(time,Math.floor(Date.now() / 1000), Math.floor(Date.now() / 1000)-time)
+                  time=0;
+                }
+              }
+            }
           };
         };
       }
