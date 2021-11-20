@@ -24,7 +24,7 @@ function TestStudentMobileSetting(props){
   let audio=props.audio
   let id=props.room.device+props.student.id
   let [ended,setEnded]=useState(false)
-  let [submitted,setSubmitted]=useState(true)
+  let [submitted,setSubmitted]=useState(false)
   let startTime=props.test.startTime;
   let endTime=props.test.endTime;
 
