@@ -29,7 +29,7 @@ function NavBar(){
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text>
-          Signed in as: <a href="#login">000 교수</a>
+          Signed in as: <a href="#login">윤대균 교수</a>
           </Navbar.Text>
         </Navbar.Collapse>
       </Container>
