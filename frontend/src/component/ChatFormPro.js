@@ -34,7 +34,7 @@ function ChatFormPro(props) {
     msg["chatroom"]=chatroom
     // ToastsStore.success(msg.message);
     setMessages((messages) => [...messages, msg]);
-    if(msg.author==="Master"){
+    if((props.role==="Viewer" && msg.author==="Master") || (props.role==="Master" && msg.author==="Viewer")){
     props.setNewMessages([msg,...props.newMessages])
     }
   };

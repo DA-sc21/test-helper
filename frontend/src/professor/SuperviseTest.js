@@ -1,5 +1,6 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup, Card, Button, Offcanvas, Image, ButtonGroup, Badge, Modal, Accordion} from 'react-bootstrap';
+import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion } from 'react-bootstrap';
+import {ToastContainer as ToastContainerB} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
@@ -10,6 +11,7 @@ import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
 import moment from "moment";
+import ChatAlarm from '../component/ChatAlarm';
 
 function SuperviseTest(props){
   let history = useHistory();
@@ -265,6 +267,15 @@ function ChattingModal(props) {
           </Button>
       }
         <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatFormPro>
+        <ToastContainerB className="p-3 chatAlarmContainer positionTop" position="top-center">
+          {
+            newMessages.map((message,index)=>{
+            let chatroom=message.chatroom
+            return(
+            <ChatAlarm key={index} newMessages={newMessages} newMessage={message} chatroom={chatroom} setNewMessages={setNewMessages} ></ChatAlarm>
+            )
+          })}
+        </ToastContainerB>
     </>
   );
 }
