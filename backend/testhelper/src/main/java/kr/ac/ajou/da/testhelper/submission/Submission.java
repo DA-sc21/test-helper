@@ -30,6 +30,9 @@ public class Submission {
 
     @Column(nullable = false)
     private Boolean consented = false;
+    
+    @Column(nullable = false)
+    private String submitted;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -58,4 +61,8 @@ public class Submission {
     public void updateConsented(boolean consented){
         this.setConsented(consented);
     }
+
+	public void updateSubmitted(String submitted) {
+		this.setSubmitted(submitted);
+	}
 }
