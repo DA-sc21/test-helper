@@ -2,7 +2,7 @@ package kr.ac.ajou.da.testhelper.test.verification;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
-import kr.ac.ajou.da.testhelper.common.security.authority.IsExaminee;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessExaminee;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationReqDto;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
@@ -42,7 +42,7 @@ public class TestStudentVerificationController {
     }
     
     @PostMapping("/tests/{testId}/students/{studentId}/verification")
-    @IsExaminee
+    @AccessExaminee
     public String postTestStudentVerification(@PathVariable int testId, @PathVariable int studentId) throws SQLException {
     	return testStudentVerificationService.verification(testId, studentId);
     }
