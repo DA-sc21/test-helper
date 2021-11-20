@@ -1,7 +1,27 @@
 import React from 'react'
 import {Card,Button} from 'react-bootstrap'
+import {baseUrl} from "../component/baseUrl"
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 function TestStudentAgreement(props){
+  let {testId, studentId} =useParams();
+
+  async function studentConsented(){
+    let temp=[...props.tabCompleted]
+    temp[0]=!temp[0]
+    props.setTabCompleted(temp)
+    
+    await axios
+    .put(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/consented',{
+      "consented": !temp[0]
+    })
+    .then((result)=>{ 
+      console.log(result.data)
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
   return(
     <div className="p-5"> 
       <Card className="mt-0 m-5">
@@ -45,10 +65,7 @@ function TestStudentAgreement(props){
             PC화면 공유 및 녹화, 모바일 화면공유 및 녹화, 모바일 마이크 공유 및 녹화에 동의합니다.
           </Card.Text>
           <Button variant="primary" type="submit" onClick={()=>{
-            console.log(props.tabCompleted)
-            let temp=[...props.tabCompleted]
-            temp[0]=true
-            props.setTabCompleted(temp)
+            studentConsented()
           }}>
             동의합니다
           </Button>
