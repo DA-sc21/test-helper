@@ -14,11 +14,11 @@ export default function ChatAlarm(props){
     }
     props.setNewMessages( [...newMessageArray])
   }
-
+  
     return(
       <Toast onClose={() => {
         deleteMessage(props.newMessage)
-      }} show={show} bg={props.chatroom==='0'?"light":"success"}>
+      }} show={show} bg={props.chatroom==='0'?"light":"warning"}>
         <Toast.Header closeButton={true} >
           <strong className="me-auto">{props.chatroom==='0'?"공지사항":"채팅"}</strong>
           <small>{time.getHours()}:{time.getMinutes()}:{time.getSeconds()}</small>
