@@ -24,7 +24,7 @@ function TestStudentMobileSetting(props){
   let id=props.room.device+props.student.id;
   let [capture_1,setCapture_1]= useState("");
   let [ended,setEnded]=useState(false)
-  let [submitted,setSubmitted]=useState(true)
+  let [submitted,setSubmitted]=useState(false)
   let startTime=props.test.startTime;
   let endTime=props.test.endTime;
 

@@ -23,8 +23,8 @@ function NavBarStudent(){
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text className="mx-2">
             </Navbar.Text>
-            <Button className="mx-1" variant="primary" onClick={()=>{setShowNotice(!showNotice)}} >공지사항</Button>
-            <Button className="mx-1" variant="primary" onClick={()=>{setShowChat(!showChat)}} >채팅하기</Button>
+            <Button className="mx-1" variant="primary" onClick={()=>{setShowNotice(!showNotice);setNewMessages([])}} >공지사항</Button>
+            <Button className="mx-1" variant="primary" onClick={()=>{setShowChat(!showChat);setNewMessages([])}} >채팅하기</Button>
           </Navbar.Collapse>
         </Container>
       </Navbar>
