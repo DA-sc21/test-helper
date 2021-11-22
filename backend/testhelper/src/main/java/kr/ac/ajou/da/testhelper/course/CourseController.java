@@ -10,20 +10,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class CourseController {
 
+    private final CourseService courseService;
+
     @GetMapping("/courses")
     @IsProfessor
-    public ResponseEntity<Object> getCourses(@AuthenticationPrincipal @ApiIgnore Account account){
+    public ResponseEntity<List<GetCourseResDto>> getCourses(@AuthenticationPrincipal @ApiIgnore Account account) {
 
-        List<GetCourseResDto> courses = new ArrayList<>();
-        courses.add(new GetCourseResDto(1L, "name"));
+        List<Course> courses = courseService.getByProfessorId(account.getId());
 
-        return ResponseEntity.ok().body(courses);
+        return ResponseEntity.ok().body(courses.stream().map(GetCourseResDto::new).collect(Collectors.toList()));
     }
 }
