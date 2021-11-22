@@ -2,7 +2,7 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessExaminee;
-import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionUploadUrlResDto;
 import kr.ac.ajou.da.testhelper.submission.dto.PutSubmissionConsentedReqDto;
@@ -22,7 +22,7 @@ public class SubmissionController {
     private final SubmissionService submissionService;
 
     @GetMapping("/tests/{testId}/submissions")
-    @IsProctor
+    @AccessTestByProctor
     public List<HashMap<String, Object>> getSubmissionStatus(@PathVariable int testId,
                                                              @RequestParam(required = false, defaultValue = "0") int studentId) throws SQLException {
         return submissionService.getSubmissionStatus(testId, studentId);

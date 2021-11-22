@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
 import kr.ac.ajou.da.testhelper.test.dto.PutTestStatusReqDto;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class TestController {
     }
 
     @PutMapping("/tests/{testId}/status")
-    @IsProctor
+    @AccessTestByProctor
     public ResponseEntity<BooleanResponse> putTestStatus(@PathVariable Long testId,
                                                          PutTestStatusReqDto reqDto,
                                                          @AuthenticationPrincipal @ApiIgnore Account account){

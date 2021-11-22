@@ -3,7 +3,7 @@ package kr.ac.ajou.da.testhelper.test.verification;
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessExaminee;
-import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationReqDto;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class TestStudentVerificationController {
     private final TestStudentVerificationService testStudentVerificationService;
 
     @GetMapping("/tests/{testId}/students/verification")
-    @IsProctor
+    @AccessTestByProctor
     public ResponseEntity<List<GetTestStudentVerificationResDto>> getTestStudentVerificationList(@PathVariable Long testId,
                                                                                                  @AuthenticationPrincipal @ApiIgnore Account account) {
 
@@ -33,7 +33,7 @@ public class TestStudentVerificationController {
     }
 
     @PutMapping("/tests/{testId}/students/{studentId}/verification")
-    @IsProctor
+    @AccessTestByProctor
     public ResponseEntity<BooleanResponse> putTestStudentVerification(@PathVariable Long testId,
                                                                       @PathVariable Long studentId,
                                                                       @RequestBody GetTestStudentVerificationReqDto reqDto) {
@@ -41,11 +41,11 @@ public class TestStudentVerificationController {
         return ResponseEntity.ok().body(BooleanResponse.of(testStudentVerificationService.update(testId, studentId, reqDto.getVerified())));
 
     }
-    
+
     @PostMapping("/tests/{testId}/students/{studentId}/verification")
     @AccessExaminee
     public String postTestStudentVerification(@PathVariable int testId, @PathVariable int studentId) throws SQLException {
-    	return testStudentVerificationService.verification(testId, studentId);
+        return testStudentVerificationService.verification(testId, studentId);
     }
 
 }
