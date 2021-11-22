@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.course;
 
+import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,7 +24,9 @@ public class Course {
     @Column(nullable = false)
     private String name;
 
-    //private Account professor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_id", nullable = false)
+    private Account professor;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Test> tests = new ArrayList<>();

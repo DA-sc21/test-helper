@@ -49,7 +49,7 @@ class TestStudentVerificationServiceTest {
         assertEquals(submissions.size(), res.size());
 
         if (submissions.size() > 0) {
-            assertAll( "Submission Info Correct",
+            assertAll("Submission Info Correct",
                     () -> assertEquals(submissions.get(0).getId(), res.get(0).getSubmissionId()),
                     () -> assertEquals(submissions.get(0).getVerified(), res.get(0).getVerified())
             );

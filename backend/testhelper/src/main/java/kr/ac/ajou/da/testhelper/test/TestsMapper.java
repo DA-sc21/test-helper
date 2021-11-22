@@ -17,7 +17,7 @@ public interface TestsMapper {
 			+ "JOIN COURSE \n"
 			+ "ON TEST.course_id = COURSE.id \n"
 			+ "WHERE COURSE.professor_id = ${accountId}")
-	List<HashMap<String, Object>> getTestListOfProfessor(@Param("accountId") int accountId) throws SQLException;
+	List<HashMap<String, Object>> getTestListOfProfessor(@Param("accountId") Long accountId) throws SQLException;
 
 	@Select("SELECT COURSE.name, TEST.id, TEST.test_type, TEST.start_time, TEST.end_time, TEST.test_status \n"
 			+ "FROM TEST_ASSISTANT \n"
@@ -26,5 +26,5 @@ public interface TestsMapper {
 			+ "JOIN COURSE \n"
 			+ "ON COURSE.id = TEST.course_id \n"
 			+ "WHERE TEST_ASSISTANT.account_id = ${accountId}")
-	List<HashMap<String, Object>> getTestListOfAssistant(@Param("accountId") int accountId) throws SQLException;
+	List<HashMap<String, Object>> getTestListOfAssistant(@Param("accountId") Long accountId) throws SQLException;
 }
