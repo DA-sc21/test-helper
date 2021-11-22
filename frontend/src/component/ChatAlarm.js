@@ -7,16 +7,18 @@ export default function ChatAlarm(props){
   // console.log(props.newMessage)
 
   function deleteMessage(element)  {
-    let newMessageArray= props.newMessages;
-    var index = newMessageArray.indexOf(element); // 5를 제거해야 하는 경우
+    let newMessageArray=[...props.newMessages]
+    var index = newMessageArray.indexOf(element); 
     if (index > -1) {
       newMessageArray.splice(index, 1);
     }
-    return newMessageArray
+    props.setNewMessages( [...newMessageArray])
   }
-
+  
     return(
-      <Toast onClose={() => {setShow(false);props.setNewMessages( [...deleteMessage(props.newMessage)])}} show={show} bg={props.chatroom==='0'?"light":"success"}>
+      <Toast onClose={() => {
+        deleteMessage(props.newMessage)
+      }} show={show} bg={props.chatroom==='0'?"light":"warning"}>
         <Toast.Header closeButton={true} >
           <strong className="me-auto">{props.chatroom==='0'?"공지사항":"채팅"}</strong>
           <small>{time.getHours()}:{time.getMinutes()}:{time.getSeconds()}</small>

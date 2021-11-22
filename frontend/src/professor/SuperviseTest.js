@@ -1,7 +1,8 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup, Card, Button, Offcanvas, Image, ButtonGroup, Badge, Modal, Accordion} from 'react-bootstrap';
+import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion } from 'react-bootstrap';
+import {ToastContainer as ToastContainerB} from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Loading from '../component/Loading';
 import ChatFormPro from '../component/ChatFormPro';
 import Master from '../kinesisVideo/Master';
@@ -9,15 +10,16 @@ import {baseUrl} from "../component/baseUrl"
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
+import moment from "moment";
+import ChatAlarm from '../component/ChatAlarm';
 
-function SuperviseTest(){
-
+function SuperviseTest(props){
+  let history = useHistory();
   let [studentName,setStudentName] = useState([]);
   let [studentInfo,setStudentInfo] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
   let [credentials,setCredentials] = useState();
   let [verifications,setVerifications] = useState([]);
-  let [submissions,setSubmissions] = useState([])
   let [loading,setLoading] = useState(false);
   let [toggled,setToggled]=useState(0);
   let {testId} = useParams();
@@ -29,7 +31,6 @@ function SuperviseTest(){
   
   useEffect(()=>{
     getVerifications();
-    getSubmissions();
     createTestRooms();
   },[]);
 
@@ -49,16 +50,6 @@ function SuperviseTest(){
       setVerifications(result.data)
       console.log(result.data)
       getStudentId(result.data)
-    })
-    .catch(()=>{ console.log("실패") })
-  }
-
-  async function getSubmissions(){
-    await axios
-    .get(baseUrl+'/tests/'+testId+'/submissions')
-    .then((result)=>{ 
-      setSubmissions(result.data)
-      console.log(result.data)
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -95,7 +86,6 @@ function SuperviseTest(){
     let rooms = arr.map(data=>{
       temp.push(data.roomId);
     })
-    setLoading(true);
     setTestRooms(temp);
   }
 
@@ -119,13 +109,23 @@ function SuperviseTest(){
   const notify = (name) => toast.warn(`${name} 학생의 손이 화면에서 벗어났습니다.`, {
     position: "bottom-right",
     transition: Slide,
-    autoClose: false,
+    autoClose: 15000,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: false,
     draggable: true,
     progress: undefined,
   });
+
+  async function exitTest(e){
+    history.push('/tests');
+    await axios
+    .put(baseUrl+'/tests/'+testId+'/status?status=ENDED')
+    .then((result)=>{
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
 
   if(!loading)return(<Loading></Loading>)
   return(
@@ -134,7 +134,8 @@ function SuperviseTest(){
         <div className="col-md-3 d-flex justify-content-start">
           <ToastContainer
             position="bottom-right"
-            autoClose={false}
+            autoClose={15000}
+            hideProgressBar={false}
             newestOnTop={false}
             closeOnClick={false}
             rtl={false}
@@ -142,17 +143,18 @@ function SuperviseTest(){
             draggable
             style={{ width: "350px" }}
           />
-          <StudentsList verifications={verifications} audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo}></StudentsList>
+          <StudentsList audio={shareState.audio} pc={shareState.pc} studentInfo={studentInfo} testId={testId}></StudentsList>
+          <AnswerSheetSubmissionList studentInfo={studentInfo} testId={testId}></AnswerSheetSubmissionList>
         </div>
         <div className="col-md-9 d-flex justify-content-end">
-          <ChattingModal studentId="0"></ChattingModal>
+          <ChattingModal studentId="0" cheating={false}></ChattingModal>
+          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={(e)=> exitTest(e)}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
           {
             verifications.map((verification,index)=>{
 
-
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} submission={submissions[index]} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
 
             })
           }
@@ -209,15 +211,6 @@ function StudentCard(props){
         <Card.Body>
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
           <hr />
-          <Card.Text>
-            {props.verification.submissionId}(submissionId)
-          </Card.Text>
-          <Card.Text>
-          본인인증 : {verification_status_options[props.verification.verified]}
-          </Card.Text>
-          <Card.Text>
-          답안제출현황 : {submission_status_options[props.submission.submitted]}
-          </Card.Text>
           <div className="row">
             {props.verification.verified==="SUCCESS"
             ? <Button className="col-md-4" variant="primary" onClick={()=>{
@@ -226,15 +219,15 @@ function StudentCard(props){
             : <Button className="col-md-4" variant="outline-primary" onClick={()=>{
                 changeVerifications(props,true)}}>본인인증승인
               </Button> }
-            <ChattingModal studentId={props.verification.studentId}></ChattingModal>
-            <Button className="col-md-4" variant="danger">경고</Button>
+            <ChattingModal studentId={props.verification.studentId} cheating={false}></ChattingModal>
+            <ChattingModal studentId={props.verification.studentId} cheating={true}></ChattingModal>
           </div>
         </Card.Body>
         <Card.Footer>
           <div className="row">
           <Accordion>
             <Accordion.Item eventKey="0">
-              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"0", outline:"0", fontWeight:"bold", marginLeft:"0%"}} onClick={(e)=>getIdentificationImgae(e)}>본인인증 사진</Button></Accordion.Header>
+              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"#61dafb00", outline:"0", fontWeight:"bold", width:"100%", textAlign:"left"}} onClick={(e)=>getIdentificationImgae(e)}>본인인증 사진</Button></Accordion.Header>
                 <Accordion.Body>
                   <Image className="col-md-5" style={{height:"270px", width:"290px", marginRight:"1.5%"}} src={studentCard} />
                   <Image className="col-md-5" style={{height:"270px", width:"290px", marginLeft:"1.5%"}} src={face} />
@@ -258,15 +251,29 @@ function ChattingModal(props) {
     <>
       {props.studentId==="0"
         ?
-          <Button variant="success" onClick={handleShow} style={{marginRight: "2.5%"}}>
+          <Button onClick={handleShow} style={{marginRight: "2.5%", backgroundColor:"#d2d6df", borderColor:"#d2d6df", color:"black", fontWeight:"bold", boxShadow:"2px 2px 2px #57575775"}}>
           공지사항
           </Button>
         :
+          props.cheating?
+          <Button className="col-md-4" variant="danger" onClick={handleShow}>
+          부정행위경고
+          </Button>
+          :
           <Button className="col-md-4" variant="success" onClick={handleShow}>
           채팅
           </Button>
       }
-        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatFormPro>
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
+        <ToastContainerB className="p-3 chatAlarmContainer positionTop" position="top-center">
+          {
+            newMessages.map((message,index)=>{
+            let chatroom=message.chatroom
+            return(
+            <ChatAlarm key={index} newMessages={newMessages} newMessage={message} chatroom={chatroom} setNewMessages={setNewMessages} ></ChatAlarm>
+            )
+          })}
+        </ToastContainerB>
     </>
   );
 }
@@ -292,9 +299,14 @@ async function changeVerifications(props,verified){
 }
 
 function StudentsList(props) {
+  console.log(props)
+  let [verifications,setVerifications] = useState([]);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setShow(true);
+    getVerifications();
+  }
   let verification_status_options={
     "REJECTED" : "거절",
     "PENDING" : "보류",
@@ -305,21 +317,30 @@ function StudentsList(props) {
     "PENDING" : "warning",
     "SUCCESS" : "success",
   }
+  async function getVerifications(){
+    await axios
+    .get(baseUrl+'/tests/'+props.testId+'/students/verification')
+    .then((result)=>{ 
+      setVerifications(result.data);
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
 
   return (
     <>
-      <Button style={{backgroundColor: "#506EA5"}} onClick={handleShow}>
+      <Button style={{backgroundColor: "#506EA5", borderColor:"#506EA5", boxShadow:"2px 2px 2px #57575775"}} onClick={handleShow}>
         전체 학생 현황
       </Button>
 
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>전체 학생 본인 인증 현황</Offcanvas.Title>
+          <Offcanvas.Title>전체 학생 본인인증 현황</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
             <ListGroup variant="flush">
             {
-              props.verifications.map((verification,index)=>{
+              verifications.map((verification,index)=>{
                 return (
                   <ListGroup.Item key={index}>
                     <div className="row ">
@@ -328,6 +349,66 @@ function StudentsList(props) {
                         {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
                         {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />}
                         <Badge bg={verification_status_css[verification.verified]} className="mx-3">{verification_status_options[verification.verified]}</Badge>
+                      </div>
+                    </div>
+                  </ListGroup.Item>
+                )
+              })
+            }
+            </ListGroup>
+        </Offcanvas.Body>
+      </Offcanvas>
+    </>
+  );
+}
+
+function AnswerSheetSubmissionList(props) {
+  console.log(props);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    getSubmissions();
+  }
+  let [submissions,setSubmissions] = useState([]);
+  let submission_status_options={
+    "PENDING" : "제출전",
+    "DONE" : "제출완료",
+  }
+  let submission_status_css={
+    "PENDING" : "secondary",
+    "DONE" : "primary",
+  }
+  async function getSubmissions(){
+    await axios
+    .get(baseUrl+'/tests/'+props.testId+'/submissions')
+    .then((result)=>{ 
+      setSubmissions(result.data);
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  return (
+    <>
+      <Button style={{backgroundColor: "#4f596d", borderColor:"#4f596d", marginLeft:"3%", boxShadow:"2px 2px 2px #57575775"}} onClick={handleShow}>
+        답안 제출 현황
+      </Button>
+
+      <Offcanvas show={show} onHide={handleClose} style={{width:"350px"}}>
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>답안 제출 현황</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+            <ListGroup variant="flush">
+            {
+              submissions.map((submissions,index)=>{
+                return (
+                  <ListGroup.Item key={index}>
+                    <div className="row ">
+                      <div className="col-md-6">{index+1}. {props.studentInfo[index].student.name}</div>
+                      <div className="col-md-6 d-flex justify-content-end"> 
+                        <Badge bg={submission_status_css[submissions.submitted]} className="mx-3">{submission_status_options[submissions.submitted]}</Badge>
                       </div>
                     </div>
                   </ListGroup.Item>

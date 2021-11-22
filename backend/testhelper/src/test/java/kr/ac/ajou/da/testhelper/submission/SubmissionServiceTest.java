@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +30,7 @@ class SubmissionServiceTest {
     @Mock
     private FileService fileService;
 
-    private final kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
-    private final Student student = DummyFactory.createStudent();
-    private final long supervisedBy = DummyFactory.createAssistant().getId();
-    private final Submission submission = DummyFactory.createSubmission();
-    private final List<Submission> submissions = DummyFactory.createSubmissions();
 
-    private final SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
 
     private final String uploadUrl = "uploadUrl";
 
@@ -52,25 +47,33 @@ class SubmissionServiceTest {
     @Test
     void getByTestIDAndStudentID_success() {
         //given
-        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+        Submission expectedSubmission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = expectedSubmission.getTest();
+        Student student = expectedSubmission.getStudent();
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(expectedSubmission));
 
         //when
-        Submission submission = submissionService.getByTestIdAndStudentId(test.getId(), student.getId());
+        Submission actualSubmission = submissionService.getByTestIdAndStudentId(test.getId(), student.getId());
 
         //then
         verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
 
-        assertEquals(this.submission, submission);
+        assertEquals(expectedSubmission, actualSubmission);
     }
 
     @Test
     void getByTestIDAndStudentID_notFound_thenThrow_SubmissionNotFoundException() {
         //given
+
+        Long testId = 1L;
+        Long studentId = 1L;
+
         when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
         //when
         assertThrows(SubmissionNotFoundException.class, () -> {
-            Submission submission = submissionService.getByTestIdAndStudentId(test.getId(), student.getId());
+            Submission submission = submissionService.getByTestIdAndStudentId(testId, studentId);
         });
 
         //then
@@ -82,10 +85,16 @@ class SubmissionServiceTest {
     void getByTestIDAndSupervisedBy_success() {
         //given
 
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission);
+
         when(submissionRepository.findByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
-        List<Submission> res = submissionService.getByTestIdAndSupervisedBy(test.getId(), supervisedBy);
+        List<Submission> res = submissionService.getByTestIdAndSupervisedBy(test.getId(), submission.getSupervisedBy());
 
         //then
         verify(submissionRepository, times(1)).findByTestIdAndSupervisedBy(anyLong(), anyLong());
@@ -96,6 +105,15 @@ class SubmissionServiceTest {
     @Test
     void getUploadUrlByTestIdAndStudentIdAndSubmissionType_success() {
         //given
+
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission);
+
+        SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
+
         when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
         when(fileService.getUploadUrl(anyString())).thenReturn(this.uploadUrl);
 
@@ -114,11 +132,16 @@ class SubmissionServiceTest {
     @Test
     void getUploadUrlByTestIdAndStudentIdAndSubmissionType_submissionNotFound_thenThrow_SubmissionNotFoundException() {
         //given
+
+        Long testId = 1L;
+        Long studentId = 1L;
+        SubmissionType submissionType = SubmissionType.SCREEN_SHARE_VIDEO;
+
         when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
         //when
         assertThrows(SubmissionNotFoundException.class, () -> {
-            submissionService.getUploadUrlByTestIdAndStudentIdAndSubmissionType(test.getId(), student.getId(), submissionType);
+            submissionService.getUploadUrlByTestIdAndStudentIdAndSubmissionType(testId, studentId, submissionType);
         });
 
         //then

@@ -1,4 +1,4 @@
-package kr.ac.ajou.da.testhelper.tests;
+package kr.ac.ajou.da.testhelper.test;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

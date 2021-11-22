@@ -46,8 +46,8 @@ function Tests(){
   return(
     <div className="container mt-3 p-2">
       <ButtonGroup aria-label="Basic example">
-        <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>id순오름정렬</Button>
-        <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>id순내림정렬</Button>
+        <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>생성빠른순정렬</Button>
+        <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button>
         <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
         <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
       </ButtonGroup>
@@ -64,10 +64,11 @@ function Tests(){
 
 function TestCard(props){
   let test_status_options={
-    "CREATE" : "문제생성중",
-    "PROBLEM" : "실시대기중",
-    "MARK" : "채점중",
-    "FINISH" : "채점완료",
+    "CREATE" : "시험 생성중",
+    "IN_PROGRESS" : "시험 진행중",
+    "ENDED" : "시험 종료",
+    "MARK" : "시험 채점중",
+    "GRADED" : "점수 전송 완료",
   }
   let history = useHistory()
 
@@ -91,7 +92,12 @@ function TestCard(props){
           </Card.Text>
           <div className="row">
             <Button className="col-md-4" variant="primary">문제출제</Button>
-            <Button className="col-md-4" variant="danger" onClick={()=>{history.push("/tests/"+props.test.id+"/supervise")}}>시험감독</Button>
+            <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
+              pathname: "/tests/"+props.test.id+"/supervise",
+              state: {
+                testStartTime: props.test.start_time,
+                testEndTime: props.test.end_time
+                }})}}>시험감독</Button>
             <Button className="col-md-4" variant="success">채점하기</Button>
           </div>
         </Card.Body>

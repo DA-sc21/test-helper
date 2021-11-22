@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS from "aws-sdk";
 import { Button } from 'react-bootstrap';
@@ -47,6 +47,8 @@ const Viewer = (props) => {
     natTraversal: OPTIONS.TRAVERSAL.STUN_TURN,
     receivedMessages: '',
   };
+  const [dataChannel,setDataChannel] = useState();
+
 
   useEffect(() => {
     console.log(props);
@@ -57,8 +59,8 @@ const Viewer = (props) => {
     let currentTime = moment(); //현재 시간
     let testStartTime = moment(props.startTime);
     let testEndTime = moment(props.endTime);
-    // let testStartTime = moment("2021 11 16 23:59");//테스트
-    // let testEndTime = moment("2021 11 17 00:00");//테스트
+    // let testStartTime = moment("2021 11 19 21:39");//테스트
+    // let testEndTime = moment("2021 11 19 21:45");//테스트
     let startTimeDifference = moment.duration(testStartTime.diff(currentTime)).seconds();
     let endTimeDifference = moment.duration(testEndTime.diff(currentTime)).seconds();
     if(startTimeDifference===0){
@@ -79,14 +81,20 @@ const Viewer = (props) => {
   
   function capture(e){ //두손 사진 캡쳐 제출
     navigator.mediaDevices.getUserMedia({ video: true })
-    .then(mediaStream => {
+    .then(mediaStream =>{
         // Do something with the stream.
         const track = mediaStream.getVideoTracks()[0];
         let imageCapture = new ImageCapture(track);
-  
-        imageCapture.takePhoto()
-        .then(blob => {console.log(blob); //blob=캡쳐이미지
-          checkHandDetection(blob);
+        const photoSettings = {
+          imageHeight : 480,
+          imageWidth : 640,
+        }
+        imageCapture.takePhoto(photoSettings)
+        .then((blob) => 
+          {
+        console.log(blob); //blob=캡쳐이미지
+       
+        checkHandDetection(blob);
         })
         .catch(error => console.log(error));
     })
@@ -121,9 +129,9 @@ const Viewer = (props) => {
   } 
 
   function sendMessage() {
-    if (viewer.dataChannel) {
+    if (dataChannel) {
       try {
-        viewer.dataChannel.send("HandDetection_False");
+        dataChannel.send("HandDetection_False");
         console.log("Message sent to master: HandDetection_False");
       } catch (e) {
           console.error('[VIEWER] Send DataChannel: ', e.toString());
@@ -241,6 +249,7 @@ const Viewer = (props) => {
     if (viewer.openDataChannel) {
         console.log(`Opened data channel with MASTER.`);
         viewer.dataChannel = viewer.peerConnection.createDataChannel('kvsDataChannel');
+        setDataChannel(viewer.dataChannel);
         viewer.peerConnection.ondatachannel = event => {
           event.channel.onmessage = (message) => {
             const timestamp = new Date().toISOString();

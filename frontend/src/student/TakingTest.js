@@ -20,7 +20,6 @@ function TakingTest(props) {
         <Modal show={show} fullscreen={true} onHide={handleClose}>
           <Modal.Header >
             <Modal.Title>시험장</Modal.Title>
-            <Button>채팅하기</Button>
           </Modal.Header>
           <Modal.Body>
             {props.ended?

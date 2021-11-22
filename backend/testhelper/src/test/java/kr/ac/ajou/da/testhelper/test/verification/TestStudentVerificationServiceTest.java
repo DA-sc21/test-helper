@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -25,12 +26,6 @@ class TestStudentVerificationServiceTest {
     @Mock
     private SubmissionService submissionService;
 
-    private final kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
-    private final Student student = DummyFactory.createStudent();
-    private final long supervisedBy = DummyFactory.createAssistant().getId();
-    private final Submission submission = DummyFactory.createSubmission();
-    private final List<Submission> submissions = DummyFactory.createSubmissions();
-
     @BeforeEach
     void init() {
         submissionService = mock(SubmissionService.class);
@@ -40,10 +35,15 @@ class TestStudentVerificationServiceTest {
     @Test
     void getList_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission);
+
         when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
-        List<GetTestStudentVerificationResDto> res = testStudentVerificationService.getList(test.getId(), supervisedBy);
+        List<GetTestStudentVerificationResDto> res = testStudentVerificationService.getList(test.getId(), submission.getSupervisedBy());
 
         //then
         assertEquals(submissions.size(), res.size());
@@ -60,6 +60,10 @@ class TestStudentVerificationServiceTest {
     @Test
     void update_verifiedTrue_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when
@@ -75,6 +79,10 @@ class TestStudentVerificationServiceTest {
     @Test
     void update_verifiedFalse_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,12 +32,6 @@ class TestRoomServiceTest {
     @Mock
     private TestRoomManagingService testRoomManagingService;
 
-    private final kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
-    private final Student student = DummyFactory.createStudent();
-    private final long supervisedBy = DummyFactory.createAssistant().getId();
-    private final Submission submission = DummyFactory.createSubmission();
-    private final List<Submission> submissions = DummyFactory.createSubmissions();
-
     @BeforeEach
     void init() {
         this.submissionService = mock(SubmissionService.class);
@@ -46,6 +41,12 @@ class TestRoomServiceTest {
 
     @Test
     void getRoom_success() {
+
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when
@@ -75,6 +76,9 @@ class TestRoomServiceTest {
     @Test
     void getRoom_isPC_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
 
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
@@ -89,6 +93,9 @@ class TestRoomServiceTest {
     @Test
     void getRoom_isMobile_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
 
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
@@ -104,11 +111,14 @@ class TestRoomServiceTest {
     void getRoom_roomNotFoundForTestIDAndStudent_then_throwRoomNotFoundException() {
         //given
 
+        Long testId = 1L;
+        Long studentId = 1L;
+
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenThrow(new SubmissionNotFoundException());
 
         //when
         assertThrows(RoomNotFoundException.class, () -> {
-            RoomDto room = this.testRoomService.getRoom(test.getId(), student.getId(), DeviceType.PC);
+            RoomDto room = this.testRoomService.getRoom(testId, studentId, DeviceType.PC);
         });
 
         //then
@@ -119,10 +129,16 @@ class TestRoomServiceTest {
     @Test
     void createRoomsForStudents_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission);
+
         when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
-        List<StudentRoomDto> rooms = testRoomService.createRoomsForStudents(test.getId(), supervisedBy);
+        List<StudentRoomDto> rooms = testRoomService.createRoomsForStudents(test.getId(), submission.getSupervisedBy());
 
         //then
         verify(submissionService, times(1)).getByTestIdAndSupervisedBy(anyLong(), anyLong());
@@ -130,15 +146,34 @@ class TestRoomServiceTest {
 
         assertEquals(submissions.size(), rooms.size());
 
-        if (rooms.size() > 0) {
-            Submission submission = submissions.get(0);
-            StudentRoomDto room = rooms.get(0);
-            assertEquals(submission.resolveRoomId(), room.getRoomId());
-            assertAll("Student Info Correct",
-                    () -> assertEquals(student.getId(), room.getStudent().getId()),
-                    () -> assertEquals(student.getName(), room.getStudent().getName()),
-                    () -> assertEquals(student.getStudentNumber(), room.getStudent().getStudentNumber())
-            );
-        }
+        StudentRoomDto room = rooms.get(0);
+        assertEquals(submission.resolveRoomId(), room.getRoomId());
+        assertAll("Student Info Correct",
+                () -> assertEquals(student.getId(), room.getStudent().getId()),
+                () -> assertEquals(student.getName(), room.getStudent().getName()),
+                () -> assertEquals(student.getStudentNumber(), room.getStudent().getStudentNumber())
+        );
+
+    }
+
+    @Test
+    void deleteRoomsForStudents_success() {
+
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission);
+
+        //given
+        when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
+
+        //when
+        testRoomService.deleteRoomsForStudents(test.getId(), submission.getSupervisedBy());
+
+        //then
+        verify(submissionService, times(1)).getByTestIdAndSupervisedBy(anyLong(), anyLong());
+        verify(testRoomManagingService, times(submissions.size())).deleteRoom(anyString());
+
     }
 }
