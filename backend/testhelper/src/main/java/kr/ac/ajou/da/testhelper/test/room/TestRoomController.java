@@ -14,6 +14,7 @@ import kr.ac.ajou.da.testhelper.test.room.dto.StudentRoomDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,11 +35,11 @@ public class TestRoomController {
     // POST /tests/{testId}/room를 변경
     @PostMapping("/tests/{testId}/students/room")
     @IsProctor
-    public ResponseEntity<PostTestStudentRoomResDto> postTestStudentRoom(@PathVariable Long testId) {
+    public ResponseEntity<PostTestStudentRoomResDto> postTestStudentRoom(@PathVariable Long testId,
+                                                                         @AuthenticationPrincipal @ApiIgnore Account account) {
 
-        Account supervisedBy = new Account(1L);
         Test test = testService.getTest(testId);
-        List<StudentRoomDto> studentRooms = testRoomService.createRoomsForStudents(test.getId(), supervisedBy.getId());
+        List<StudentRoomDto> studentRooms = testRoomService.createRoomsForStudents(test.getId(), account.getId());
 
         return ResponseEntity.ok(new PostTestStudentRoomResDto(
                 temporaryCredentialService.createTemporaryCredential(),

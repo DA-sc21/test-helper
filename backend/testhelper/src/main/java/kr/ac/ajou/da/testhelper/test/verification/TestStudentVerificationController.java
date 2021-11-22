@@ -9,7 +9,9 @@ import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerification
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -23,11 +25,10 @@ public class TestStudentVerificationController {
 
     @GetMapping("/tests/{testId}/students/verification")
     @IsProctor
-    public ResponseEntity<List<GetTestStudentVerificationResDto>> getTestStudentVerificationList(@PathVariable Long testId) {
+    public ResponseEntity<List<GetTestStudentVerificationResDto>> getTestStudentVerificationList(@PathVariable Long testId,
+                                                                                                 @AuthenticationPrincipal @ApiIgnore Account account) {
 
-        Account proctor = new Account(1L);
-
-        return ResponseEntity.ok().body(testStudentVerificationService.getList(testId, proctor.getId()));
+        return ResponseEntity.ok().body(testStudentVerificationService.getList(testId, account.getId()));
 
     }
 
