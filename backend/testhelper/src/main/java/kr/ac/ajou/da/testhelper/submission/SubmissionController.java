@@ -50,11 +50,12 @@ public class SubmissionController {
     }
     
     @PutMapping("/tests/{testId}/students/{studentId}/submissions/submitted")
+    @AccessExaminee
     public ResponseEntity<BooleanResponse> putSubmissionSubmitted(@PathVariable Long testId,
                                                                   @PathVariable Long studentId,
                                                                   @RequestBody PutSubmissionSubmittedReqDto reqDto) {
 
-        return ResponseEntity.ok().body(new BooleanResponse(
+        return ResponseEntity.ok().body(BooleanResponse.of(
                 submissionService.updateSubmittedByTestIdAndStudentId(testId, studentId, reqDto.getSubmitted())));
     }
     
