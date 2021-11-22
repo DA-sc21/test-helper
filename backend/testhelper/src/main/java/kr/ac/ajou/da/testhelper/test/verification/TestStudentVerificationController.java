@@ -2,13 +2,16 @@ package kr.ac.ajou.da.testhelper.test.verification;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessExaminee;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationReqDto;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -21,26 +24,28 @@ public class TestStudentVerificationController {
     private final TestStudentVerificationService testStudentVerificationService;
 
     @GetMapping("/tests/{testId}/students/verification")
-    public ResponseEntity<List<GetTestStudentVerificationResDto>> getTestStudentVerificationList(@PathVariable Long testId) {
+    @AccessTestByProctor
+    public ResponseEntity<List<GetTestStudentVerificationResDto>> getTestStudentVerificationList(@PathVariable Long testId,
+                                                                                                 @AuthenticationPrincipal @ApiIgnore Account account) {
 
-        Account proctor = new Account(1L);
-
-        return ResponseEntity.ok().body(testStudentVerificationService.getList(testId, proctor.getId()));
+        return ResponseEntity.ok().body(testStudentVerificationService.getList(testId, account.getId()));
 
     }
 
     @PutMapping("/tests/{testId}/students/{studentId}/verification")
+    @AccessTestByProctor
     public ResponseEntity<BooleanResponse> putTestStudentVerification(@PathVariable Long testId,
                                                                       @PathVariable Long studentId,
                                                                       @RequestBody GetTestStudentVerificationReqDto reqDto) {
 
-        return ResponseEntity.ok().body(new BooleanResponse(testStudentVerificationService.update(testId, studentId, reqDto.getVerified())));
+        return ResponseEntity.ok().body(BooleanResponse.of(testStudentVerificationService.update(testId, studentId, reqDto.getVerified())));
 
     }
-    
+
     @PostMapping("/tests/{testId}/students/{studentId}/verification")
+    @AccessExaminee
     public String postTestStudentVerification(@PathVariable int testId, @PathVariable int studentId) throws SQLException {
-    	return testStudentVerificationService.verification(testId, studentId);
+        return testStudentVerificationService.verification(testId, studentId);
     }
 
 }

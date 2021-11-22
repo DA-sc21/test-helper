@@ -41,7 +41,7 @@ public class TestService {
 
     }
 
-    public List<HashMap<String, Object>> getTests(int accountId) throws SQLException {
+    public List<HashMap<String, Object>> getTests(Long accountId) throws SQLException {
         String role = getAccountRole(accountId);
 
         if(role.equals("PROFESSOR")) {
@@ -53,7 +53,7 @@ public class TestService {
         return null;
     }
 
-    private String getAccountRole(int accountId) throws SQLException {
+    private String getAccountRole(Long accountId) throws SQLException {
         return accountMapper.getAccountRole(accountId);
     }
 }

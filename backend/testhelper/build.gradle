@@ -58,6 +58,13 @@ dependencies {
 	// implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'com.google.guava:guava:23.0'
 
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
+
+	//aop
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
 }
 
 bootRun{

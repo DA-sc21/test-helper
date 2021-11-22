@@ -33,6 +33,7 @@ mybatis: #Mybatis 설정
 logging: # ROOT레벨 전체 로깅 레벨 결정
   level:
     root: info
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 server:
   port: 8081

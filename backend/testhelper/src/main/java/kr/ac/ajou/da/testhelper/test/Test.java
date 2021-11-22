@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.test;
 
+import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
@@ -11,6 +12,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -37,6 +40,12 @@ public class Test {
     private TestStatus status = TestStatus.CREATE;
 
     //private String problem;
+
+    @ManyToMany
+    @JoinTable(name = "TEST_ASSISTANT",
+            joinColumns = @JoinColumn(name="test_id"),
+            inverseJoinColumns = @JoinColumn(name="account_id"))
+    private Set<Account> assistants = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
@@ -69,5 +78,13 @@ public class Test {
 
     private boolean isEndingTestBeforeEndTime(TestStatus status) {
         return TestStatus.ENDED.equals(status) && LocalDateTime.now().isBefore(endTime);
+    }
+
+    public boolean isProfessor(Account account) {
+        return this.getCourse().getProfessor().equals(account);
+    }
+
+    public boolean isAssistant(Account account) {
+        return this.getAssistants().contains(account);
     }
 }
