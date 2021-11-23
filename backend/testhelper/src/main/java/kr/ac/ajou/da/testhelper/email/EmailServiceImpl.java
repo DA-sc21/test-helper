@@ -22,6 +22,9 @@ public class EmailServiceImpl {
 	@Autowired
 	private JavaMailSender emailSender;
 	
+	@Autowired
+	private RedisService redisService;
+	
 	private MimeMessage createMessage(String to, String ePw) throws Exception {
 
 		log.info("보내는 대상 : "+ to);
@@ -92,6 +95,7 @@ public class EmailServiceImpl {
 			es.printStackTrace();
 			throw new IllegalArgumentException();
 		}
+		redisService.setRedisValue(to, ePw);
 		
 	}
 
