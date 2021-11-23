@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.course;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessCourseByProfessor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import kr.ac.ajou.da.testhelper.course.dto.GetCourseResDto;
 import kr.ac.ajou.da.testhelper.course.dto.GetDetailedCourseResDto;
@@ -34,6 +35,7 @@ public class CourseController {
     }
 
     @GetMapping("/courses/{courseId}")
+    @AccessCourseByProfessor
     public ResponseEntity<GetDetailedCourseResDto> getCourse(@PathVariable Long courseId){
 
         Course course = courseService.get(courseId);
@@ -42,6 +44,7 @@ public class CourseController {
     }
 
     @PutMapping("/courses/{courseId}/assistants")
+    @AccessCourseByProfessor
     public ResponseEntity<BooleanResponse> putCourseAssistant(@PathVariable Long courseId,
                                                               PutCourseAssistantReqDto reqDto) {
 

@@ -54,4 +54,8 @@ public class Course {
         this.assistants.clear();
         this.assistants.addAll(filteredAssistants);
     }
+
+    public boolean hasProfessor(Account account) {
+        return professor.equals(account);
+    }
 }
