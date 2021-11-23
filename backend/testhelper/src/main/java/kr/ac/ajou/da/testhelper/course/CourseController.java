@@ -4,6 +4,7 @@ import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import kr.ac.ajou.da.testhelper.course.dto.GetCourseResDto;
+import kr.ac.ajou.da.testhelper.course.dto.GetDetailedCourseResDto;
 import kr.ac.ajou.da.testhelper.course.dto.PutCourseAssistantReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,14 @@ public class CourseController {
         List<Course> courses = courseService.getByProfessorId(account.getId());
 
         return ResponseEntity.ok().body(courses.stream().map(GetCourseResDto::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/courses/{courseId}")
+    public ResponseEntity<GetDetailedCourseResDto> getCourse(@PathVariable Long courseId){
+
+        Course course = courseService.get(courseId);
+
+        return ResponseEntity.ok().body(new GetDetailedCourseResDto(course));
     }
 
     @PutMapping("/courses/{courseId}/assistants")
