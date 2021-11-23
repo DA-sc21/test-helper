@@ -15,10 +15,17 @@ public class EmailService {
 		
 	@Autowired
 	private EmailServiceImpl emailServiceImpl;
+	
+	@Autowired
+	private RedisService redisService;
 
 	public boolean sendEmail(String email) throws Exception {
 		emailServiceImpl.sendSimpleMessage(email);
 		return true;
+	}
+
+	public boolean confirmEmail(PostEmailConfirmReqDto reqDto) {
+		return redisService.isVerify(reqDto);
 	}
 
 }

@@ -21,6 +21,10 @@ public class EmailController {
 	public ResponseEntity<BooleanResponse> sendEmail(@RequestBody PostEmailReqDto email) throws Exception {
 		return ResponseEntity.ok().body(BooleanResponse.of(emailService.sendEmail(email.getEmail())));
 	}
-
+	
+	@PostMapping("/users/email/confirm")
+	public ResponseEntity<BooleanResponse> confirmEmail(@RequestBody PostEmailConfirmReqDto reqDto) {
+		return ResponseEntity.ok().body(BooleanResponse.of(emailService.confirmEmail(reqDto)));
+	}
 
 }
