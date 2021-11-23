@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +20,11 @@ public class AccountController {
     @GetMapping("/assistants")
     @IsProfessor
     public ResponseEntity<List<GetAssistantsResDto>> getAssistants(GetAssistantsReqDto reqDto){
-        ArrayList<GetAssistantsResDto> assistants = new ArrayList<>();
-        assistants.add(new GetAssistantsResDto(1L, "name","email"));
-        return ResponseEntity.ok().body(assistants);
+        List<Account> assistants = accountService.getAssistantsByEmailStartingWith(reqDto.getEmail());
+
+        return ResponseEntity.ok().body(assistants.stream()
+                .map(GetAssistantsResDto::new)
+                .collect(Collectors.toList()));
     }
 
 }

@@ -32,4 +32,9 @@ public class AccountService implements UserDetailsService {
     public List<Account> getByIds(List<Long> ids) {
         return accountRepository.findAllById(ids);
     }
+
+    @Transactional
+    public List<Account> getAssistantsByEmailStartingWith(String email) {
+        return accountRepository.findAllByEmailStartingWith(email);
+    }
 }
