@@ -89,4 +89,52 @@ class CourseServiceTest {
 
         //then
     }
+
+    @Test
+    void updateCourseAssistants_overlappingCourseAssistants_then_removeOverlapped() {
+        //given
+        Course course = DummyFactory.createCourse();
+        List<Account> assistants = new ArrayList<>();
+        Account overlappingAssistant = DummyFactory.createAssistant();
+        assistants.add(overlappingAssistant);
+        assistants.add(overlappingAssistant);
+
+        when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+        when(accountService.getByIds(anyList())).thenReturn(assistants);
+
+        //when
+        courseService.updateCourseAssistants(course.getId(),
+                assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
+
+        //then
+        verify(courseRepository, times(1)).findById(anyLong());
+        verify(accountService, times(1)).getByIds(anyList());
+
+        assertEquals(1, course.getAssistants().size());
+        assertTrue(course.getAssistants().contains(overlappingAssistant));
+    }
+
+    @Test
+    void updateCourseAssistants_professorGiven_then_removeProfessor() {
+        //given
+        Course course = DummyFactory.createCourse();
+        List<Account> assistants = new ArrayList<>();
+        Account assistant = DummyFactory.createAssistant();
+        assistants.add(DummyFactory.createProfessor());
+        assistants.add(assistant);
+
+        when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+        when(accountService.getByIds(anyList())).thenReturn(assistants);
+
+        //when
+        courseService.updateCourseAssistants(course.getId(),
+                assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
+
+        //then
+        verify(courseRepository, times(1)).findById(anyLong());
+        verify(accountService, times(1)).getByIds(anyList());
+
+        assertEquals(1, course.getAssistants().size());
+        assertTrue(course.getAssistants().contains(assistant));
+    }
 }

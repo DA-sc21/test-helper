@@ -2,7 +2,6 @@ package kr.ac.ajou.da.testhelper.common.security.authority;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.account.AccountService;
-import kr.ac.ajou.da.testhelper.account.definition.AccountRole;
 import kr.ac.ajou.da.testhelper.common.security.exception.NotAuthorizedException;
 import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.test.Test;
@@ -49,15 +48,15 @@ public class AccessAspect {
         Test test = testService.getTest(testId);
         Account proctor = resolveAccount();
 
-        if(AccountRole.PROFESSOR.equals(proctor.getRole())){
-            if(!test.isProfessor(proctor)){
+        if(proctor.isProfessor()){
+            if(!test.hasProfessor(proctor)){
                 throw new NotAuthorizedException();
             }
             return;
         }
 
-        if(AccountRole.ASSISTANT.equals(proctor.getRole())){
-            if(!test.isAssistant(proctor)){
+        if(proctor.isAssistant()){
+            if(!test.hasAssistant(proctor)){
                 throw new NotAuthorizedException();
             }
         }

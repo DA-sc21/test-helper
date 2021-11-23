@@ -44,6 +44,14 @@ public class Account implements UserDetails {
         this.role = role;
     }
 
+    public boolean isProfessor(){
+        return AccountRole.PROFESSOR.equals(role);
+    }
+
+    public boolean isAssistant(){
+        return AccountRole.ASSISTANT.equals(role);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role.resolveAuthority()));

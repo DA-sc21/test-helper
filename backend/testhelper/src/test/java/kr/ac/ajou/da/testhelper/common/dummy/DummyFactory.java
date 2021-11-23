@@ -15,6 +15,9 @@ public class DummyFactory {
     public static Account createAccount() {
         return new Account(1L);
     }
+    public static Account createProfessor() {
+        return new Account(1L,"name","email","password", AccountRole.PROFESSOR);
+    }
 
     public static Account createAssistant() {
         return new Account(1L,"name","email","password", AccountRole.ASSISTANT);

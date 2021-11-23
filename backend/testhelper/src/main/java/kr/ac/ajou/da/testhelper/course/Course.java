@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -45,9 +46,12 @@ public class Course {
         this.name = name;
     }
 
-    public void updateAssistants(List<Account> assistants){
+    public void updateAssistants(List<Account> assistants) {
         //TODO : batch delete하는 방법 찾아보기
+
+        Set<Account> filteredAssistants = assistants.stream().filter(Account::isAssistant).collect(Collectors.toSet());
+
         this.assistants.clear();
-        this.assistants.addAll(assistants);
+        this.assistants.addAll(filteredAssistants);
     }
 }
