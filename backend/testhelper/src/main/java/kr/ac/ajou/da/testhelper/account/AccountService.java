@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
@@ -16,7 +18,7 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public Account get(Long id){
         return accountRepository.findById(id)
-                .orElseThrow(()-> new AccountNotFoundException());
+                .orElseThrow(AccountNotFoundException::new);
     }
 
     @Override
@@ -24,5 +26,10 @@ public class AccountService implements UserDetailsService {
     public Account loadUserByUsername(String username) throws UsernameNotFoundException {
         return accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
+    @Transactional
+    public List<Account> getByIds(List<Long> ids) {
+        return accountRepository.findAllById(ids);
     }
 }

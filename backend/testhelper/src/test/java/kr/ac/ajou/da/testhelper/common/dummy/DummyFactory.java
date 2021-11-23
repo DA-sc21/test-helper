@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.common.dummy;
 
 import kr.ac.ajou.da.testhelper.account.Account;
+import kr.ac.ajou.da.testhelper.account.definition.AccountRole;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
@@ -13,6 +14,10 @@ public class DummyFactory {
 
     public static Account createAccount() {
         return new Account(1L);
+    }
+
+    public static Account createAssistant() {
+        return new Account(1L,"name","email","password", AccountRole.ASSISTANT);
     }
 
     public static Course createCourse() {

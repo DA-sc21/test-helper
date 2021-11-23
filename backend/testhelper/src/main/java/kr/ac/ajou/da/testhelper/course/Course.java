@@ -9,7 +9,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -31,9 +33,21 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Test> tests = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "COURSE_ASSISTANT",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    private Set<Account> assistants = new HashSet<>();
+
     public Course(Long id, String name) {
         this.id = id;
         this.name = name;
     }
-}
 
+    public void updateAssistants(List<Account> assistants){
+        //TODO : batch delete하는 방법 찾아보기
+        this.assistants.clear();
+        this.assistants.addAll(assistants);
+    }
+}
