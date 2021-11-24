@@ -1,0 +1,39 @@
+.box{
+  text-align: center;
+}
+.content{
+  display: inline-block;
+  width: 90%;
+}
+.semester{
+  text-align: left;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  margin-left: 7%;
+  font-size: 21px;
+}
+.courseName{
+  text-align: left;
+  margin-top: 1%;
+  margin-left: 2%;
+  font-size: 17px;
+  font-weight: bold;
+}
+.cardbox{
+  border-radius: 1px;
+  display: inline-block;
+  width: 85%;
+  height: 115px;
+  margin-bottom: 2%;
+}
+.cardbox:hover{
+  box-shadow: 2px 3px 2px rgba(173, 173, 173, 0.247);
+  text-decoration: underline;
+}
+.cardline{
+  float: left;
+  margin-top: 0;
+  background-color: rgb(82, 82, 94);
+  width: 12px;
+  height: 100%;
+}
