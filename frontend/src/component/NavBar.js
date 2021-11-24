@@ -1,8 +1,24 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { Navbar , Nav , NavDropdown , Container  } from 'react-bootstrap';
+import { Navbar , Nav , NavDropdown , Container , Button  } from 'react-bootstrap';
+import { baseUrl } from "./baseUrl";
+import axios from 'axios';
 
 function NavBar(){
+  async function logout(e){
+    await axios
+    .delete(baseUrl+'/sessions',{
+      withCredentials : true
+    })
+    .then((result)=>{
+      console.log(result.data);
+      if(result.data.result === true){ //로그아웃 성공
+        sessionStorage.removeItem('username');
+        document.location.href = '/';
+      }
+    })
+    .catch(()=>{ console.log("실패") })
+  }
   return(
     <Navbar bg="light" expand="lg">
       <Container fluid>
@@ -32,6 +48,7 @@ function NavBar(){
           Signed in as: <a href="#login">윤대균 교수</a>
           </Navbar.Text>
         </Navbar.Collapse>
+        <Button style={{marginLeft:"1%", backgroundColor:"#eeeeee", borderColor:"#eeeeee", color:"black", boxShadow:"1px 1px 1px #d4d4d4"}} onClick={(e)=>logout(e)}>로그아웃</Button>
       </Container>
     </Navbar>
   )
