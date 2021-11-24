@@ -12,10 +12,6 @@ function NavBar(){
     })
     .then((result)=>{
       console.log(result.data);
-      if(result.data.result === true){ //로그아웃 성공
-        sessionStorage.removeItem('username');
-        document.location.href = '/';
-      }
     })
     .catch(()=>{ console.log("실패") })
   }

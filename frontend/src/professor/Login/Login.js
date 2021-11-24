@@ -24,9 +24,9 @@ function Login(){
     .then((result)=>{
       console.log(result.data);
       if(result.data.result === true){ //로그인 성공
-        sessionStorage.setItem('username', state.username);
+        // sessionStorage.setItem('username', state.username);
         // history.push("/");
-        document.location.href = '/';
+        // document.location.href = '/';
       }
     })
     .catch(()=>{ console.log("실패") })
