@@ -80,11 +80,11 @@ public class Test {
         return TestStatus.ENDED.equals(status) && LocalDateTime.now().isBefore(endTime);
     }
 
-    public boolean isProfessor(Account account) {
+    public boolean hasProfessor(Account account) {
         return this.getCourse().getProfessor().equals(account);
     }
 
-    public boolean isAssistant(Account account) {
+    public boolean hasAssistant(Account account) {
         return this.getAssistants().contains(account);
     }
 }

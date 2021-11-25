@@ -2,8 +2,9 @@ package kr.ac.ajou.da.testhelper.common.security.authority;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.account.AccountService;
-import kr.ac.ajou.da.testhelper.account.definition.AccountRole;
 import kr.ac.ajou.da.testhelper.common.security.exception.NotAuthorizedException;
+import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.course.CourseService;
 import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.test.Test;
 import kr.ac.ajou.da.testhelper.test.TestService;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AccessAspect {
 
+    private final CourseService courseService;
     private final TestService testService;
     private final AccountService accountService;
 
@@ -49,18 +51,36 @@ public class AccessAspect {
         Test test = testService.getTest(testId);
         Account proctor = resolveAccount();
 
-        if(AccountRole.PROFESSOR.equals(proctor.getRole())){
-            if(!test.isProfessor(proctor)){
+        if(proctor.isProfessor()){
+            if(!test.hasProfessor(proctor)){
                 throw new NotAuthorizedException();
             }
             return;
         }
 
-        if(AccountRole.ASSISTANT.equals(proctor.getRole())){
-            if(!test.isAssistant(proctor)){
+        if(proctor.isAssistant()){
+            if(!test.hasAssistant(proctor)){
                 throw new NotAuthorizedException();
             }
         }
+    }
+
+    @Before("execution(* kr.ac.ajou.da.testhelper..*Controller.*(..)) " +
+            "&& @annotation(AccessCourseByProfessor)")
+    @Transactional
+    public void hasAccessToCourseByProctor(JoinPoint joinPoint) {
+
+        Long courseId = resolveCourseId(joinPoint);
+        Course course = courseService.get(courseId);
+        Account professor = resolveAccount();
+
+        if(!course.hasProfessor(professor)){
+            throw new NotAuthorizedException();
+        }
+    }
+
+    private Long resolveCourseId(JoinPoint joinPoint) {
+        return (Long) resolveParameter("courseId", joinPoint);
     }
 
     private Long resolveTestId(JoinPoint joinPoint) {
