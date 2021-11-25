@@ -43,6 +43,13 @@ public class Account implements UserDetails {
         this.password = password;
         this.role = role;
     }
+    
+    public Account(String name, String email, String password, AccountRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public boolean isProfessor(){
         return AccountRole.PROFESSOR.equals(role);
