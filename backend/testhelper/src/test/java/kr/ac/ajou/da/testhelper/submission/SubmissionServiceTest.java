@@ -6,6 +6,7 @@ import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
+import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -160,12 +161,32 @@ class SubmissionServiceTest {
         SubmissionType submissionType = SubmissionType.ROOM_VIDEO;
 
         when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+        when(fileService.exist(anyString())).thenReturn(true);
 
         //when
         submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
 
         //then
         verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileService, times(1)).exist(anyString());
         verify(fileConvertService,times(1)).convertToMp4(any(Submission.class), any(SubmissionType.class));
+    }
+
+    @Test
+    void uploadSubmission_fileNotFound_thenThrow_UploadedFileNotFoundException() {
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        SubmissionType submissionType = SubmissionType.ROOM_VIDEO;
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+        when(fileService.exist(anyString())).thenReturn(false);
+
+        //when
+        assertThrows(UploadedFileNotFoundException.class, ()->{
+            submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
+        });
+
+        //then
+
     }
 }
