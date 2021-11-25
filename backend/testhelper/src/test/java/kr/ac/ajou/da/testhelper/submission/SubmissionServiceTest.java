@@ -8,6 +8,7 @@ import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -155,7 +156,26 @@ class SubmissionServiceTest {
     }
 
     @Test
+    @Disabled
     void uploadSubmission_success() {
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        SubmissionType submissionType = SubmissionType.ROOM_VIDEO; //change to not video
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+
+        //when
+        submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
+
+        //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileService, never()).exist(anyString());
+        verify(fileConvertService,never()).convertToMp4(any(Submission.class), any(SubmissionType.class));
+
+    }
+
+    @Test
+    void uploadSubmission_isVideo_convertToMp4() {
         //given
         Submission submission = DummyFactory.createSubmission();
         SubmissionType submissionType = SubmissionType.ROOM_VIDEO;

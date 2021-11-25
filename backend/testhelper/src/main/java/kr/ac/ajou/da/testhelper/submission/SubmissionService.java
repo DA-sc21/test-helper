@@ -76,12 +76,18 @@ public class SubmissionService {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
+        convertFileIfVideo(submission, submissionType);
+
+
+    }
+
+    private void convertFileIfVideo(Submission submission, SubmissionType submissionType) {
+        if(!submissionType.isVideo()) return;
+
         if(!fileService.exist(submissionType.resolveSubmissionPath(submission, false))){
             throw new UploadedFileNotFoundException();
         }
 
         fileConvertService.convertToMp4(submission, submissionType);
-
-
     }
 }
