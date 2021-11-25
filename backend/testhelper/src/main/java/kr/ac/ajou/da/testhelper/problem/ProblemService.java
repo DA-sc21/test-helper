@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,5 +21,12 @@ public class ProblemService {
         return problemRepository.findByTestId(testId);
 
     }
+
+	@Transactional
+	public boolean postTestProblem(Long testId, TestProblemReqDto reqDto) {
+		Problem problem = new Problem(reqDto.getProblemNum(), testId, reqDto.getQuestion(), reqDto.getPoint(), reqDto.getAttachedFile());
+		problemRepository.save(problem);
+		return true;
+	}
 
 }
