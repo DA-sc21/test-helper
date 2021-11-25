@@ -25,9 +25,11 @@ function SignUp(){
       "password": state.password,
       "role": state.role
     }
-    console.log(data);
+    console.log(JSON.stringify(data));
     await axios
-    .post(baseUrl+'/users', JSON.stringify(data))
+    .post(baseUrl+'/users', JSON.stringify(data),{
+      headers: { "Content-Type": `application/json`}
+        })
     .then((result)=>{
       console.log(result.data);
     })
@@ -39,6 +41,7 @@ function SignUp(){
     let data = {
       email : state.email
     }
+    console.log(JSON.stringify(data));
     await axios
     .post(baseUrl+'/users/email/validate', JSON.stringify(data),{
       headers: { "Content-Type": `application/json`}
@@ -57,8 +60,11 @@ function SignUp(){
       "code": state.verificationCode,
       "email": state.email
     }
+    console.log(JSON.stringify(data));
     await axios
-    .post(baseUrl+'/users/email/confirm', JSON.stringify(data))
+    .post(baseUrl+'/users/email/confirm', JSON.stringify(data),{
+      headers: { "Content-Type": `application/json`}
+        })
     .then((result)=>{
       console.log(result.data);
       if(result.data.result === true){
