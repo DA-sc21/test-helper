@@ -82,3 +82,8 @@ spring:
 
 server:
   ai: https://ai.test-helper.com
+  servlet:
+    session:
+      cookie:
+        domain: test-helper.com
+
