@@ -1,6 +1,6 @@
 package kr.ac.ajou.da.testhelper.common.security;
 
-import kr.ac.ajou.da.testhelper.examinee.ExamineeService;
+import kr.ac.ajou.da.testhelper.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,37 +17,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE + 100)
-public class ExamineeSecurityConfig extends WebSecurityConfigurerAdapter {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final ExamineeService examineeService;
+    private final AdminService adminService;
 
     @Bean
-    public PasswordEncoder ExamineePasswordEncoder() {
+    public PasswordEncoder adminPasswordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
-    public AuthenticationProvider examineeAuthenticationProvider() {
+    public AuthenticationProvider adminAuthenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(examineeService);
-        authenticationProvider.setPasswordEncoder(ExamineePasswordEncoder());
+        authenticationProvider.setUserDetailsService(adminService);
+        authenticationProvider.setPasswordEncoder(adminPasswordEncoder());
 
         return authenticationProvider;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(examineeService).passwordEncoder(ExamineePasswordEncoder());
+        auth.userDetailsService(adminService).passwordEncoder(adminPasswordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .antMatcher("/examinee/sessions")
+                .antMatcher("/admin/**")
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/examinee/sessions").permitAll()
+                .antMatchers(HttpMethod.POST, "/admin/sessions").permitAll()
                 .anyRequest().authenticated();
     }
 }
