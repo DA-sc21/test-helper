@@ -20,7 +20,7 @@ import java.util.Date;
 public class PreSignedURLService implements FileService {
 
 	private static final long EXPIRATION_TIME = 1000 * 60 * 3; // 3분;
-	private static final String BUCKET_NAME = "testhelper";
+	public static final String BUCKET_NAME = "testhelper";
 
 	private AmazonS3 s3Client;
 	

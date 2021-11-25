@@ -1,11 +1,10 @@
 package kr.ac.ajou.da.testhelper.submission;
 
+import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,6 +19,7 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final SubmissionMapper submissionMapper;
     private final FileService fileService;
+    private final FileConvertService fileConvertService;
 
     @Transactional
     public Submission getByTestIdAndStudentId(Long testId, Long studentId) {
@@ -52,7 +52,7 @@ public class SubmissionService {
 
 
     @Transactional
-    public boolean updateConsentedByTestIdAndStudentId(Long testId, Long studentId, Boolean consented){
+    public boolean updateConsentedByTestIdAndStudentId(Long testId, Long studentId, Boolean consented) {
         Submission submission = getByTestIdAndStudentId(testId, studentId);
 
         submission.updateConsented(consented);
@@ -61,11 +61,22 @@ public class SubmissionService {
     }
 
     @Transactional
-	public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, String submitted) {
-    	Submission submission = getByTestIdAndStudentId(testId, studentId);
-    	
-    	submission.updateSubmitted(submitted);
-    	
-		return true;
-	}
+    public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, String submitted) {
+        Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        submission.updateSubmitted(submitted);
+
+        return true;
+    }
+
+
+    @Transactional
+    public void uploadSubmission(Long testId, Long studentId, SubmissionType submissionType) {
+
+        Submission submission = this.getByTestIdAndStudentId(testId, studentId);
+
+        fileConvertService.convertToMp4(submission, submissionType);
+
+
+    }
 }

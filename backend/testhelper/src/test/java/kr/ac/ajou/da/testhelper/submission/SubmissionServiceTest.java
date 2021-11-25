@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
+import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
@@ -29,6 +30,8 @@ class SubmissionServiceTest {
     private SubmissionMapper submissionMapper;
     @Mock
     private FileService fileService;
+    @Mock
+    private FileConvertService fileConvertService;
 
 
 
@@ -41,7 +44,8 @@ class SubmissionServiceTest {
         submissionMapper = mock(SubmissionMapper.class);
         fileService = mock(FileService.class);
         submissionMapper = mock(SubmissionMapper.class);
-        submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
+        fileConvertService = mock(FileConvertService.class);
+        submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService, fileConvertService);
     }
 
     @Test
@@ -147,5 +151,21 @@ class SubmissionServiceTest {
         //then
         verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
         verify(fileService, never()).getUploadUrl(anyString());
+    }
+
+    @Test
+    void uploadSubmission_success() {
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        SubmissionType submissionType = SubmissionType.ROOM_VIDEO;
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+
+        //when
+        submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
+
+        //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileConvertService,times(1)).convertToMp4(any(Submission.class), any(SubmissionType.class));
     }
 }

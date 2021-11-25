@@ -65,6 +65,9 @@ dependencies {
 	//aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+	//cloud convert
+	implementation 'com.cloudconvert:cloudconvert-java:1.0.7'
+
 }
 
 bootRun{
