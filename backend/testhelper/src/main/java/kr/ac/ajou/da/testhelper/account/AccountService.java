@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,7 +27,7 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public Account get(Long id){
         return accountRepository.findById(id)
-                .orElseThrow(()-> new AccountNotFoundException());
+                .orElseThrow(AccountNotFoundException::new);
     }
 
     @Override
@@ -42,4 +44,13 @@ public class AccountService implements UserDetailsService {
 		accountRepository.save(account);
 		return true;
 	}
+  
+    public List<Account> getByIds(List<Long> ids) {
+        return accountRepository.findAllById(ids);
+    }
+
+    @Transactional
+    public List<Account> getAssistantsByEmailStartingWith(String email) {
+        return accountRepository.findAllByEmailStartingWith(email);
+    }
 }
