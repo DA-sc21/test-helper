@@ -42,6 +42,11 @@ public class PreSignedURLService implements FileService {
 		return this.getPreSignedURL(path, EXPIRATION_TIME, BUCKET_NAME, HttpMethod.GET);
 	}
 
+	@Override
+	public boolean exist(String path) {
+		return s3Client.doesObjectExist(BUCKET_NAME, path);
+	}
+
 	private String getPreSignedURL(String objectKey, long expirationTime, String bucketName, HttpMethod method) {
 		log.info(objectKey);		
 	    GeneratePresignedUrlRequest generatePresignedUrlRequest = 

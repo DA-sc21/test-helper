@@ -4,6 +4,7 @@ import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
+import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +75,10 @@ public class SubmissionService {
     public void uploadSubmission(Long testId, Long studentId, SubmissionType submissionType) {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
+
+        if(!fileService.exist(submissionType.resolveSubmissionPath(submission, false))){
+            throw new UploadedFileNotFoundException();
+        }
 
         fileConvertService.convertToMp4(submission, submissionType);
 
