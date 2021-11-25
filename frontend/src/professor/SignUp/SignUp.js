@@ -4,6 +4,16 @@ import { baseUrl } from "../../component/baseUrl";
 import axios from 'axios';
 
 function SignUp(){
+  const nameValidation = /^[가-힣]{2,4}$/;
+  const emailValidation = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+  const pwValidation = /^.*(?=^.{8,16}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[~,!,@,#,$,*,(,),=,+,_,.,|]).*$/;
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
+  const [role, setRole] = useState();
+  const [confirmCode, setConfirmCode] = useState();
+  const [code, setCode] = useState();
   const [state, setState] = useState([]);
   const [timerId, setTimerId] = useState(false);
   const [minutes, setMinutes] = useState(3);
@@ -18,7 +28,75 @@ function SignUp(){
     console.log(state);
   }
 
+  async function checkName(){
+    if(nameValidation.test(state.name) === false){
+      setName(false);
+      return false;
+    }
+    else{
+      setName(true);
+      return true;
+    }
+  }
+  async function checkEmail(){
+    if(emailValidation.test(state.email) === false){
+      setEmail(false);
+      return false;
+    }
+    else{
+      setEmail(true);
+      return true;
+    }
+  }
+  async function checkPassword(){
+    if(pwValidation.test(state.password) === false){
+      setPassword(false);
+      return false;
+    }
+    else{
+      setPassword(true);
+      return true;
+    }
+  }
+  async function checkConfirmPassword(){
+    if(state.password != state.confirmpassword){
+      setConfirmPassword(false);
+      return false;
+    }
+    else{
+      setConfirmPassword(true);
+      return true;
+    }
+  }
+  async function checkRole(){
+    if(state.role === undefined){
+      setRole(false);
+      return false;
+    }
+    else{
+      setRole(true);
+      return true;
+    }
+  }
+  async function checkConfirmCode(){
+    if(confirmCode === false || confirmCode === undefined){
+      setCode(false);
+      return false;
+    }
+    else{
+      setCode(true);
+      return true;
+    }
+  }
+
   async function submitForm(e){
+    let isName = await checkName();
+    let isEmail = await checkEmail();
+    let isPassword = await checkPassword();
+    let isConfirmPassword = await checkConfirmPassword();
+    let isRole = await checkRole();
+    let isConfirmCode = await checkConfirmCode();
+
     let data = {
       "email": state.email,
       "name": state.name,
@@ -26,14 +104,22 @@ function SignUp(){
       "role": state.role
     }
     console.log(JSON.stringify(data));
-    await axios
-    .post(baseUrl+'/users', JSON.stringify(data),{
-      headers: { "Content-Type": `application/json`}
-        })
-    .then((result)=>{
-      console.log(result.data);
-    })
-    .catch(()=>{ console.log("실패") })
+    console.log(isName,isEmail,isPassword,isConfirmPassword,isRole,isConfirmCode,confirmCode);
+    if(isName && isEmail && isPassword && isConfirmPassword && isRole && isConfirmCode && confirmCode){
+      await axios
+      .post(baseUrl+'/users', JSON.stringify(data),{
+        headers: { "Content-Type": `application/json`}
+          })
+      .then((result)=>{
+        console.log(result.data);
+        alert("회원가입에 성공했습니다.");
+
+      })
+      .catch(()=>{ 
+        console.log("실패");
+        alert("회원가입에 실패했습니다.");
+      })
+    }
   }
 
   async function verifyEmail(e){
@@ -68,10 +154,14 @@ function SignUp(){
     .then((result)=>{
       console.log(result.data);
       if(result.data.result === true){
-        alert("이메일 인증이 완료되었습니다.");
+        setConfirmCode(true);
+        alert("이메일 인증에 성공했습니다.");
       }
     })
-    .catch(()=>{ console.log("실패") })
+    .catch(()=>{ 
+      console.log("실패");
+      alert("인증번호가 일치하지 않습니다.");
+     })
   }
 
   useEffect(()=>{
@@ -99,37 +189,42 @@ function SignUp(){
       <div style={{color:"white", marginBottom:"0", paddingTop:"1.5%", textShadow:"2px 2px 2px #3e475c"}}>
       <h1>Test-Helper</h1>
       </div>
-      <div style={{width:"40%", height:"87%", backgroundColor:"white", display:"inline-block", marginTop:"0%", borderRadius:"10px"}}>
+      <div style={{width:"40%", height:"85%", backgroundColor:"white", display:"inline-block", marginTop:"0%", borderRadius:"10px"}}>
         <div style={{textAlign:"left", marginTop:"4%", marginLeft:"14%"}}>
           <Form>
-            <Form.Group className="w-75 mb-3">
+            <Form.Group className="w-75 mb-0">
               <Form.Label style={{fontWeight:"bold"}}>이름</Form.Label>
               <Form.Control type="name" placeholder="name" name="name" onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
+            {name === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>이름은 2~4자 이내의 한글만 가능합니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
 
             <Button style={{float:"right", marginTop:"6%", marginRight:"8%", backgroundColor:"#4c5974", borderColor:"#4c5974"}} onClick={(e)=>verifyEmail(e)}>인증</Button>
 
-            <Form.Group className="w-75 mb-3" >
+            <Form.Group className="w-75 mb-0" >
               <Form.Label style={{fontWeight:"bold"}}>이메일</Form.Label>
               <Form.Control type="email" placeholder="id@example.com" name="email" onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
+            {email === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>이메일은 @를 포함한 영문, 숫자만 가능합니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
             
             <Button style={{float:"right", marginTop:"6%", marginRight:"8%", backgroundColor:"#4c5974", borderColor:"#4c5974"}} onClick={(e)=>confirmEmail(e)}>확인</Button>
 
-            <Form.Group className="w-75 mb-3">
+            <Form.Group className="w-75 mb-0">
               <Form.Label style={{fontWeight:"bold"}}>인증 번호 {timerId? <span style={{color:"#162f5f"}}> {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</span> : <span></span>}</Form.Label>
               <Form.Control placeholder="" name="verificationCode" onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
+            {code === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>이메일 인증이 필요합니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
 
-            <Form.Group className="w-75 mb-3">
+            <Form.Group className="w-75 mb-0">
               <Form.Label style={{fontWeight:"bold"}}>비밀번호</Form.Label>
               <Form.Control type="password" placeholder="password" name="password" onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
+            {password === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>비밀번호는 8~16자의 영문, 숫자, 특수문자를 모두 사용해야합니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
 
-            <Form.Group className="w-75 mb-3">
+            <Form.Group className="w-75 mb-0">
               <Form.Label style={{fontWeight:"bold"}}>비밀번호 확인</Form.Label>
-              <Form.Control type="password" placeholder="password"/>
+              <Form.Control type="password" placeholder="password" name="confirmpassword" onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
+            {confirmPassword === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>비밀번호가 일치하지 않습니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
 
             <Form.Group className="mb-3">
               <Form.Label style={{fontWeight:"bold"}}>역할</Form.Label>
@@ -150,9 +245,10 @@ function SignUp(){
                 onChange={(e)=>onChangehandler(e)}  
               />
             </Form.Group>
+            {role === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>역할을 선택해주세요</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
           </Form>
         </div>
-        <Button style={{marginTop:"3%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
+        <Button style={{marginTop:"1%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
       </div>
     </div>
   )
