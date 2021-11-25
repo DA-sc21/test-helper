@@ -22,7 +22,9 @@ function Tests(){
 
   async function getTests(){
     await axios
-    .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus)
+    .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus,{
+      withCredentials : true
+    })
     .then((result)=>{ 
       setTestData(result.data);
       setLoading(true);

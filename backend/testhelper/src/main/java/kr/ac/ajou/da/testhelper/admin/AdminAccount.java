@@ -1,7 +1,5 @@
-package kr.ac.ajou.da.testhelper.account;
+package kr.ac.ajou.da.testhelper.admin;
 
-
-import kr.ac.ajou.da.testhelper.account.definition.AccountRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +16,8 @@ import java.util.Collections;
 @Getter
 @Setter(value = AccessLevel.PRIVATE)
 @Entity
-public class Account implements UserDetails {
+@Table(name = "ADMIN_ACCOUNT")
+public class AdminAccount implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,39 +28,20 @@ public class Account implements UserDetails {
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private AccountRole role;
-
-    public Account(Long id) {
+    public AdminAccount(Long id) {
         this.id = id;
     }
 
-    public Account(Long id, String name, String email, String password, AccountRole role) {
+    public AdminAccount(Long id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
-    }
-    
-    public Account(String name, String email, String password, AccountRole role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public boolean isProfessor(){
-        return AccountRole.PROFESSOR.equals(role);
-    }
-
-    public boolean isAssistant(){
-        return AccountRole.ASSISTANT.equals(role);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role.resolveAuthority()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
     @Override
