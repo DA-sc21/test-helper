@@ -16,21 +16,23 @@ function Login(){
     console.log(state);
   }
   async function submitForm(e){
-    await axios
-    .post(baseUrl+'/sessions', null, { params:{
-        password: state.password,
-        username: state.username
-      }},{withCredentials : true})
-    .then((result)=>{
-      console.log(result.data);
-      if(result.data.result === true){ //로그인 성공
-        // sessionStorage.setItem('username', state.username);
-        // history.push("/");
-        // document.location.href = '/';
+    let email = state.username.split('@');
+    let response = await fetch(baseUrl+`/sessions?password=${state.password}&username=${email[0]}%40${email[1]}`,{
+      method: 'POST',
+      credentials : 'include'
+    })
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        alert("로그인에 성공했습니다.");
+      }
+      else{
+        alert("로그인에 실패했습니다.");
       }
     })
-    .catch(()=>{ console.log("실패") })
+    .catch(error => {console.error('Error:', error)});
   }
+
   return(
     <div style={{backgroundColor:"#2a2f38", height:"100vh", textAlign:"center"}}>
       <div style={{color:"white", marginBottom:"2%", paddingTop:"1.5%", textShadow:"2px 2px 2px #3e475c"}}>
