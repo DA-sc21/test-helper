@@ -22,12 +22,12 @@ public class TestRoomService {
     private final TestRoomManagingService testRoomManagingService;
 
     @Transactional
-    public RoomDto getRoom(Long testID, Long studentId, DeviceType deviceType) {
+    public RoomDto getRoom(Long testId, Long studentId, DeviceType deviceType) {
 
         Submission submission;
 
         try {
-            submission = submissionService.getByTestIdAndStudentId(testID, studentId);
+            submission = submissionService.getByTestIdAndStudentId(testId, studentId);
         } catch (SubmissionNotFoundException exception) {
             throw new RoomNotFoundException();
         }
