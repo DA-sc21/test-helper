@@ -1,5 +1,7 @@
 .box{
   text-align: center;
+  background-color: rgb(243, 243, 243);
+  height: 91vh;
 }
 .content{
   display: inline-block;
