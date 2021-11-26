@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
 import './Course.css';
 
 function Course(){
+  let history = useHistory();
   const [loading, setLoading] = useState(false);
   const [course, setCourse] = useState([]);
   const [year, setYear] = useState(0);
@@ -48,7 +50,7 @@ function Course(){
       <div className="content">
         <p className="semester">{year}학년 {semester}학기</p>
         {course.map((data,i)=>(
-        <Card key={i} className="cardbox">
+        <Card key={i} className="cardbox" onClick={()=>history.push(`/courses/${data.id}`)}>
           <div className="cardline"></div>
           <Card.Body>
             <p className="courseName">{data.name}</p>

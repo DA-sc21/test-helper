@@ -6,6 +6,7 @@ import Tests from './professor/Tests'
 import SuperviseTest from "./professor/SuperviseTest"
 import TestStudentPre from './student/TestStudentPre'
 import Course from './professor/Course/Course';
+import CourseInfo from './professor/Course/CourseInfo';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <NavBar></NavBar>
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
+          <Route path="/courses/:courseId" component={CourseInfo} />
           <Route exact path="/tests" component={Tests} />
           <Route exact path="/" component={Main} />
         </>
