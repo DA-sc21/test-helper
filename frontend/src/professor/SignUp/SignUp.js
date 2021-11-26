@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Form } from 'react-bootstrap';
+import { Link, useHistory } from 'react-router-dom';
 import { baseUrl } from "../../component/baseUrl";
 import axios from 'axios';
 
@@ -18,6 +19,7 @@ function SignUp(){
   const [timerId, setTimerId] = useState(false);
   const [minutes, setMinutes] = useState(3);
   const [seconds, setSeconds] = useState(0);
+  let history = useHistory();
 
   function onChangehandler(e){
     let { name , value} = e.target;
@@ -113,6 +115,7 @@ function SignUp(){
       .then((result)=>{
         console.log(result.data);
         alert("회원가입에 성공했습니다.");
+        history.push("/login");
 
       })
       .catch(()=>{ 
@@ -189,7 +192,7 @@ function SignUp(){
       <div style={{color:"white", marginBottom:"0", paddingTop:"1.5%", textShadow:"2px 2px 2px #3e475c"}}>
       <h1>Test-Helper</h1>
       </div>
-      <div style={{width:"40%", height:"85%", backgroundColor:"white", display:"inline-block", marginTop:"0%", borderRadius:"10px"}}>
+      <div style={{width:"40%", height:"86%", backgroundColor:"white", display:"inline-block", marginTop:"0%", borderRadius:"10px"}}>
         <div style={{textAlign:"left", marginTop:"4%", marginLeft:"14%"}}>
           <Form>
             <Form.Group className="w-75 mb-0">
@@ -226,7 +229,7 @@ function SignUp(){
             </Form.Group>
             {confirmPassword === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>비밀번호가 일치하지 않습니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
 
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-0">
               <Form.Label style={{fontWeight:"bold"}}>역할</Form.Label>
               <Form.Check
                 type="radio"
@@ -248,7 +251,8 @@ function SignUp(){
             {role === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>역할을 선택해주세요</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
           </Form>
         </div>
-        <Button style={{marginTop:"1%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
+        <Button style={{marginTop:"0%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
+        <div style={{textDecoration:"underline", textAlign:"right", marginTop:"0%", marginRight:"11%", fontSize:"17px"}}><Link to="/login" style={{color:"#525252"}}>로그인</Link></div>
       </div>
     </div>
   )
