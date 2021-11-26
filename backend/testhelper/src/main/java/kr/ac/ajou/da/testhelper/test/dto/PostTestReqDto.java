@@ -13,11 +13,15 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class PostTestReqDto {
+
     private final TestType type;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private final LocalDateTime startTime;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private final LocalDateTime endTime;
+
     private final List<Long> assistants;
 
     public Test createTest(Course course, Long createdBy) {
