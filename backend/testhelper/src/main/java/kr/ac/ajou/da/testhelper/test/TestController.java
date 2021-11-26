@@ -3,7 +3,9 @@ package kr.ac.ajou.da.testhelper.test;
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
+import kr.ac.ajou.da.testhelper.test.dto.GetDetailedTestResDto;
 import kr.ac.ajou.da.testhelper.test.dto.PutTestStatusReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +35,19 @@ public class TestController {
     @AccessTestByProctor
     public ResponseEntity<BooleanResponse> putTestStatus(@PathVariable Long testId,
                                                          PutTestStatusReqDto reqDto,
-                                                         @AuthenticationPrincipal @ApiIgnore Account account){
+                                                         @AuthenticationPrincipal @ApiIgnore Account account) {
 
         testService.updateStatus(testId, reqDto.getStatus(), account);
 
         return ResponseEntity.ok().body(BooleanResponse.of(true));
+    }
+
+    @GetMapping("/tests/{testId}")
+    @AccessTestByProfessor
+    public ResponseEntity<GetDetailedTestResDto> getTest(@PathVariable Long testId,
+                                                         @AuthenticationPrincipal @ApiIgnore Account account) {
+
+        return ResponseEntity.ok().body(new GetDetailedTestResDto(testService.getTest(testId)));
+
     }
 }

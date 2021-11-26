@@ -39,9 +39,7 @@ public class Test {
     @Enumerated(EnumType.STRING)
     private TestStatus status = TestStatus.CREATE;
 
-    //private String problem;
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TEST_ASSISTANT",
             joinColumns = @JoinColumn(name="test_id"),
             inverseJoinColumns = @JoinColumn(name="account_id"))
