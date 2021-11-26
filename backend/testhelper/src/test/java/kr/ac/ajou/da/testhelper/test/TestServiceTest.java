@@ -8,7 +8,8 @@ import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.course.CourseService;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
-import kr.ac.ajou.da.testhelper.test.dto.PostTestReqDto;
+import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
+import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
 import kr.ac.ajou.da.testhelper.test.room.TestRoomService;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,7 +115,7 @@ class TestServiceTest {
         Account professor = course.getProfessor();
         Set<Account> assistants = course.getAssistants();
 
-        PostTestReqDto reqDto = new PostTestReqDto(TestType.MID,
+        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
@@ -134,14 +135,9 @@ class TestServiceTest {
         verify(testRepository, times(1)).save(any(kr.ac.ajou.da.testhelper.test.Test.class));
     }
 
-    private void assertTestEquals(Course course, PostTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
-        assertAll(
-                ()-> assertEquals(course, actualTest.getCourse()),
-                ()-> assertEquals(reqDto.getType(), actualTest.getTestType()),
-                ()-> assertEquals(reqDto.getStartTime(), actualTest.getStartTime()),
-                ()-> assertEquals(reqDto.getEndTime(), actualTest.getEndTime()),
-                ()-> assertAssistantsEquals(reqDto.getAssistants(), actualTest.getAssistants())
-        );
+    private void assertTestEquals(Course course, PostAndPatchTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
+        assertEquals(course, actualTest.getCourse());
+        assertTestEquals(reqDto, actualTest);
     }
 
     private void assertAssistantsEquals(List<Long> expectedAssistants, Set<Account> actualAssistants) {
@@ -152,5 +148,61 @@ class TestServiceTest {
         for(Long expectedAssistant : expectedAssistants){
             assertTrue(actualAssistantMap.containsKey(expectedAssistant));
         }
+    }
+
+    @Test
+    void updateTest_testStatusCREATE_success() {
+        //given
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+        Account professor = test.getCourse().getProfessor();
+        List<Account> assistants = Collections.singletonList(DummyFactory.createAssistant());
+
+        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2),
+                assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
+
+        when(testRepository.getById(anyLong())).thenReturn(test);
+        when(accountService.getByIds(anyList())).thenReturn(assistants);
+
+        //when
+        kr.ac.ajou.da.testhelper.test.Test actualTest = testService.updateTest(test.getId(), reqDto, professor.getId());
+
+        //then
+        assertTestEquals(reqDto, actualTest);
+        verify(accountService, times(1)).getByIds(anyList());
+        verify(testRepository, times(1)).getById(anyLong());
+    }
+
+    private void assertTestEquals(PostAndPatchTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
+        assertAll(
+                ()-> assertEquals(reqDto.getType(), actualTest.getTestType()),
+                ()-> assertEquals(reqDto.getStartTime(), actualTest.getStartTime()),
+                ()-> assertEquals(reqDto.getEndTime(), actualTest.getEndTime()),
+                ()-> assertAssistantsEquals(reqDto.getAssistants(), actualTest.getAssistants())
+        );
+    }
+
+    @Test
+    void updateTest_testStatusINPROGRESS_thenThrow_CannotUpdateTestException() {
+        //given
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+        test.updateStatus(TestStatus.IN_PROGRESS);
+        Account professor = test.getCourse().getProfessor();
+        List<Long> assistantIds = Arrays.asList(1L,2L);
+
+        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2),
+                assistantIds);
+
+        when(testRepository.getById(anyLong())).thenReturn(test);
+
+        //when
+
+        assertThrows(CannotUpdateTestException.class,
+                ()->testService.updateTest(test.getId(), reqDto, professor.getId()));
+
+        //then
     }
 }

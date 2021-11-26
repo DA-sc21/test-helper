@@ -5,6 +5,8 @@ import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.exception.CannotEndTestBeforeEndTimeException;
+import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestAssistantException;
+import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -117,7 +120,36 @@ public class Test {
     }
 
     public void updateAssistants(List<Account> assistants) {
+
+        if(!isValidStatusForUpdatingAssistant()){
+            throw new CannotUpdateTestAssistantException();
+        }
+
         this.assistants.clear();
         this.assistants.addAll(assistants);
+    }
+
+    private boolean isValidStatusForUpdatingAssistant() {
+        return Objects.equals(TestStatus.CREATE, status);
+    }
+
+    public void update(TestType type, LocalDateTime startTime, LocalDateTime endTime, Long updatedBy) {
+
+        if(!isValidStatusForUpdating()){
+            throw new CannotUpdateTestException();
+        }
+
+        setTestType(type);
+        setStartTime(startTime);
+        setEndTime(endTime);
+        setUpdatedBy(updatedBy);
+    }
+
+    private boolean isValidStatusForUpdating() {
+        return Objects.equals(TestStatus.CREATE, status);
+    }
+
+    public boolean canUpdateAssistant() {
+        return isValidStatusForUpdatingAssistant();
     }
 }

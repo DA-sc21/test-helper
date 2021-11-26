@@ -6,7 +6,7 @@ import kr.ac.ajou.da.testhelper.account.AccountService;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.course.CourseService;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
-import kr.ac.ajou.da.testhelper.test.dto.PostTestReqDto;
+import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
 import kr.ac.ajou.da.testhelper.test.room.TestRoomService;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class TestService {
     }
 
     @Transactional
-    public Test createTest(Long courseId, PostTestReqDto reqDto, Long createdBy) {
+    public Test createTest(Long courseId, PostAndPatchTestReqDto reqDto, Long createdBy) {
         Course course = courseService.get(courseId);
 
         List<Account> assistants = accountService.getByIds(reqDto.getAssistants());
@@ -73,6 +73,21 @@ public class TestService {
         test.updateAssistants(assistants);
 
         testRepository.save(test);
+
+        return test;
+    }
+
+    @Transactional
+    public Test updateTest(Long testId, PostAndPatchTestReqDto reqDto, Long updatedBy) {
+        Test test = testRepository.getById(testId);
+
+        reqDto.updateTest(test,updatedBy);
+
+        if(test.canUpdateAssistant()){
+            List<Account> assistants = accountService.getByIds(reqDto.getAssistants());
+
+            test.updateAssistants(assistants);
+        }
 
         return test;
     }

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class PostTestReqDto {
+public class PostAndPatchTestReqDto {
 
     private final TestType type;
 
@@ -28,5 +28,9 @@ public class PostTestReqDto {
         Test test = new Test(type, startTime, endTime, course, createdBy);
         course.addTest(test);
         return test;
+    }
+
+    public void updateTest(Test test, Long updatedBy) {
+        test.update(type, startTime, endTime, updatedBy);
     }
 }
