@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@IsProctor
+@IsAccount
 public @interface AccessTestByProctor {
 }

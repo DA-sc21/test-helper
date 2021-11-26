@@ -46,13 +46,13 @@ public class TestRoomController {
         ));
     }
 
-    @GetMapping("/tests/{testID}/students/{studentID}/room")
+    @GetMapping("/tests/{testId}/students/{studentId}/room")
     @AccessExaminee
-    public ResponseEntity<GetTestStudentRoomResDto> getTestStudentRoom(@PathVariable Long testID,
-                                                                       @PathVariable Long studentID,
+    public ResponseEntity<GetTestStudentRoomResDto> getTestStudentRoom(@PathVariable Long testId,
+                                                                       @PathVariable Long studentId,
                                                                        @ApiIgnore Device device) {
 
-        RoomDto room = testRoomService.getRoom(testID, studentID, DeviceType.of(device));
+        RoomDto room = testRoomService.getRoom(testId, studentId, DeviceType.of(device));
 
         return ResponseEntity.ok(new GetTestStudentRoomResDto(
                 temporaryCredentialService.createTemporaryCredential()

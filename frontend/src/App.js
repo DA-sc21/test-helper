@@ -1,15 +1,19 @@
 import './App.css';
 import { Route, Switch} from 'react-router-dom';
-import Main from './Main'
-import NavBar from './component/NavBar'
-import Tests from './professor/Tests'
-import SuperviseTest from "./professor/SuperviseTest"
-import TestStudentPre from './student/TestStudentPre'
+import Main from './Main';
+import NavBar from './component/NavBar';
+import Tests from './professor/Tests';
+import SuperviseTest from './professor/SuperviseTest';
+import TestStudentPre from './student/TestStudentPre';
+import SignUp from './professor/SignUp/SignUp';
+import Login from './professor/Login/Login';
 
 function App() {
   return (
     <div className="App">
       <Switch>
+        <Route path="/signup" component={SignUp} />
+        <Route path="/login" component={Login} />
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} / >
         <>
           <NavBar></NavBar>
