@@ -5,6 +5,7 @@ import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
 import CourseRouter from './CourseRouter';
+import './Course.css';
 
 function CourseInfo(){
   let {courseId} = useParams();
@@ -37,14 +38,14 @@ function CourseInfo(){
   return(
     <div style={{display: "flex", flexDirection: "row", textAlign:"center"}}>
     <div style={{display: "flex", flexDirection: "column", borderRight:"1px solid #e0e0e0", height:"91vh", width:"15%"}}>
-    <div style={{width:"100%", textAlign:"center", marginTop:"3%", fontSize:"22px", marginBottom:"2%"}}>{courseInfo.name}</div>
+    <div style={{width:"100%", textAlign:"center", marginTop:"4%", fontSize:"24px", marginBottom:"2%"}}>{courseInfo.name}</div>
     <div style={{borderBottom:"1px solid gray", width:"98%", marginLeft:"0.5%", boxShadow: "1px 1px 1px gray", marginBottom:"3%"}}></div>
-    <Nav variant="tabs" as="ul" defaultActiveKey={menus[0].path} className="flex-column" style={{width:"100%"}}>
+    <Nav as="ul" defaultActiveKey={menus[0].path} className="flex-column" style={{width:"100%"}}>
       {
         menus.map((data,index)=>{
           return(
             <Nav.Item key={index} as="li">
-              <Nav.Link  as={Link} to ={data.path} eventKey={"link-"+index} style={{fontSize:"18px", color:"black"}}>{data.name}</Nav.Link>
+              <Nav.Link  as={Link} to ={data.path} eventKey={"link-"+index} className="menuLink">{data.name}</Nav.Link>
             </Nav.Item>
           )
         })

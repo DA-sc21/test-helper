@@ -12,6 +12,7 @@ function CourseRouter (props){
       <Route exact path={path+"/assistants"} 
         render ={()=>
           <Assistant
+            path={path}
             assistant={assistant} />
         }
       />
