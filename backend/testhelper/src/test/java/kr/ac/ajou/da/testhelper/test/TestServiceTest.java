@@ -205,4 +205,20 @@ class TestServiceTest {
 
         //then
     }
+
+    @Test
+    void sendTestInvitation_statusCREATE_success() {
+        //given
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+
+        when(testRepository.findById(anyLong())).thenReturn(Optional.of(test));
+
+        //when
+        testService.sendTestInvitation(test.getId());
+
+        //then
+        assertEquals(TestStatus.INVITED, test.getStatus());
+        verify(testRepository, times(1)).findById(anyLong());
+        //TODO : send email to all students
+    }
 }

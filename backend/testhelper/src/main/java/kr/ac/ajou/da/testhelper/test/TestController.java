@@ -78,6 +78,16 @@ public class TestController {
 
     }
 
+    @PostMapping("/tests/{testId}/invitation")
+    @AccessTestByProfessor
+    public ResponseEntity<BooleanResponse> postTestInvitation(@PathVariable Long testId){
+
+
+        testService.sendTestInvitation(testId);
+
+        return ResponseEntity.ok().body(BooleanResponse.TRUE);
+    }
+
     private void validate(PostAndPatchTestReqDto reqDto) {
         if (!LocalDateTime.now().isBefore(reqDto.getStartTime())) {
             throw new InvalidInputException("시작 시간을 현재 이후로 설정해주세요");

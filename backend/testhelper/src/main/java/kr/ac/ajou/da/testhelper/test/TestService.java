@@ -91,4 +91,9 @@ public class TestService {
 
         return test;
     }
+
+    @Transactional
+    public void sendTestInvitation(Long testId) {
+
+    }
 }
