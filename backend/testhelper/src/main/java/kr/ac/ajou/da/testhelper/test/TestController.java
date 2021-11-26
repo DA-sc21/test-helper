@@ -3,7 +3,7 @@ package kr.ac.ajou.da.testhelper.test;
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
-import kr.ac.ajou.da.testhelper.common.security.authority.IsProctor;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
 import kr.ac.ajou.da.testhelper.test.dto.PutTestStatusReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class TestController {
     private final TestService testService;
 
     @GetMapping("/tests")
-    @IsProctor
+    @IsAccount
     public List<HashMap<String, Object>> getTests(@AuthenticationPrincipal @ApiIgnore Account account) throws Exception {
         return testService.getTests(account.getId());
     }
