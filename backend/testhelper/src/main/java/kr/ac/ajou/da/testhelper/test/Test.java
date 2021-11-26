@@ -9,10 +9,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -49,6 +52,20 @@ public class Test {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    @Column(nullable = false)
+    private Long createdBy;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private Long updatedBy;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
     public Test(Long id,
                 TestType testType,
                 LocalDateTime startTime,
@@ -59,6 +76,19 @@ public class Test {
         this.startTime = startTime;
         this.endTime = endTime;
         this.course = course;
+    }
+
+    public Test(TestType testType,
+                LocalDateTime startTime,
+                LocalDateTime endTime,
+                Course course,
+                Long createdBy) {
+        this.testType = testType;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.course = course;
+        this.createdBy = createdBy;
+        this.updatedBy = createdBy;
     }
 
     public String resolveName() {
@@ -84,5 +114,10 @@ public class Test {
 
     public boolean hasAssistant(Account account) {
         return this.getAssistants().contains(account);
+    }
+
+    public void updateAssistants(List<Account> assistants) {
+        this.assistants.clear();
+        this.assistants.addAll(assistants);
     }
 }
