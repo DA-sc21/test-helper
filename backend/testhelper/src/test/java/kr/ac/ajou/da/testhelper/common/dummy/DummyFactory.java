@@ -9,22 +9,27 @@ import kr.ac.ajou.da.testhelper.test.Test;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DummyFactory {
 
     public static Account createAccount() {
         return new Account(1L);
     }
+
     public static Account createProfessor() {
-        return new Account(1L,"name","email","password", AccountRole.PROFESSOR);
+        return new Account(1L, "name", "email", "password", AccountRole.PROFESSOR);
     }
 
     public static Account createAssistant() {
-        return new Account(1L,"name","email","password", AccountRole.ASSISTANT);
+        return new Account(1L, "name", "email", "password", AccountRole.ASSISTANT);
     }
 
     public static Course createCourse() {
-        return new Course(1L, "name");
+        Set<Account> assistants = new HashSet<>();
+        assistants.add(createAssistant());
+        return new Course(1L, "name", createProfessor(), assistants);
     }
 
     public static Test createTest() {
