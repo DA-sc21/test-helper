@@ -43,11 +43,19 @@ function Course(){
     })
     .catch((e)=>{ console.log("실패") })
   }
+  function sortCourse(){
+    let courseList = course.sort(function(a, b) { // 오름차순
+      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+    });
+    setCourse(courseList);
+    console.log(courseList);
+  }
 
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="box">
       <div className="content">
+        <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button>
         <p className="semester">{year}학년 {semester}학기</p>
         {course.map((data,i)=>(
         <Card key={i} className="cardbox" onClick={()=>history.push(`/courses/${data.id}`)}>

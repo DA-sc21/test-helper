@@ -56,3 +56,11 @@
   font-weight: bold;
   text-decoration: underline;
 } */
+.sortCourseBt{
+  float: right;
+  margin-top: 2%;
+  margin-right: 8%;
+  background-color: #4c5272;
+  border-color: #4c5272;
+  box-shadow: 1px 1px 1px #929394;
+}
