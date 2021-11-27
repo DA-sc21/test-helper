@@ -13,13 +13,13 @@ function Test(props){
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => {setShow(true);setAssistantInfo([]);}
+  const handleShow = () => {setShow(true);}
   const [state, setState] = useState([]);
   const [testList, setTestList] = useState([]);
   const [midterm, setMidterm] = useState([]);
   const [final, setFinal] = useState([]);
   const [quiz, setQuiz] = useState([]);
-  const [assistantInfo, setAssistantInfo] = useState([]);
+  const [assistant, setAssistant] = useState([]);
   let test_status_options={
     "CREATE" : "시험 생성 완료",
     "IN_PROGRESS" : "시험 진행중",
@@ -29,10 +29,11 @@ function Test(props){
   }
 
   useEffect(()=>{
-    console.log(props)
+    console.log(props);
+    setAssistant(props.assistant);
     getTest();
   },[])
-  
+
   function onChangehandler(e){
     let { name , value} = e.target;
     setState({
@@ -76,24 +77,21 @@ function Test(props){
     setQuiz(quiz);
     setLoading(true);
   }
-  async function searchAssistantInfo(){
-    let email = state.email.split('@');
-
-    await axios
-    .get(baseUrl+`/assistants?email=${email[0]}%40${email[1]}`,{
-        withCredentials : true
-      })
-    .then((result)=>{
-      console.log(result.data);
-      setAssistantInfo(result.data);
-    })
-    .catch(()=>{ console.log("실패") })
-  }
   async function submitForm(e){
-    let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
-    let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
-
-    let response = await fetch(baseUrl+path+`/tests?assistants=${state.assistantId}&endTime=${end_time}&startTime=${start_time}&type=${state.type}`,{
+    if(state.endTime<state.startTime){
+        console.log("에러")
+    }
+    if(state.startTime===undefined||state.endTime===undefined||state.assistantId===undefined||state.type===undefined){
+      alert("정보를 모두 입력해 주세요.");
+    }
+    else if(moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+      alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
+    }
+    else{
+      let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
+      let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
+    
+      let response = await fetch(baseUrl+path+`/tests?assistants=${state.assistantId}&endTime=${end_time}&startTime=${start_time}&type=${state.type}`,{
         method: 'POST',
         credentials : 'include',
       })
@@ -104,13 +102,13 @@ function Test(props){
             setShow(false);
             setLoading(false);
             getTest();
-          }
-          else{
-            alert("시험 생성에 실패했습니다.");
-          }
         }
-      )
-      .catch(error => {console.error('Error:', error)});
+        else{
+          alert("시험 생성에 실패했습니다.");
+        }
+      })
+      .catch(error => {console.error('Error:', error)});  
+    }
     // await axios
     // .post(baseUrl+path+'/tests', null, { params:{
     //     assistants: state.assistantId,
@@ -189,7 +187,7 @@ function Test(props){
           <Modal.Title>시험 생성</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{height:"65vh"}}>
+          <div style={{height:"55vh"}}>
             <div className="FormName">시험 유형</div>
             <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
               <option>시험 유형</option>
@@ -202,17 +200,6 @@ function Test(props){
             <div className="FormName">종료 일시</div>
             <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
             <div className="FormName">담당 조교 등록</div>
-            <Button variant="secondary" style={{float:"right"}} onClick={(e)=>searchAssistantInfo(e)}>검색</Button>
-            <InputGroup className="mb-3" style={{width:"87%"}}>
-              <InputGroup.Text id="basic-addon1">조교 이메일</InputGroup.Text>
-              <FormControl
-                placeholder="email"
-                aria-label="email"
-                aria-describedby="basic-addon1"
-                name="email" 
-                onChange={(e)=>onChangehandler(e)}
-              />
-            </InputGroup>
             <div style={{overflow: "auto"}}>
             <Table striped bordered hover>
               <thead>
@@ -224,23 +211,23 @@ function Test(props){
               </tr>
               </thead>
               <tbody>
-                {assistantInfo.map((data,idx)=>(
-                  <tr key={idx}>
-                  <td>{idx+1}</td>
-                  <td>{data.name}</td>
-                  <td>{data.email}</td>
-                  <td><Form style={{marginLeft:"12%"}}>
-                    <Form.Check
-                      inline
-                      name="assistantId"
-                      value={data.id}
-                      onChange={(e)=>onChangehandler(e)}
-                    />
-                    </Form>
-                   </td>
-                  </tr>
-                ))}
-              </tbody>
+              {assistant.map((data,idx)=>(
+                <tr key={idx}>
+                <td>{idx+1}</td>
+                <td>{data.name}</td>
+                <td>{data.email}</td>
+                <td><Form style={{marginLeft:"12%"}}>
+                  <Form.Check
+                    inline
+                    name="assistantId"
+                    value={data.id}
+                    onChange={(e)=>onChangehandler(e)}
+                  />
+                  </Form>
+                </td>
+                </tr>
+              ))}
+            </tbody>
             </Table>
             </div>
           </div>

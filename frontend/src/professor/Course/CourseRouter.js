@@ -23,7 +23,8 @@ function CourseRouter (props){
         render ={()=>
           <Test
             path={path} 
-            courseName={courseName} />
+            courseName={courseName}
+            assistant={assistant} />
         }
       />
     </>
