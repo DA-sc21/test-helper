@@ -85,5 +85,5 @@ server:
   servlet:
     session:
       cookie:
-        domain: test-helper.com
+        domain: .test-helper.com
 
