@@ -71,6 +71,9 @@ dependencies {
 	// email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	//cloud convert
+	implementation 'com.cloudconvert:cloudconvert-java:1.0.7'
+
 }
 
 bootRun{
