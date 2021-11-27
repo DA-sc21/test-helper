@@ -6,18 +6,21 @@ import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
 
 function Assistant(props){
-  console.log(props);
   let history = useHistory();
   const path = props.path;
-  const [state, setState] = useState();
+  const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {setShow(true);setAssistantInfo([]);}
+  const [state, setState] = useState();
   const [assistant, setAssistant] = useState([]);
   const [assistantInfo, setAssistantInfo] = useState([]);
+
   useEffect(()=>{
+    console.log(props);
     setAssistant(props.assistant);
   },[])
+
   function onChangehandler(e){
     let { name , value} = e.target;
     setState({
@@ -26,6 +29,7 @@ function Assistant(props){
     });
     console.log(state);
   }
+
   async function searchAssistantInfo(){
     let email = state.email.split('@');
 
@@ -39,6 +43,7 @@ function Assistant(props){
     })
     .catch((e)=>{ console.log(e) })
   }
+
   async function submitForm(e){
     await axios
     .put(baseUrl+path+'/assistants?assistants='+state.assistantId,{
@@ -48,10 +53,27 @@ function Assistant(props){
       console.log(result.data);
       alert("조교 등록이 완료되었습니다");
       setShow(false);
-      history.push(path+'/assistants');
+      setLoading(false);
+      // history.push(path+'/assistants');
+      updateAssistantList();
     })
     .catch((e)=>{ console.log(e) })
   }
+
+  async function updateAssistantList(){
+    await axios
+    .get(baseUrl+path,{
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log(result.data);
+      setAssistant(result.data.assistants);
+      setLoading(true);
+    })
+    .catch((e)=>{ console.log(e.response.data) })
+  }
+
+  if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"2%", width:"70%"}}>
       <Button variant="secondary" style={{float:"right", marginRight:"15%"}} onClick={handleShow}>조교 등록</Button>
