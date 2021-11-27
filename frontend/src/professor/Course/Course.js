@@ -41,7 +41,7 @@ function Course(){
       setCourse(result.data);
       setLoading(true);
     })
-    .catch((e)=>{ console.log(e.response.data) })
+    .catch((e)=>{ console.log("실패") })
   }
 
   if(!loading)return(<Loading></Loading>)

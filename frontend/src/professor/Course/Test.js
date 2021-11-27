@@ -5,6 +5,7 @@ import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
 import './Test.css';
+import moment from "moment";
 
 function Test(props){
   const path = props.path;
@@ -31,6 +32,7 @@ function Test(props){
     console.log(props)
     getTest();
   },[])
+  
   function onChangehandler(e){
     let { name , value} = e.target;
     setState({
@@ -85,9 +87,43 @@ function Test(props){
       console.log(result.data);
       setAssistantInfo(result.data);
     })
-    .catch((e)=>{ console.log(e) })
+    .catch(()=>{ console.log("실패") })
   }
   async function submitForm(e){
+    let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
+    let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
+
+    let response = await fetch(baseUrl+path+`/tests?assistants=${state.assistantId}&endTime=${end_time}&startTime=${start_time}&type=${state.type}`,{
+        method: 'POST',
+        credentials : 'include',
+      })
+      .then( res => {
+        console.log("response:", res);
+        if(res.status === 200){
+            alert("시험이 생성되었습니다.");
+            setShow(false);
+            setLoading(false);
+            getTest();
+          }
+          else{
+            alert("시험 생성에 실패했습니다.");
+          }
+        }
+      )
+      .catch(error => {console.error('Error:', error)});
+    // await axios
+    // .post(baseUrl+path+'/tests', null, { params:{
+    //     assistants: state.assistantId,
+    //     endTime: end_time,
+    //     startTime: start_time,
+    //     type: state.type
+    //   }},{
+    //     withCredentials : true
+    // })
+    // .then((result)=>{
+    //   console.log(result.data);
+    // })
+    // .catch((e)=>{ console.log(e) })
 
   }
   if(!loading)return(<Loading></Loading>)
@@ -153,7 +189,7 @@ function Test(props){
           <Modal.Title>시험 생성</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{height:"500px"}}>
+          <div style={{height:"65vh"}}>
             <div className="FormName">시험 유형</div>
             <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
               <option>시험 유형</option>
