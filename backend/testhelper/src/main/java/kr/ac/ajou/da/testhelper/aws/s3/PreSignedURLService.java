@@ -20,7 +20,7 @@ import java.util.Date;
 public class PreSignedURLService implements FileService {
 
 	private static final long EXPIRATION_TIME = 1000 * 60 * 3; // 3분;
-	private static final String BUCKET_NAME = "testhelper";
+	public static final String BUCKET_NAME = "testhelper";
 
 	private AmazonS3 s3Client;
 	
@@ -40,6 +40,11 @@ public class PreSignedURLService implements FileService {
 	@Override
 	public String getDownloadUrl(String path) {
 		return this.getPreSignedURL(path, EXPIRATION_TIME, BUCKET_NAME, HttpMethod.GET);
+	}
+
+	@Override
+	public boolean exist(String path) {
+		return s3Client.doesObjectExist(BUCKET_NAME, path);
 	}
 
 	private String getPreSignedURL(String objectKey, long expirationTime, String bucketName, HttpMethod method) {
