@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
 	List<Problem> findByTestId(Long testId);
+
+	Problem findByTestIdAndProblemNum(Long testId, Long problemNum);
 }

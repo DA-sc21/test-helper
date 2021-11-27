@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -57,5 +58,11 @@ public class Problem {
         this.point = point;
         this.attachedFile = attachedFile;
     }
+
+	public void updateTestProblem(TestProblemReqDto reqDto) {
+		this.setQuestion(reqDto.getQuestion());
+		this.setPoint(reqDto.getPoint());
+		this.setAttachedFile(reqDto.getAttachedFile());
+	}
 	
 }

@@ -21,11 +21,25 @@ public class ProblemService {
         return problemRepository.findByTestId(testId);
 
     }
+	
+	@Transactional
+	private Problem getByTestIdAndProblemNum(Long testId, Long problemNum) {
+		return problemRepository.findByTestIdAndProblemNum(testId, problemNum);
+	}
 
 	@Transactional
 	public boolean postTestProblem(Long testId, TestProblemReqDto reqDto) {
 		Problem problem = new Problem(reqDto.getProblemNum(), testId, reqDto.getQuestion(), reqDto.getPoint(), reqDto.getAttachedFile());
 		problemRepository.save(problem);
+		return true;
+	}
+
+	@Transactional
+	public boolean putTestProblem(Long testId, TestProblemReqDto reqDto) {
+		Problem problem = getByTestIdAndProblemNum(testId, reqDto.getProblemNum());
+		
+		problem.updateTestProblem(reqDto);
+		
 		return true;
 	}
 
