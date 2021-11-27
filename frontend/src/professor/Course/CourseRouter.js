@@ -21,8 +21,9 @@ function CourseRouter (props){
 
       <Route exact path={path+"/tests"} 
         render ={()=>
-          <Test 
-          courseName={courseName} />
+          <Test
+            path={path} 
+            courseName={courseName} />
         }
       />
     </>

@@ -136,7 +136,6 @@ function Assistant(props){
                     inline
                     name="assistantId"
                     value={data.id}
-       
                     onChange={(e)=>onChangehandler(e)}
                     />
                     </Form>

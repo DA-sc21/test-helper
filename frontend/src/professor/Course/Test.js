@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, InputGroup, FormControl, Form , Card } from 'react-bootstrap';
+import { Table, Button, Modal, InputGroup, FormControl, Form , Card } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
@@ -7,16 +7,18 @@ import Loading from '../../component/Loading';
 import './Test.css';
 
 function Test(props){
+  const path = props.path;
   const courseName = props.courseName;
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {setShow(true);setAssistantInfo([]);}
   const [state, setState] = useState([]);
   const [testList, setTestList] = useState([]);
   const [midterm, setMidterm] = useState([]);
   const [final, setFinal] = useState([]);
-  const [quiz, setQuiz] = useState([]); 
+  const [quiz, setQuiz] = useState([]);
+  const [assistantInfo, setAssistantInfo] = useState([]);
   let test_status_options={
     "CREATE" : "시험 생성 완료",
     "IN_PROGRESS" : "시험 진행중",
@@ -72,8 +74,21 @@ function Test(props){
     setQuiz(quiz);
     setLoading(true);
   }
+  async function searchAssistantInfo(){
+    let email = state.email.split('@');
+
+    await axios
+    .get(baseUrl+`/assistants?email=${email[0]}%40${email[1]}`,{
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log(result.data);
+      setAssistantInfo(result.data);
+    })
+    .catch((e)=>{ console.log(e) })
+  }
   async function submitForm(e){
-    
+
   }
   if(!loading)return(<Loading></Loading>)
   return(
@@ -138,8 +153,60 @@ function Test(props){
           <Modal.Title>시험 생성</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{height:"380px"}}>
-            시험 생성
+          <div style={{height:"500px"}}>
+            <div className="FormName">시험 유형</div>
+            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
+              <option>시험 유형</option>
+              <option value="MID">중간고사</option>
+              <option value="FINAL">기말고사</option>
+              <option value="QUIZ">퀴즈</option>
+            </Form.Select>
+            <div className="FormName">시작 일시</div>
+            <input className="date" type="datetime-local" name="startTime" onChange={(e)=>onChangehandler(e)}/>
+            <div className="FormName">종료 일시</div>
+            <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
+            <div className="FormName">담당 조교 등록</div>
+            <Button variant="secondary" style={{float:"right"}} onClick={(e)=>searchAssistantInfo(e)}>검색</Button>
+            <InputGroup className="mb-3" style={{width:"87%"}}>
+              <InputGroup.Text id="basic-addon1">조교 이메일</InputGroup.Text>
+              <FormControl
+                placeholder="email"
+                aria-label="email"
+                aria-describedby="basic-addon1"
+                name="email" 
+                onChange={(e)=>onChangehandler(e)}
+              />
+            </InputGroup>
+            <div style={{overflow: "auto"}}>
+            <Table striped bordered hover>
+              <thead>
+              <tr>
+              <th>#</th>
+              <th>이름</th>
+              <th>이메일</th>
+              <th>Check</th>
+              </tr>
+              </thead>
+              <tbody>
+                {assistantInfo.map((data,idx)=>(
+                  <tr key={idx}>
+                  <td>{idx+1}</td>
+                  <td>{data.name}</td>
+                  <td>{data.email}</td>
+                  <td><Form style={{marginLeft:"12%"}}>
+                    <Form.Check
+                      inline
+                      name="assistantId"
+                      value={data.id}
+                      onChange={(e)=>onChangehandler(e)}
+                    />
+                    </Form>
+                   </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
