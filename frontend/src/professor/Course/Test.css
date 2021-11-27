@@ -1,0 +1,25 @@
+.testCard{
+    height:17%;
+    width:97%;
+    box-shadow:2px 2px 2px #b9b9b9;
+    display:inline-block;
+    margin-bottom: 1%;
+  }
+  .testCard:hover{
+    text-decoration: underline;
+    font-size: 19px;
+  }
+  .noTestCard{
+    height:17%;
+    width:97%;
+    box-shadow:2px 2px 2px #b9b9b9;
+    display:inline-block;
+    margin-bottom: 1%;
+  }
+  .testName{
+    font-size: 18px;
+  }
+  .noTest{
+    font-size: 18px;
+    color: rgb(104, 104, 104);
+  }

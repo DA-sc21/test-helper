@@ -1,11 +1,13 @@
 import React from "react";
 import {  Route } from 'react-router-dom';
 import Assistant from './Assistant';
+import Test from './Test';
 
 function CourseRouter (props){
   console.log(props);
   let path = props.path;
   let assistant = props.assistant;
+  let courseName = props.courseName;
 
   return (
     <>
@@ -14,6 +16,13 @@ function CourseRouter (props){
           <Assistant
             path={path}
             assistant={assistant} />
+        }
+      />
+
+      <Route exact path={path+"/tests"} 
+        render ={()=>
+          <Test 
+          courseName={courseName} />
         }
       />
     </>

@@ -12,7 +12,7 @@ function Assistant(props){
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {setShow(true);setAssistantInfo([]);}
-  const [state, setState] = useState();
+  const [state, setState] = useState([]);
   const [assistant, setAssistant] = useState([]);
   const [assistantInfo, setAssistantInfo] = useState([]);
 
