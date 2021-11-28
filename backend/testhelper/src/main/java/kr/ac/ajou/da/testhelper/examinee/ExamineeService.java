@@ -1,10 +1,16 @@
 package kr.ac.ajou.da.testhelper.examinee;
 
+import kr.ac.ajou.da.testhelper.account.Account;
+import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,4 +31,18 @@ public class ExamineeService implements UserDetailsService {
         return examinee;
     }
 
+    @Transactional
+    public List<Examinee> createTestExaminees(Test test) {
+        List<Student> students = test.getCourse().getStudents();
+        List<Account> assistants = new ArrayList<>(test.getAssistants());
+        List<Examinee> examinees = new LinkedList<>();
+
+        for(int i = 0; i<students.size(); i++){
+            examinees.add(Examinee.create(students.get(i), test, assistants.get(i% assistants.size())));
+        }
+
+        examineeRepository.saveAll(examinees);
+
+        return examinees;
+    }
 }

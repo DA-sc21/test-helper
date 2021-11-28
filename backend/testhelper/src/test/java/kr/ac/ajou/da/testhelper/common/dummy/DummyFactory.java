@@ -37,7 +37,7 @@ public class DummyFactory {
     }
 
     public static Student createStudent() {
-        return new Student(1L, "name", "201820000", "email@ajou.ac.kr");
+        return new Student(1L, "name", "201820000", "email@ajou.ac.kr", createCourse());
     }
 
     public static Submission createSubmission() {

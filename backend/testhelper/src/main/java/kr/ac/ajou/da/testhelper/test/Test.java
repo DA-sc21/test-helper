@@ -152,4 +152,8 @@ public class Test {
     public boolean canUpdateAssistant() {
         return isValidStatusForUpdatingAssistant();
     }
+
+    public boolean canSendInvitation() {
+        return Objects.equals(TestStatus.CREATE, status);
+    }
 }

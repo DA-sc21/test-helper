@@ -9,6 +9,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class EmailConfig {
+
+	@Bean
+	public String companyEmail(){
+		return "testhelper@naver.com";
+	}
 	
 	@Bean
 	public JavaMailSender javaMailService() {
@@ -23,7 +28,7 @@ public class EmailConfig {
 		// 다음: 465
 		mailSender.setPort(465);
 		// 이메일 주소
-		mailSender.setUsername("testhelper@naver.com");
+		mailSender.setUsername(companyEmail());
 		// 이메일 패스워드
 		mailSender.setPassword("");
 		

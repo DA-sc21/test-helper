@@ -51,6 +51,7 @@ spring:
     port: 6379
 
 server:
+  fe: http://localhost:3000
   ai: http://localhost:5000
 
 --- #dev 환경
@@ -66,6 +67,7 @@ spring:
     port: 6379
 
 server:
+  fe: http://localhost:3000
   ai: http://host.docker.internal:5000
 
 --- #prod 환경
@@ -81,6 +83,7 @@ spring:
     port: 6379
 
 server:
+  fe: https://site.test-helper.com
   ai: https://ai.test-helper.com
   servlet:
     session:

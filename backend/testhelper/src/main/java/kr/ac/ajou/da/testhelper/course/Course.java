@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.course;
 
 import kr.ac.ajou.da.testhelper.account.Account;
+import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class Course {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Test> tests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Student> students = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "COURSE_ASSISTANT",
