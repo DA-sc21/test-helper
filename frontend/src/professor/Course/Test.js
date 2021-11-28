@@ -13,7 +13,7 @@ function Test(props){
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => {setShow(true);}
+  const handleShow = () => {setShow(true);setCheckList([]);setState([]);}
   const [state, setState] = useState([]);
   const [testList, setTestList] = useState([]);
   const [midterm, setMidterm] = useState([]);
@@ -32,19 +32,9 @@ function Test(props){
   useEffect(()=>{
     console.log(props);
     setAssistant(props.assistant);
-    sortAssistant();
     getTest();
   },[])
 
-  function sortAssistant(){
-    console.log(props.assistant);
-    let temp = props.assistant;
-    let arr = [];
-    for(let i=0; i<temp.length; i++){
-      arr.push(temp[i].id);
-    }
-    console.log(arr);
-  }
   function checkBoxHandler(checked,id){
     if(checked){
       setCheckList([...checkList, id]);
@@ -98,9 +88,6 @@ function Test(props){
     setLoading(true);
   }
   async function submitForm(e){
-    if(state.endTime<state.startTime){
-        console.log("에러")
-    }
     if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
@@ -151,7 +138,7 @@ function Test(props){
         {midterm.length !=0 ? midterm.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant}/>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path}/>
             </Card.Body>
           </Card>
         )):
@@ -166,7 +153,7 @@ function Test(props){
         {final.length != 0 ? final.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant}/>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path}/>
             </Card.Body>
           </Card>
         )):
@@ -181,7 +168,7 @@ function Test(props){
         {quiz.length !=0 ? quiz.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant}/>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path}/>
             </Card.Body>
           </Card>
         )):
@@ -256,28 +243,42 @@ function Test(props){
 
 const CheckTestInfo = (props) => {
   // console.log(props)
+  let history = useHistory();
   const [loading, setLoading] = useState(false);
   const [show1, setShow1] = useState(false); //시험 정보 조회 Modal
   const handleClose1 = () => setShow1(false);
   const handleShow1 = () => setShow1(true);
   const [show2, setShow2] = useState(false); //시험 정보 수정 Modal
-  const handleClose2 = () => setShow2(false);
-  const handleShow2 = () => setShow2(true);
+  const handleClose2 = () => {setShow2(false);setCheckList([]);}
+  const handleShow2 = () => {setShow2(true);setState([]);}
   const [state, setState] = useState([]);
   const [quizNum,setQuizNum] = useState("");
   const [testInfo, setTestInfo] = useState([]);
   const [startTime, setStartTime] = useState([]);
   const [endTime, setEndTime] = useState([]);
+  const [checkList, setCheckList] = useState([]);
   let test_type={
     "MID" : "중간고사",
     "FINAL" : "기말고사",
     "QUIZ" : "퀴즈",
   }
+
   useEffect(()=>{
     if(props.type==="QUIZ"){
       setQuizNum(props.idx);
     }
   })
+
+  function checkBoxHandler(checked,id){
+    if(checked){
+      setCheckList([...checkList, id]);
+    }
+    else{
+      setCheckList(checkList.filter((el) => el !== id));
+    }
+    console.log(checkList);
+  }
+
   function onChangehandler(e){
     let { name , value} = e.target;
     setState({
@@ -286,6 +287,7 @@ const CheckTestInfo = (props) => {
     });
     console.log(state);
   }
+
   async function getTestInfo(){
     setShow1(true);
     await axios
@@ -300,25 +302,86 @@ const CheckTestInfo = (props) => {
       setStartTime(start_time[0]+"T"+start_time[1]);
       setEndTime(end_time[0]+"T"+end_time[1]);
       console.log(start_time[0]+"T"+start_time[1]);
-      setLoading(true);
+      sortAssistant(result.data.assistants);
     })
     .catch(()=>{ console.log("실패") })
   }
-  function openModifyModal(){
-    let start_time = testInfo.startTime.split(" ");
-    let end_time = testInfo.endTime.split(" ");
-    start_time = start_time[0]+"T"+start_time[1];
-    end_time = end_time[0]+"T"+end_time[1];
 
+  function sortAssistant(data){
+    let arr = [];
+    for(let i=0; i<data.length; i++){
+      arr.push(data[i].id);
+    }
+    console.log(arr);
+    setCheckList(arr);
+    setLoading(true);
+  }
+  
+  function openModifyModal(){
     setState({
       type: testInfo.type,
-      startTime: start_time,
-      endTime: end_time,
-      assistantId: String(testInfo.assistants[0].id)
+      startTime: startTime,
+      endTime: endTime,
     })
-    console.log(testInfo.type,start_time,end_time,testInfo.assistants[0].id)
     setShow1(false);
     setShow2(true);
+  }
+
+  async function submitForm(e){;
+    console.log(state.startTime,state.endTime,state.type,checkList)
+    if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
+      alert("정보를 모두 입력해 주세요.");
+    }
+    else if(moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+      alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
+    }
+    else{
+      let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
+      let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
+      
+      let assistantList = "";
+      for(let i=0; i<checkList.length; i++){
+        if(i==0){
+          assistantList+=String(checkList[i]);
+        }
+        else{
+          assistantList+=','+String(checkList[i]);
+        }
+      }
+      console.log(assistantList);
+      console.log(props.id);
+
+      let response = await fetch(baseUrl+`/tests/${props.id}?assistants=${assistantList}&endTime=${end_time}&startTime=${start_time}&type=${state.type}`,{
+        method: 'PATCH',
+        credentials : 'include',
+      })
+      .then( res => {
+        console.log("response:", res);
+        if(res.status === 200){
+            alert("시험 정보가 수정되었습니다.");
+            setShow2(false);
+            history.push(props.path+'/tests');
+        }
+        else{
+          alert("시험 정보 수정에 실패했습니다.");
+        }
+      })
+      .catch(error => {console.error('Error:', error)});
+      
+      // await axios
+      // .patch(baseUrl+'/tests/'+props.id, null, { params:{
+      //     assistants: assistantList,
+      //     endTime: end_time,
+      //     startTime: start_time,
+      //     type: state.type
+      //   }},{
+      //     withCredentials : true
+      // })
+      // .then((result)=>{
+      //   console.log(result.data);
+      // })
+      // .catch((e)=>{ console.log(e) })
+    }
   }
 
   return(
@@ -396,7 +459,7 @@ const CheckTestInfo = (props) => {
             <div className="FormName">담당 조교 등록</div>
             <div style={{height:"39%", overflow: "auto"}}>
             <Table striped bordered hover>
-              <thead>
+              <thead className="tableHead"> 
               <tr>
               <th>#</th>
               <th>이름</th>
@@ -410,24 +473,17 @@ const CheckTestInfo = (props) => {
                 <td>{idx+1}</td>
                 <td>{data.name}</td>
                 <td>{data.email}</td>
-                <td>{data.id? 
-                  <Form style={{marginLeft:"12%"}} checked>
-                  <Form.Check
-                    inline
-                    name="assistantId"
-                    value={data.id}
-                    onChange={(e)=>onChangehandler(e)}
-                  />
-                  </Form>:
+                <td>
                   <Form style={{marginLeft:"12%"}}>
                   <Form.Check
                     inline
                     name="assistantId"
                     value={data.id}
-                    onChange={(e)=>onChangehandler(e)}
+                    // onChange={(e)=>onChangehandler(e)}
+                    onChange={(e)=>checkBoxHandler(e.currentTarget.checked, data.id)}
+                    checked={checkList.includes(data.id) ? true : false}
                   />
                   </Form>
-                }
                 </td>
                 </tr>
               ))}
@@ -437,7 +493,7 @@ const CheckTestInfo = (props) => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary">
+          <Button variant="secondary" onClick={(e)=>submitForm(e)}>
             확인
           </Button>
         </Modal.Footer>

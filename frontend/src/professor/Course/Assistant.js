@@ -15,11 +15,23 @@ function Assistant(props){
   const [state, setState] = useState([]);
   const [assistant, setAssistant] = useState([]);
   const [assistantInfo, setAssistantInfo] = useState([]);
+  const [checkList, setCheckList] = useState([]);
 
   useEffect(()=>{
     console.log(props);
     setAssistant(props.assistant);
+    sortAssistant(props.assistant);
   },[])
+
+  function checkBoxHandler(checked,id){
+    if(checked){
+      setCheckList([...checkList, id]);
+    }
+    else{
+      setCheckList(checkList.filter((el) => el !== id));
+    }
+    console.log(checkList);
+  }
 
   function onChangehandler(e){
     let { name , value} = e.target;
@@ -28,6 +40,15 @@ function Assistant(props){
       [name]: value,
     });
     console.log(state);
+  }
+
+  function sortAssistant(data){
+    let arr = [];
+    for(let i=0; i<data.length; i++){
+      arr.push(data[i].id);
+    }
+    console.log(arr);
+    setCheckList(arr);
   }
 
   async function searchAssistantInfo(){
@@ -45,8 +66,18 @@ function Assistant(props){
   }
 
   async function submitForm(e){
+    let assistantList = "";
+    for(let i=0; i<checkList.length; i++){
+      if(i==0){
+        assistantList+=String(checkList[i]);
+      }
+      else{
+        assistantList+=','+String(checkList[i]);
+      }
+    }
+    console.log(assistantList);
     await axios
-    .put(baseUrl+path+'/assistants?assistants='+state.assistantId,{
+    .put(baseUrl+path+`/assistants?assistants=${assistantList}`,{
         withCredentials : true
       })
     .then((result)=>{
@@ -136,7 +167,8 @@ function Assistant(props){
                     inline
                     name="assistantId"
                     value={data.id}
-                    onChange={(e)=>onChangehandler(e)}
+                    // onChange={(e)=>onChangehandler(e)}
+                    onChange={(e)=>checkBoxHandler(e.currentTarget.checked, data.id)}
                     />
                     </Form>
                 </td>
