@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
-@Disabled
+//@Disabled
 class TestInvitationSenderIntegrationTest {
 
     @Autowired
