@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, InputGroup, FormControl, Form , Card } from 'react-bootstrap';
+import { Table, Button, Modal, InputGroup, FormControl, Form , Card, Spinner } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
@@ -134,9 +134,7 @@ function Test(props){
         {midterm.length !=0 ? midterm.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <div className="testName">
-                {data.name} 중간고사
-              </div>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id}/>
             </Card.Body>
           </Card>
         )):
@@ -151,9 +149,7 @@ function Test(props){
         {final.length != 0 ? final.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <div className="testName">
-                {data.name} 기말고사
-              </div>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id}/>
             </Card.Body>
           </Card>
         )):
@@ -168,9 +164,7 @@ function Test(props){
         {quiz.length !=0 ? quiz.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <div className="testName">
-                {data.name} 퀴즈{idx+1}
-              </div>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1}/>
             </Card.Body>
           </Card>
         )):
@@ -241,5 +235,98 @@ function Test(props){
     </div>
   )
 }
+
+const CheckTestInfo = (props) => {
+  console.log(props)
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {setShow(true);}
+  const [state, setState] = useState([]);
+  const [quizNum,setQuizNum] = useState("");
+  const [testInfo, setTestInfo] = useState([]);
+  let test_type={
+    "MID" : "중간고사",
+    "FINAL" : "기말고사",
+    "QUIZ" : "퀴즈",
+  }
+  useEffect(()=>{
+    if(props.type==="QUIZ"){
+      setQuizNum(props.idx);
+    }
+  })
+  async function getTestInfo(){
+    setShow(true);
+    await axios
+    .get(baseUrl+'/tests/'+props.id,{
+        withCredentials : true
+    })
+    .then((result)=>{
+      console.log(result.data);
+      setTestInfo(result.data);
+      setLoading(true);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  return(
+    <div>
+      <button className="testName" onClick={(e)=>getTestInfo(e)}>
+        {props.name} {test_type[props.type]}{quizNum}
+      </button>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>시험 정보</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{height:"55vh"}}>
+            {loading?
+            <div>
+              <div className="FormName">시험 유형</div>
+              <div className="testContent">{test_type[testInfo.type]}</div>
+              <div className="FormName">시작 일시</div>
+              <div className="testContent">{testInfo.startTime}</div>
+              <div className="FormName">종료 일시</div>
+              <div className="testContent">{testInfo.endTime}</div>
+              <div className="FormName">담당 조교</div>
+              <div style={{overflow: "auto", width:"97%", marginLeft:"1%"}}>
+                <Table striped bordered hover>
+                  <thead className="tableHead">
+                  <tr>
+                  <th>#</th>
+                  <th>이름</th>
+                  <th>이메일</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {testInfo.assistants.map((data,idx)=>(
+                    <tr key={idx}>
+                    <td>{idx+1}</td>
+                    <td>{data.name}</td>
+                    <td>{data.email}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                </Table>
+              </div>
+            </div> :
+            <div>
+              <h4 style={{textAlign:"center", paddingTop:"20%"}}>정보를 불러오는 중입니다.</h4>
+              <Spinner className="loading" animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary">
+            수정
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  )
+}
+
 
 export default Test;
