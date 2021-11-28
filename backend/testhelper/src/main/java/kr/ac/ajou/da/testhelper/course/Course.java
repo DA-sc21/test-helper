@@ -41,9 +41,11 @@ public class Course {
     )
     private Set<Account> assistants = new HashSet<>();
 
-    public Course(Long id, String name) {
+    public Course(Long id, String name, Account professor, Set<Account> assistants) {
         this.id = id;
         this.name = name;
+        this.professor = professor;
+        this.assistants = assistants;
     }
 
     public void updateAssistants(List<Account> assistants) {
@@ -57,5 +59,9 @@ public class Course {
 
     public boolean hasProfessor(Account account) {
         return professor.equals(account);
+    }
+
+    public void addTest(Test test) {
+        tests.add(test);
     }
 }
