@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
+import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -47,13 +48,22 @@ public class SubmissionService {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
+        if(!submission.getTest().isInProgress()){
+            throw new CannotSubmitWhenTestNotInProgressException();
+        }
+
         return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission));
     }
 
 
     @Transactional
     public boolean updateConsentedByTestIdAndStudentId(Long testId, Long studentId, Boolean consented){
+
         Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        if(!submission.getTest().isInProgress()){
+            throw new CannotSubmitWhenTestNotInProgressException();
+        }
 
         submission.updateConsented(consented);
 
@@ -63,8 +73,12 @@ public class SubmissionService {
     @Transactional
 	public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, String submitted) {
     	Submission submission = getByTestIdAndStudentId(testId, studentId);
-    	
-    	submission.updateSubmitted(submitted);
+
+        if(!submission.getTest().isInProgress()){
+            throw new CannotSubmitWhenTestNotInProgressException();
+        }
+
+        submission.updateSubmitted(submitted);
     	
 		return true;
 	}

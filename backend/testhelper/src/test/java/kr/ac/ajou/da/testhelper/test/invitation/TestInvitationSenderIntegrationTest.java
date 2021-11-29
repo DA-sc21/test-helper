@@ -4,6 +4,7 @@ import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -37,8 +38,9 @@ class TestInvitationSenderIntegrationTest {
         Student student = new Student(1L, "name", "201820000", email, course);
         kr.ac.ajou.da.testhelper.test.Test test = new kr.ac.ajou.da.testhelper.test.Test(1L,
                 TestType.MID,
-                LocalDateTime.now().plusDays(1),
-                LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().minusHours(1),
+                LocalDateTime.now().plusHours(2),
+                TestStatus.INVITED,
                 course
         );
 
