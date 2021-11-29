@@ -96,19 +96,6 @@ public class Test {
         this.updatedBy = createdBy;
     }
 
-    public Test(TestType testType,
-                LocalDateTime startTime,
-                LocalDateTime endTime,
-                Course course,
-                Long createdBy) {
-        this.testType = testType;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.course = course;
-        this.createdBy = createdBy;
-        this.updatedBy = createdBy;
-    }
-
     public String resolveName() {
         return String.format("%s %s", course.getName(), testType.getName());
     }
