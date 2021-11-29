@@ -35,6 +35,10 @@ logging: # ROOT레벨 전체 로깅 레벨 결정
     root: info
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
+
+CLOUDCONVERT_API_KEY:
+CLOUDCONVERT_WEBHOOK_SIGNING_SECRET:
+
 email:
   username: testhelper@naver.com
   password:
