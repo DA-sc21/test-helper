@@ -2,7 +2,7 @@ package kr.ac.ajou.da.testhelper.cloudconvert;
 
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.cloudconvert.client.CloudConvertClient;
-import com.cloudconvert.client.setttings.EnvironmentVariableSettingsProvider;
+import com.cloudconvert.client.setttings.PropertyFileSettingsProvider;
 import com.cloudconvert.dto.request.ConvertFilesTaskRequest;
 import com.cloudconvert.dto.request.S3ExportRequest;
 import com.cloudconvert.dto.request.S3ImportRequest;
@@ -25,7 +25,7 @@ public class CloudConvertFileConvertService implements FileConvertService {
     private final AWSTemporaryCredentialService credentialService;
 
     public CloudConvertFileConvertService(AWSTemporaryCredentialService credentialService) throws IOException {
-        this.cloudConvertClient = new CloudConvertClient(new EnvironmentVariableSettingsProvider());
+        this.cloudConvertClient = new CloudConvertClient(new PropertyFileSettingsProvider("application.yml"));
         this.credentialService = credentialService;
     }
 
