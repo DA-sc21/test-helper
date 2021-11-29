@@ -146,7 +146,7 @@ public class Test {
     }
 
     private boolean isValidStatusForUpdating() {
-        return Objects.equals(TestStatus.CREATE, status);
+        return List.of(TestStatus.CREATE, TestStatus.INVITED).contains(status);
     }
 
     public boolean canUpdateAssistant() {
