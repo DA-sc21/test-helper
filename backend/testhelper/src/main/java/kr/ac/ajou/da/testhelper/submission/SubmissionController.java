@@ -39,6 +39,18 @@ public class SubmissionController {
 
     }
 
+    @PostMapping("/tests/{testId}/students/{studentId}/submissions/{submissionType}")
+    @AccessExaminee
+    public ResponseEntity<BooleanResponse> postSubmission(@PathVariable Long testId,
+                                                          @PathVariable Long studentId,
+                                                          @PathVariable SubmissionType submissionType) {
+
+        submissionService.uploadSubmission(testId, studentId, submissionType);
+
+        return ResponseEntity.ok().body(BooleanResponse.TRUE);
+
+    }
+
     @PutMapping("/tests/{testId}/students/{studentId}/submissions/consented")
     @AccessExaminee
     public ResponseEntity<BooleanResponse> putSubmissionConsented(@PathVariable Long testId,
@@ -48,7 +60,7 @@ public class SubmissionController {
         return ResponseEntity.ok().body(BooleanResponse.of(
                 submissionService.updateConsentedByTestIdAndStudentId(testId, studentId, reqDto.getConsented())));
     }
-    
+
     @PutMapping("/tests/{testId}/students/{studentId}/submissions/submitted")
     @AccessExaminee
     public ResponseEntity<BooleanResponse> putSubmissionSubmitted(@PathVariable Long testId,
@@ -58,5 +70,5 @@ public class SubmissionController {
         return ResponseEntity.ok().body(BooleanResponse.of(
                 submissionService.updateSubmittedByTestIdAndStudentId(testId, studentId, reqDto.getSubmitted())));
     }
-    
+
 }
