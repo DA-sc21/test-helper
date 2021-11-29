@@ -7,6 +7,7 @@ import SuperviseTest from './professor/SuperviseTest';
 import TestStudentPre from './student/TestStudentPre';
 import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
+import CreateProblems from './professor/CreateProblems';
 
 function App() {
   let isAuthorized = localStorage.getItem("isAuthorized");
@@ -19,6 +20,7 @@ function App() {
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
         <>
           <NavBar></NavBar>
+          <Route exact path="/tests/:testId/problems" component={CreateProblems} />
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/tests" component={Tests} />
           <Route exact path="/" component={Main} />

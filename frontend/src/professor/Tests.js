@@ -93,7 +93,9 @@ function TestCard(props){
             종료시각 : {moment(props.test.end_time).format("YYYY-MM-DD dd HH:mm:ss")}
           </Card.Text>
           <div className="row">
-            <Button className="col-md-4" variant="primary">문제출제</Button>
+            <Button className="col-md-4" variant="primary" onClick={()=>{history.push({
+              pathname: "/tests/"+props.test.id+"/problems",
+              })}}>문제출제</Button>
             <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
               pathname: "/tests/"+props.test.id+"/supervise",
               state: {
