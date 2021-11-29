@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.email;
 
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,6 +10,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class EmailConfig {
+
+	@Autowired
+	private EmailProperties emailProperties;
+
+	@Bean
+	public String companyEmail(){
+		return emailProperties.getUsername();
+	}
 	
 	@Bean
 	public JavaMailSender javaMailService() {
@@ -23,9 +32,9 @@ public class EmailConfig {
 		// 다음: 465
 		mailSender.setPort(465);
 		// 이메일 주소
-		mailSender.setUsername("testhelper@naver.com");
+		mailSender.setUsername(emailProperties.getUsername());
 		// 이메일 패스워드
-		mailSender.setPassword("");
+		mailSender.setPassword(emailProperties.getPassword());
 		
 		Properties javaMailProperties = new Properties();
 		

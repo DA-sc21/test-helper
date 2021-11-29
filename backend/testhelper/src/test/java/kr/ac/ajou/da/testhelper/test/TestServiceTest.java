@@ -6,11 +6,16 @@ import kr.ac.ajou.da.testhelper.account.AccountService;
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.course.CourseService;
+import kr.ac.ajou.da.testhelper.examinee.Examinee;
+import kr.ac.ajou.da.testhelper.examinee.ExamineeService;
+import kr.ac.ajou.da.testhelper.student.Student;
+
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
+import kr.ac.ajou.da.testhelper.test.invitation.TestInvitationSender;
 import kr.ac.ajou.da.testhelper.test.room.TestRoomService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +54,13 @@ class TestServiceTest {
     @Mock
     private AccountService accountService;
 
+
+    @Mock
+    private ExamineeService examineeService;
+
+    @Mock
+    private TestInvitationSender testInvitationSender;
+
     @BeforeEach
     private void init() {
         testRepository = mock(TestRepository.class);
@@ -57,8 +69,17 @@ class TestServiceTest {
         accountMapper = mock(AccountMapper.class);
         courseService = mock(CourseService.class);
         accountService = mock(AccountService.class);
+        examineeService = mock(ExamineeService.class);
+        testInvitationSender = mock(TestInvitationSender.class);
 
-        testService = new TestService(testRepository, testRoomService, testsMapper, accountMapper, courseService, accountService);
+        testService = new TestService(testRepository,
+                testRoomService,
+                testsMapper,
+                accountMapper,
+                courseService,
+                accountService,
+                examineeService,
+                testInvitationSender);
     }
 
     @Test
@@ -204,5 +225,26 @@ class TestServiceTest {
                 ()->testService.updateTest(test.getId(), reqDto, professor.getId()));
 
         //then
+    }
+
+    @Test
+    void sendTestInvitation_statusCREATE_success() {
+        //given
+        Student student = DummyFactory.createStudent();
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+        Long supervisedBy = 1L;
+        List<Examinee> examinees = Arrays.asList(new Examinee(1L, student, test, supervisedBy));
+
+        when(testRepository.findById(anyLong())).thenReturn(Optional.of(test));
+        when(examineeService.createTestExaminees(any(kr.ac.ajou.da.testhelper.test.Test.class))).thenReturn(examinees);
+
+        //when
+        testService.sendTestInvitation(test.getId());
+
+        //then
+        assertEquals(TestStatus.INVITED, test.getStatus());
+        verify(testRepository, times(1)).findById(anyLong());
+        verify(examineeService, times(1)).createTestExaminees(any(kr.ac.ajou.da.testhelper.test.Test.class));
+        verify(testInvitationSender, times(1)).sendInvitations(anyList());
     }
 }

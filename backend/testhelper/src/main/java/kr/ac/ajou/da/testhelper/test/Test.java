@@ -73,12 +73,27 @@ public class Test {
                 TestType testType,
                 LocalDateTime startTime,
                 LocalDateTime endTime,
+                TestStatus status,
                 Course course) {
         this.id = id;
         this.testType = testType;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.status = status;
         this.course = course;
+    }
+
+    public Test(TestType testType,
+                LocalDateTime startTime,
+                LocalDateTime endTime,
+                Course course,
+                Long createdBy) {
+        this.testType = testType;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.course = course;
+        this.createdBy = createdBy;
+        this.updatedBy = createdBy;
     }
 
     public Test(TestType testType,
@@ -146,10 +161,23 @@ public class Test {
     }
 
     private boolean isValidStatusForUpdating() {
-        return Objects.equals(TestStatus.CREATE, status);
+        return List.of(TestStatus.CREATE, TestStatus.INVITED).contains(status);
     }
 
     public boolean canUpdateAssistant() {
         return isValidStatusForUpdatingAssistant();
+    }
+
+    public boolean canSendInvitation() {
+        return Objects.equals(TestStatus.CREATE, status);
+    }
+
+    public boolean canStartTest() {
+        return List.of(TestStatus.INVITED, TestStatus.IN_PROGRESS).contains(status)
+                && LocalDateTime.now().isAfter(startTime.minusHours(2L));
+    }
+
+    public boolean isInProgress() {
+        return Objects.equals(TestStatus.IN_PROGRESS, status);
     }
 }
