@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.student;
 
+import kr.ac.ajou.da.testhelper.course.Course;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,4 +25,8 @@ public class Student {
 
     @Column(nullable = false, length = 50)
     private String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 }
