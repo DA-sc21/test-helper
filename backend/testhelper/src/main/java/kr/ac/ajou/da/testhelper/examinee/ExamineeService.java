@@ -22,8 +22,8 @@ public class ExamineeService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         String[] tokens = username.split(" ");
-        Long testId = Long.parseLong(tokens[0]);
-        Long studentId = Long.parseLong(tokens[1]);
+        Long studentId = Long.parseLong(tokens[0]);
+        Long testId = Long.parseLong(tokens[1]);
 
         Examinee examinee = examineeRepository.findByTestIdAndStudentId(testId, studentId)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
