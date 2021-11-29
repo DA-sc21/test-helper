@@ -33,6 +33,8 @@ public class ExamineeService implements UserDetailsService {
 
     @Transactional
     public List<Examinee> createTestExaminees(Test test) {
+        
+        //TODO : batch insert 방법 찾아보기
         List<Student> students = test.getCourse().getStudents();
         List<Account> assistants = new ArrayList<>(test.getAssistants());
         List<Examinee> examinees = new LinkedList<>();
