@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,13 @@ public class ProblemController {
     }
 	
 	@PostMapping("/tests/{testId}/problems")
-	@IsProfessor
+	@AccessTestByProctor
 	public ResponseEntity<BooleanResponse> postTestProblem(@PathVariable Long testId, @RequestBody TestProblemReqDto reqDto) {
 		return ResponseEntity.ok().body(BooleanResponse.of(problemService.postTestProblem(testId, reqDto)));
 	}
 	
 	@PutMapping("/tests/{testId}/problems")
-	@IsProfessor
+	@AccessTestByProctor
 	public ResponseEntity<BooleanResponse> putTestProblem(@PathVariable Long testId, @RequestBody TestProblemReqDto reqDto) {
 		return ResponseEntity.ok().body(BooleanResponse.of(problemService.putTestProblem(testId, reqDto)));
 	}

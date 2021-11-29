@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
+import kr.ac.ajou.da.testhelper.problem.exception.ProblemNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,7 +25,8 @@ public class ProblemService {
 	
 	@Transactional
 	private Problem getByTestIdAndProblemNum(Long testId, Long problemNum) {
-		return problemRepository.findByTestIdAndProblemNum(testId, problemNum);
+		return problemRepository.findByTestIdAndProblemNum(testId, problemNum)
+				.orElseThrow(ProblemNotFoundException::new);
 	}
 
 	@Transactional
