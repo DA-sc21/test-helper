@@ -13,6 +13,7 @@ function CourseInfo(){
   const [loading, setLoading] = useState(false);
   const [courseInfo, setCourseInfo] = useState([]);
   const [assistant, setAssistant] = useState([]);
+  
   const menus = [
     { name: "조교 정보", path: `/courses/${courseId}/assistants`},
     { name: "시험 정보", path: `/courses/${courseId}/tests`},
@@ -32,8 +33,9 @@ function CourseInfo(){
       setAssistant(result.data.assistants);
       setLoading(true);
     })
-    .catch((e)=>{ console.log(e.response.data) })
+    .catch(()=>{ console.log("실패") })
   }
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div style={{display: "flex", flexDirection: "row", textAlign:"center"}}>
@@ -53,8 +55,9 @@ function CourseInfo(){
     </Nav>
     </div>
     <CourseRouter
-      path={path} 
+      path={path}
       assistant={assistant}
+      courseName={courseInfo.name}
     />
     </div>
   )
