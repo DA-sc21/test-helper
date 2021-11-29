@@ -64,6 +64,12 @@ dependencies {
 
 	//aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	
+	// email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	//cloud convert
 	implementation 'com.cloudconvert:cloudconvert-java:1.0.7'

@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 100)
 public class ExamineeSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ExamineeService examineeService;

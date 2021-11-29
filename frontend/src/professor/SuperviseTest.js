@@ -45,7 +45,7 @@ function SuperviseTest(props){
 
   async function getVerifications(){
     await axios
-    .get(baseUrl+'/tests/'+testId+'/students/verification')
+    .get(baseUrl+'/tests/'+testId+'/students/verification',{withCredentials : true})
     .then((result)=>{ 
       setVerifications(result.data)
       console.log(result.data)
@@ -69,7 +69,7 @@ function SuperviseTest(props){
 
   async function createTestRooms(){
     await axios
-    .post(baseUrl+'/tests/'+testId+'/students/room')
+    .post(baseUrl+'/tests/'+testId+'/students/room',{withCredentials : true})
     .then((result)=>{
       getStudentName(result.data.students);
       sortTestRooms(result.data.students);
@@ -120,7 +120,7 @@ function SuperviseTest(props){
   async function exitTest(e){
     history.push('/tests');
     await axios
-    .put(baseUrl+'/tests/'+testId+'/status?status=ENDED')
+    .put(baseUrl+'/tests/'+testId+'/status?status=ENDED',{withCredentials : true})
     .then((result)=>{
       console.log(result.data);
     })
@@ -196,7 +196,7 @@ function StudentCard(props){
     testId=String(testId).padStart(5,"0");
     let studentNum=props.studentInfo[props.index].student.studentNumber;
     await axios
-      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg')
+      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg',{withCredentials : true})
       .then((result)=>{
         setfunc(result.data);
       })
@@ -284,14 +284,18 @@ async function changeVerifications(props,verified){
   let studentId=props.verification.studentId
   let setVerifications=props.setVerifications
   await axios
-  .put(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification',{"verified" : verified})
+  .put(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification',{"verified" : verified},{
+    withCredentials : true
+  })
   .then((result)=>{ 
     console.log(result.data)
   })
   .catch(()=>{ console.log("실패") })
 
   await axios
-    .get(baseUrl+'/tests/'+testId+'/students/verification')
+    .get(baseUrl+'/tests/'+testId+'/students/verification',{
+      withCredentials : true
+    })
     .then((result)=>{ 
       setVerifications(result.data)
     })
@@ -319,7 +323,9 @@ function StudentsList(props) {
   }
   async function getVerifications(){
     await axios
-    .get(baseUrl+'/tests/'+props.testId+'/students/verification')
+    .get(baseUrl+'/tests/'+props.testId+'/students/verification',{
+      withCredentials : true
+    })
     .then((result)=>{ 
       setVerifications(result.data);
       console.log(result.data);
@@ -381,7 +387,9 @@ function AnswerSheetSubmissionList(props) {
   }
   async function getSubmissions(){
     await axios
-    .get(baseUrl+'/tests/'+props.testId+'/submissions')
+    .get(baseUrl+'/tests/'+props.testId+'/submissions',{
+      withCredentials : true
+    })
     .then((result)=>{ 
       setSubmissions(result.data);
       console.log(result.data);

@@ -49,6 +49,9 @@ spring:
     hikari:
       username: server
       password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: localhost
+    port: 6379
 
 server:
   ai: http://localhost:5000
@@ -61,6 +64,9 @@ spring:
     hikari:
       username: server
       password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: redis
+    port: 6379
 
 server:
   ai: http://host.docker.internal:5000
@@ -73,6 +79,14 @@ spring:
     hikari:
       username: server
       password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: redis
+    port: 6379
 
 server:
   ai: https://ai.test-helper.com
+  servlet:
+    session:
+      cookie:
+        domain: .test-helper.com
+
