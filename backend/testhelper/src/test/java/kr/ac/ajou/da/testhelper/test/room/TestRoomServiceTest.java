@@ -6,9 +6,12 @@ import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.submission.SubmissionService;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
+import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.room.dto.RoomDto;
 import kr.ac.ajou.da.testhelper.test.room.dto.StudentRoomDto;
+import kr.ac.ajou.da.testhelper.test.room.exception.CannotStartTestException;
 import kr.ac.ajou.da.testhelper.test.room.exception.RoomNotFoundException;
+import kr.ac.ajou.da.testhelper.test.room.exception.TestNotInProgressException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -127,6 +130,36 @@ class TestRoomServiceTest {
     }
 
     @Test
+    void getRoom_testStatusINVITED_thenThrow_TestNotInProgressException() {
+        //given
+        Submission submission = DummyFactory.createSubmission(TestStatus.INVITED);
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
+        when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
+
+        //when
+        assertThrows(TestNotInProgressException.class, () -> this.testRoomService.getRoom(test.getId(), student.getId(), DeviceType.PC));
+
+        //then
+    }
+
+    @Test
+    void getRoom_testStatusENDED_thenThrow_TestNotInProgressException() {
+        //given
+        Submission submission = DummyFactory.createSubmission(TestStatus.ENDED);
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
+        when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
+
+        //when
+        assertThrows(TestNotInProgressException.class, () -> this.testRoomService.getRoom(test.getId(), student.getId(), DeviceType.PC));
+
+        //then
+    }
+
+    @Test
     void createRoomsForStudents_success() {
         //given
         Submission submission = DummyFactory.createSubmission();
@@ -138,7 +171,7 @@ class TestRoomServiceTest {
         when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
-        List<StudentRoomDto> rooms = testRoomService.createRoomsForStudents(test.getId(), submission.getSupervisedBy());
+        List<StudentRoomDto> rooms = testRoomService.createRoomsForStudents(test, submission.getSupervisedBy());
 
         //then
         verify(submissionService, times(1)).getByTestIdAndSupervisedBy(anyLong(), anyLong());
@@ -154,6 +187,34 @@ class TestRoomServiceTest {
                 () -> assertEquals(student.getStudentNumber(), room.getStudent().getStudentNumber())
         );
 
+    }
+
+    @Test
+    void createRoomsForStudents_testStatusCREATE_thenThrow_CannotStartTestException() {
+        //given
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest(TestStatus.CREATE);
+        Long supervisedBy = 1L;
+
+        //when
+        assertThrows(CannotStartTestException.class, ()->testRoomService.createRoomsForStudents(test, supervisedBy));
+
+        //then
+        verify(submissionService, never()).getByTestIdAndSupervisedBy(anyLong(), anyLong());
+        verify(testRoomManagingService, never()).createRoom(anyString());
+    }
+
+    @Test
+    void createRoomsForStudents_testStatusENDED_thenThrow_CannotStartTestException() {
+        //given
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest(TestStatus.ENDED);
+        Long supervisedBy = 1L;
+
+        //when
+        assertThrows(CannotStartTestException.class, ()->testRoomService.createRoomsForStudents(test, supervisedBy));
+
+        //then
+        verify(submissionService, never()).getByTestIdAndSupervisedBy(anyLong(), anyLong());
+        verify(testRoomManagingService, never()).createRoom(anyString());
     }
 
     @Test
