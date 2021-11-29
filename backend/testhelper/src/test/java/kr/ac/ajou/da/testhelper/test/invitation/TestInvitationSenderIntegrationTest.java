@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
-//@Disabled
+@Disabled
 class TestInvitationSenderIntegrationTest {
 
     @Autowired
@@ -23,7 +23,7 @@ class TestInvitationSenderIntegrationTest {
     @Test
     void sendInvitations_success() {
         //given
-        String email = "jmchoi1225@ajou.ac.kr";
+        String email = "";
         Examinee examinee = createExaminee(email);
 
         //when
