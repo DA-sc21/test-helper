@@ -52,12 +52,12 @@ public class TestService {
     }
 
     @Transactional
-    public List<Test> getTests(Account account, TestStatus testStatus) throws SQLException {
+    public List<Test> getTests(Account account, List<TestStatus> allowedStatus) throws SQLException {
 
         if (account.isProfessor()) {
-            return testRepository.findAllByProfessorIdAndTestStatus(account.getId(), testStatus);
+            return testRepository.findAllByProfessorIdAndTestStatus(account.getId(), allowedStatus);
         } else if (account.isAssistant()) {
-            return testRepository.findAllByAssistantIdAndTestStatus(account.getId(), testStatus);
+            return testRepository.findAllByAssistantIdAndTestStatus(account.getId(), allowedStatus);
         }
 
         return null;

@@ -28,7 +28,7 @@ public class TestController {
     @IsAccount
     public List<GetTestsResDto> getTests(GetTestsReqDto reqDto,
                                          @AuthenticationPrincipal @ApiIgnore Account account) throws Exception {
-        return testService.getTests(account, reqDto.getTestStatus())
+        return testService.getTests(account, reqDto.getTestStatus().getTestStatus())
                 .stream().map(GetTestsResDto::new).collect(Collectors.toList());
     }
 
