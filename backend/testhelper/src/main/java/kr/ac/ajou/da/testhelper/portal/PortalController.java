@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class PortalController {
 	private final PortalService portalService;
 	
-	@GetMapping("/university/classes")
+	@GetMapping("/admin/university/classes")
 	public ResponseEntity<List<PortalCourse>> getPortalCourses() {
 		return ResponseEntity.ok().body(portalService.getAll());
 	}
