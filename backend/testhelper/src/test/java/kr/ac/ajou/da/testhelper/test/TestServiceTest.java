@@ -9,7 +9,6 @@ import kr.ac.ajou.da.testhelper.course.CourseService;
 import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.examinee.ExamineeService;
 import kr.ac.ajou.da.testhelper.student.Student;
-
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
@@ -43,9 +42,6 @@ class TestServiceTest {
     private TestRoomService testRoomService;
 
     @Mock
-    private TestsMapper testsMapper;
-
-    @Mock
     private AccountMapper accountMapper;
 
     @Mock
@@ -65,7 +61,6 @@ class TestServiceTest {
     private void init() {
         testRepository = mock(TestRepository.class);
         testRoomService = mock(TestRoomService.class);
-        testsMapper = mock(TestsMapper.class);
         accountMapper = mock(AccountMapper.class);
         courseService = mock(CourseService.class);
         accountService = mock(AccountService.class);
@@ -74,7 +69,6 @@ class TestServiceTest {
 
         testService = new TestService(testRepository,
                 testRoomService,
-                testsMapper,
                 accountMapper,
                 courseService,
                 accountService,

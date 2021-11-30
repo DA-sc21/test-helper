@@ -7,9 +7,7 @@ import kr.ac.ajou.da.testhelper.common.security.authority.AccessCourseByProfesso
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
-import kr.ac.ajou.da.testhelper.test.dto.GetDetailedTestResDto;
-import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
-import kr.ac.ajou.da.testhelper.test.dto.PutTestStatusReqDto;
+import kr.ac.ajou.da.testhelper.test.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,8 +26,10 @@ public class TestController {
 
     @GetMapping("/tests")
     @IsAccount
-    public List<HashMap<String, Object>> getTests(@AuthenticationPrincipal @ApiIgnore Account account) throws Exception {
-        return testService.getTests(account.getId());
+    public List<GetTestsResDto> getTests(GetTestsReqDto reqDto,
+                                         @AuthenticationPrincipal @ApiIgnore Account account) throws Exception {
+        return testService.getTests(account, reqDto.getTestStatus())
+                .stream().map(GetTestsResDto::new).collect(Collectors.toList());
     }
 
     @PutMapping("/tests/{testId}/status")
@@ -68,7 +68,7 @@ public class TestController {
     @AccessTestByProfessor
     public ResponseEntity<BooleanResponse> patchTest(@PathVariable Long testId,
                                                      PostAndPatchTestReqDto reqDto,
-                                                     @AuthenticationPrincipal @ApiIgnore Account account){
+                                                     @AuthenticationPrincipal @ApiIgnore Account account) {
 
         validate(reqDto);
 
@@ -80,7 +80,7 @@ public class TestController {
 
     @PostMapping("/tests/{testId}/invitation")
     @AccessTestByProfessor
-    public ResponseEntity<BooleanResponse> postTestInvitation(@PathVariable Long testId){
+    public ResponseEntity<BooleanResponse> postTestInvitation(@PathVariable Long testId) {
 
 
         testService.sendTestInvitation(testId);
