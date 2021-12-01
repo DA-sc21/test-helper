@@ -12,6 +12,7 @@ function Tests(){
 
   let [testDatas,setTestData] = useState([])
   let [loading,setLoading] = useState(false)
+  let [unscoredTests,setUnscoredTests] = useState([]);
 
   useEffect(()=>{
     getTests();
@@ -22,12 +23,15 @@ function Tests(){
 
   async function getTests(){
     await axios
-    .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus,{
+    // .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus,{
+    .get(baseUrl+'/tests?testStatus=ALL',{
       withCredentials : true
     })
     .then((result)=>{ 
       setTestData(result.data);
+      sortUnscoredTests(result.data);
       setLoading(true);
+      console.log(result.data);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -41,7 +45,24 @@ function Tests(){
   }
   let [toggled,setToggled]=useState(0)
   function buttonCss(idx) {
-    return toggled===idx? "primary" : "outline-primary"  
+    if(idx===4){
+      return toggled===idx? "secondary" : "outline-secondary" 
+    }
+    else{
+      return toggled===idx? "primary" : "outline-primary"  
+    }
+  }
+
+  function sortUnscoredTests(data){
+    let temp = [];
+    console.log(temp);
+    for(let i=0; i<data.length; i++){
+      if(data[i].test_status === "ENDED" || data[i].test_status === "MARK"){
+        temp.push(data[i]);
+      }
+    }
+    console.log(temp);
+    setUnscoredTests(temp);
   }
 
   if(!loading)return(<Loading></Loading>)
@@ -52,11 +73,14 @@ function Tests(){
         <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button>
         <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
         <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
+        <Button variant={buttonCss(4)} onClick ={()=>{setToggled(4);}}>미채점 시험 조회</Button>
       </ButtonGroup>
       <div className="row mt-5">
-        {
+        {toggled===4? unscoredTests.map((testdata,index)=>{
+          return <TestCard key={index} test = {testdata} testState="unscored"/>;
+          }):
           testDatas.map((testdata,index)=>{
-            return <TestCard key={index} test = {testdata} / >;
+            return <TestCard key={index} test = {testdata} testState=""/>;
           })
         }
       </div>
@@ -65,6 +89,8 @@ function Tests(){
 }
 
 function TestCard(props){
+  console.log(props);
+  const [testState, setTestState] = useState("");
   let test_status_options={
     "CREATE" : "시험 생성중",
     "IN_PROGRESS" : "시험 진행중",
@@ -73,6 +99,14 @@ function TestCard(props){
     "GRADED" : "점수 전송 완료",
   }
   let history = useHistory()
+
+  useEffect(()=>{
+    if(props.testState==="unscored"){
+      setTestState("unscored");
+    }else{
+      setTestState("");
+    }
+  })
 
   return(
     <div className="col-md-4">
@@ -93,6 +127,9 @@ function TestCard(props){
             종료시각 : {moment(props.test.end_time).format("YYYY-MM-DD dd HH:mm:ss")}
           </Card.Text>
           <div className="row">
+            {testState === "unscored"? 
+            <Button style={{backgroundColor:"#2c4b88", borderColor:"#2c4b88"}}>채점하기</Button>: 
+            <>
             <Button className="col-md-4" variant="primary">문제출제</Button>
             <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
               pathname: "/tests/"+props.test.id+"/supervise",
@@ -101,6 +138,7 @@ function TestCard(props){
                 testEndTime: props.test.end_time
                 }})}}>시험감독</Button>
             <Button className="col-md-4" variant="success">채점하기</Button>
+            </>}
           </div>
         </Card.Body>
       </Card>
