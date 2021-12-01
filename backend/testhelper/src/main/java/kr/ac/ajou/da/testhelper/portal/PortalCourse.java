@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter(value = AccessLevel.PRIVATE)
 @Table(name = "PORTAL_COURSE")
 @NoArgsConstructor
 @Entity
@@ -33,15 +34,18 @@ public class PortalCourse {
     private Long id;
 	
 	@Column(nullable = false)
-	private String courseCode;
+	private String code;
 	
 	@Column(nullable = false)
-	private String courseName;
+	private String name;
 	
-	@Column(nullable = false)
-	private String professor;
-	
-	private String assistant;
+	@ManyToOne
+    @JoinColumn(name = "professor_id", nullable = false)
+    private PortalProfessor professor;
+
+	@ManyToOne
+    @JoinColumn(name = "assistant_id")
+	private PortalAssistant assistant;
 	
 	@Enumerated(EnumType.STRING)
 	private PortalCourseStatus registered;
@@ -52,10 +56,12 @@ public class PortalCourse {
 		    inverseJoinColumns = @JoinColumn(name="id"))
     private List<PortalStudent> students = new ArrayList<>();
 	
-	public PortalCourse(Long id, String courseCode, String courseName, String professor, String assistant, PortalCourseStatus registered, List<PortalStudent> students) {
+	public PortalCourse(Long id, String code, String name, 
+			PortalProfessor professor, PortalAssistant assistant, 
+			PortalCourseStatus registered, List<PortalStudent> students) {
 		this.id = id;
-		this.courseCode = courseCode;
-		this.courseName = courseName;
+		this.code = code;
+		this.name = name;
 		this.professor = professor;
 		this.assistant = assistant;
 		this.registered = registered;

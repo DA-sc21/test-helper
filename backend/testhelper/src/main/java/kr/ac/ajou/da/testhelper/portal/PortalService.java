@@ -18,7 +18,7 @@ public class PortalService {
 	
 	@Transactional
 	public List<PortalCourse> getAll() {
-		return portalRepository.findAll(Sort.by(Sort.Direction.ASC, "courseName"));
+		return portalRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 }
