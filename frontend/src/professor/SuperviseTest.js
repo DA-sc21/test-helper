@@ -68,17 +68,22 @@ function SuperviseTest(props){
   }
 
   async function createTestRooms(){
-    await axios
-    .post(baseUrl+'/tests/'+testId+'/students/room',{withCredentials : true})
-    .then((result)=>{
-      getStudentName(result.data.students);
-      sortTestRooms(result.data.students);
-      setStudentInfo(result.data.students);
-      setCredentials(result.data.credentials);
-      console.log(result.data);
-      setLoading(true);
-    })
-    .catch(()=>{ console.log("실패") })
+    let response = await fetch(baseUrl+"/tests/"+testId+"/students/room",{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        getStudentName(res.students);
+        sortTestRooms(res.students);
+        setStudentInfo(res.students);
+        setCredentials(res.credentials);
+        setLoading(true);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
 
   function sortTestRooms(arr){

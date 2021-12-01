@@ -198,9 +198,9 @@ function Test(props){
             <div className="FormName">종료 일시</div>
             <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
             <div className="FormName">담당 조교 등록</div>
-            <div style={{height:"39%", overflow: "auto"}}>
+            <div style={{height:"34%", overflow: "auto"}}>
             <Table striped bordered hover>
-              <thead style={{backgroundColor:"#9e9eaa"}}>
+              <thead style={{backgroundColor:"#aeb8ce"}}>
               <tr>
               <th>#</th>
               <th>이름</th>
@@ -232,7 +232,7 @@ function Test(props){
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={(e)=>submitForm(e)}>
+          <Button variant="secondary" onClick={(e)=>submitForm(e)}>
             등록
           </Button>
         </Modal.Footer>
@@ -457,7 +457,7 @@ const CheckTestInfo = (props) => {
             <div className="FormName">종료 일시</div>
             <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)} defaultValue={endTime}/>
             <div className="FormName">담당 조교 등록</div>
-            <div style={{height:"39%", overflow: "auto"}}>
+            <div style={{height:"34%", overflow: "auto"}}>
             <Table striped bordered hover>
               <thead className="tableHead"> 
               <tr>

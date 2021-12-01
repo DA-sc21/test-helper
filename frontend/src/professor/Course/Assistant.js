@@ -52,10 +52,8 @@ function Assistant(props){
   }
 
   async function searchAssistantInfo(){
-    let email = state.email.split('@');
-
     await axios
-    .get(baseUrl+`/assistants?email=${email[0]}%40${email[1]}`,{
+    .get(baseUrl+`/assistants?email=${state.email}`,{
         withCredentials : true
       })
     .then((result)=>{
@@ -76,19 +74,24 @@ function Assistant(props){
       }
     }
     console.log(assistantList);
-    await axios
-    .put(baseUrl+path+`/assistants?assistants=${assistantList}`,{
-        withCredentials : true
-      })
-    .then((result)=>{
-      console.log(result.data);
-      alert("조교 등록이 완료되었습니다");
-      setShow(false);
-      setLoading(false);
-      // history.push(path+'/assistants');
-      updateAssistantList();
+    let response = await fetch(baseUrl+path+`/assistants?assistants=${assistantList}`,{
+      method: 'PUT',
+      credentials : 'include',
     })
-    .catch((e)=>{ console.log(e) })
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        alert("조교 등록이 완료되었습니다");
+        setShow(false);
+        setLoading(false);
+        // history.push(path+'/assistants');
+        updateAssistantList();
+      }
+      else{
+        alert("조교 등록에 실패했습니다.");
+      }
+    })
+    .catch(error => {console.error('Error:', error)}); 
   }
 
   async function updateAssistantList(){
