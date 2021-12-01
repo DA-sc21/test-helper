@@ -1,7 +1,9 @@
 package kr.ac.ajou.da.testhelper.portal;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +15,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.definition.PortalCourseStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,11 +45,14 @@ public class PortalCourse {
 	
 	@ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
-    private PortalProfessor professor;
+    private PortalAccount professor;
 
-	@ManyToOne
-    @JoinColumn(name = "assistant_id")
-	private PortalAssistant assistant;
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "PORTAL_ASSISTANT",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    private Set<PortalAccount> assistants = new HashSet<>();
 	
 	@Enumerated(EnumType.STRING)
 	private PortalCourseStatus registered;
@@ -57,13 +64,13 @@ public class PortalCourse {
     private List<PortalStudent> students = new ArrayList<>();
 	
 	public PortalCourse(Long id, String code, String name, 
-			PortalProfessor professor, PortalAssistant assistant, 
+			PortalAccount professor, Set<PortalAccount> assistant, 
 			PortalCourseStatus registered, List<PortalStudent> students) {
 		this.id = id;
 		this.code = code;
 		this.name = name;
 		this.professor = professor;
-		this.assistant = assistant;
+		this.assistants = assistant;
 		this.registered = registered;
 		this.students = students;
 	}
