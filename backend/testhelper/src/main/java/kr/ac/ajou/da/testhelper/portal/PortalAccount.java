@@ -2,11 +2,14 @@ package kr.ac.ajou.da.testhelper.portal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import kr.ac.ajou.da.testhelper.definition.PortalStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +31,14 @@ public class PortalAccount {
 	@Column(nullable = false)
 	private String email;
 	
-	public PortalAccount(Long id, String name, String email) {
+	@Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+	private PortalStatus joined;
+	
+	public PortalAccount(Long id, String name, String email, PortalStatus joined) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
+		this.joined = joined;
 	}
 }

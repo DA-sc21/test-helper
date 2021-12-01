@@ -20,8 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import kr.ac.ajou.da.testhelper.account.Account;
-import kr.ac.ajou.da.testhelper.definition.PortalCourseStatus;
+import kr.ac.ajou.da.testhelper.definition.PortalStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,7 +54,7 @@ public class PortalCourse {
     private Set<PortalAccount> assistants = new HashSet<>();
 	
 	@Enumerated(EnumType.STRING)
-	private PortalCourseStatus registered;
+	private PortalStatus registered;
 	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PORTAL_STUDENT",
@@ -65,7 +64,7 @@ public class PortalCourse {
 	
 	public PortalCourse(Long id, String code, String name, 
 			PortalAccount professor, Set<PortalAccount> assistant, 
-			PortalCourseStatus registered, List<PortalStudent> students) {
+			PortalStatus registered, List<PortalStudent> students) {
 		this.id = id;
 		this.code = code;
 		this.name = name;

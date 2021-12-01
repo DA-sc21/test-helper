@@ -1,6 +1,6 @@
 package kr.ac.ajou.da.testhelper.definition;
 
-public enum PortalCourseStatus {
+public enum PortalStatus {
 	PENDING,
     DONE
 }
