@@ -35,6 +35,6 @@ public class AccountService implements UserDetailsService {
 
     @Transactional
     public List<Account> getAssistantsByEmailStartingWith(String email) {
-        return accountRepository.findAllByEmailStartingWith(email);
+        return accountRepository.findAllAssistantsByEmailStartingWith(email);
     }
 }
