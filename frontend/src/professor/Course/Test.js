@@ -91,7 +91,8 @@ function Test(props){
     if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    else if(moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+    else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+      //현재시간>=시작시간 or 시작시간>=종료시간
       alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
     }
     else{
@@ -123,6 +124,7 @@ function Test(props){
         }
         else{
           alert("시험 생성에 실패했습니다.");
+          console.log(res);
         }
       })
       .catch(error => {console.error('Error:', error)});  
@@ -333,7 +335,8 @@ const CheckTestInfo = (props) => {
     if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    else if(moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+    else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+      //현재시간>=시작시간 or 시작시간>=종료시간
       alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
     }
     else{
