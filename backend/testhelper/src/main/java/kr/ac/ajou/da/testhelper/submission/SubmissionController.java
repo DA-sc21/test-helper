@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,14 +22,20 @@ public class SubmissionController {
     @AccessTestByProctor
     public ResponseEntity<List<GetSubmissionResDto>> getSubmissions(@PathVariable Long testId,
                                                                     GetSubmissionReqDto reqDto) {
-        return ResponseEntity.ok().body(submissionService.getByTestIdAndStudentNumber(testId, reqDto.getStudentNumber()));
+        return ResponseEntity.ok().body(
+                submissionService.getByTestIdAndStudentNumber(testId, reqDto.getStudentNumber())
+                .stream().map(GetSubmissionResDto::new).collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/tests/{testId}/students/{studentId}/submissions")
     @AccessTestByProctor
-    public ResponseEntity<GetDetailedSubmissionResDto> getSubmission(@PathVariable Long testId, @PathVariable Long studentId) {
+    public ResponseEntity<GetDetailedSubmissionResDto> getSubmission(@PathVariable Long testId,
+                                                                     @PathVariable Long studentId,
+                                                                     GetDetailedSubmissionReqDto reqDto) {
 
-        return ResponseEntity.ok().body(submissionService.getDetailedByTestIdAndStudentId(testId, studentId));
+        return ResponseEntity.ok().body(
+                submissionService.getDetailedByTestIdAndStudentId(testId, studentId, reqDto.getIncludeCapture()));
     }
 
     @GetMapping("/tests/{testId}/students/{studentId}/submissions/{submissionType}/upload-url")
