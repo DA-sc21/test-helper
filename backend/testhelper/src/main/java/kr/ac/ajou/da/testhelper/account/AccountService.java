@@ -2,6 +2,9 @@ package kr.ac.ajou.da.testhelper.account;
 
 import kr.ac.ajou.da.testhelper.account.dto.PostAccountReqDto;
 import kr.ac.ajou.da.testhelper.account.exception.AccountNotFoundException;
+import kr.ac.ajou.da.testhelper.definition.PortalStatus;
+import kr.ac.ajou.da.testhelper.portal.PortalAccount;
+import kr.ac.ajou.da.testhelper.portal.account.PortalAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +23,7 @@ import java.util.List;
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
+     private final PortalAccountService portalAccountService;
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -42,10 +46,12 @@ public class AccountService implements UserDetailsService {
 //    	log.info(passwordEncoder.encode(reqDto.getPassword()));
 		Account account = new Account(reqDto.getName(), reqDto.getEmail(), passwordEncoder.encode(reqDto.getPassword()), reqDto.getRole());
 		accountRepository.save(account);
+		PortalAccount portalAccount = portalAccountService.getByEmail(reqDto.getEmail());
+		portalAccount.updateJoined(PortalStatus.DONE);
 		return true;
 	}
   
-    public List<Account> getByIds(List<Long> ids) {
+	public List<Account> getByIds(List<Long> ids) {
         return accountRepository.findAllById(ids);
     }
 
