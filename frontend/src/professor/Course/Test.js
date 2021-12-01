@@ -128,6 +128,7 @@ function Test(props){
       .catch(error => {console.error('Error:', error)});  
     }
   }
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"2%", width:"70%"}}>

@@ -11,7 +11,7 @@ function Assistant(props){
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => {setShow(true);setAssistantInfo([]);}
+  const handleShow = () => {setShow(true);setAssistantInfo([]);setState([]);}
   const [state, setState] = useState([]);
   const [assistant, setAssistant] = useState([]);
   const [assistantInfo, setAssistantInfo] = useState([]);
@@ -114,7 +114,7 @@ function Assistant(props){
       <h4 style={{marginBottom:"3%", textAlign:"left"}}>조교 정보</h4>
       <div style={{width:"85%", height:"70%", borderRadius:"10px"}}>
         <Table striped bordered hover>
-          <thead>
+          <thead style={{backgroundColor:"#9b9b9b"}}>
           <tr>
           <th>#</th>
           <th>이름</th>
@@ -138,8 +138,8 @@ function Assistant(props){
         </Modal.Header>
         <Modal.Body>
           <div style={{height:"380px"}}>
-          <Button variant="secondary" style={{float:"right"}} onClick={(e)=>searchAssistantInfo(e)}>검색</Button>
-          <InputGroup className="mb-3" style={{width:"87%"}}>
+          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantInfo(e)}>검색</Button>
+          <InputGroup className="mb-3" style={{width:"86.5%"}}>
             <InputGroup.Text id="basic-addon1">조교 이메일</InputGroup.Text>
               <FormControl
                 placeholder="email"
@@ -183,7 +183,7 @@ function Assistant(props){
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={(e)=>submitForm(e)}>
+          <Button variant="secondary" onClick={(e)=>submitForm(e)}>
             등록
           </Button>
         </Modal.Footer>

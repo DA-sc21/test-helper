@@ -4,6 +4,7 @@
   box-shadow:2px 2px 2px #b9b9b9;
   display:inline-block;
   margin-bottom: 1%;
+  border-color: #b9b9b9f3;
 }
 .noTestCard{
   height:17%;
@@ -11,6 +12,7 @@
   box-shadow:2px 2px 2px #b9b9b9;
   display:inline-block;
   margin-bottom: 1%;
+  border-color: #b9b9b9f3;
 }
 .testName{
   font-size: 18px;
