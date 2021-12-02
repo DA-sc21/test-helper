@@ -13,4 +13,5 @@ import lombok.Setter;
 public class PutAccountPasswordReqDto {
 	private String email;
 	private String password;
+	private String newPassword;
 }

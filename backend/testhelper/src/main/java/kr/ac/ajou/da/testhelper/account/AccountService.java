@@ -1,12 +1,10 @@
 package kr.ac.ajou.da.testhelper.account;
 
 import kr.ac.ajou.da.testhelper.account.dto.PostAccountReqDto;
-import kr.ac.ajou.da.testhelper.account.dto.PutAccountPasswordReqDto;
 import kr.ac.ajou.da.testhelper.account.exception.AccountNotFoundException;
 import kr.ac.ajou.da.testhelper.definition.PortalStatus;
 import kr.ac.ajou.da.testhelper.portal.PortalAccount;
 import kr.ac.ajou.da.testhelper.portal.account.PortalAccountService;
-import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +26,7 @@ import java.util.Optional;
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
-     private final PortalAccountService portalAccountService;
+    private final PortalAccountService portalAccountService;
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -59,7 +57,7 @@ public class AccountService implements UserDetailsService {
 	}
   
     @Transactional
-    private Optional<Account> verifyEmail(String email) {
+    public Optional<Account> verifyEmail(String email) {
 		return accountRepository.findByEmail(email);
 	}
 
@@ -79,10 +77,20 @@ public class AccountService implements UserDetailsService {
 	}
 
     @Transactional
-	public boolean updatePasswordByEmail(String email, String password) {
+	public void updatePasswordByEmail(String email, String password) {
 		Account account = getByEmail(email);
 		account.updatePassword(passwordEncoder.encode(password));
-		return true;
 	}
+        
+    @Transactional
+    public boolean updatePassword(String email, String password, String newPassword) {
+    	Account account = getByEmail(email);
+    	log.info(account.getPassword());
+    	if(!passwordEncoder.matches(password, account.getPassword())) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 틀렸습니다.");
+    	}
+    	updatePasswordByEmail(email, newPassword);
+    	return true;
+    }
 
 }

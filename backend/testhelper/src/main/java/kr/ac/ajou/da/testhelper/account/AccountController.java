@@ -41,7 +41,7 @@ public class AccountController {
     
     @PutMapping("/users/password")
     public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto) {
-    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePasswordByEmail(reqDto.getEmail(), reqDto.getPassword())));
+    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(reqDto.getEmail(), reqDto.getPassword(), reqDto.getNewPassword())));
     }
             
 }
