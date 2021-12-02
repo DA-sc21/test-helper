@@ -2,15 +2,18 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
+import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
+import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
+import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionResDto;
+import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
+import kr.ac.ajou.da.testhelper.submission.exception.CannotViewNotSubmittedSubmissionException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -18,7 +21,6 @@ import java.util.List;
 public class SubmissionService {
 
     private final SubmissionRepository submissionRepository;
-    private final SubmissionMapper submissionMapper;
     private final FileService fileService;
     private final FileConvertService fileConvertService;
 
@@ -35,12 +37,9 @@ public class SubmissionService {
         return submissionRepository.findByTestIdAndSupervisedBy(testId, supervisedBy);
     }
 
-    public List<HashMap<String, Object>> getSubmissionStatus(int testId, int studentId) throws SQLException {
-        if (studentId == 0) {
-            return submissionMapper.getTestSubmissionStatus(testId);
-        } else {
-            return submissionMapper.getStudentSubmissionStatus(testId, studentId);
-        }
+    @Transactional
+    public List<GetSubmissionResDto> getByTestIdAndStudentNumber(Long testId, String studentNumber) {
+        return submissionRepository.findAllByTestIdAndStartWithStudentNumber(testId, studentNumber);
     }
 
     @Transactional
@@ -48,13 +47,36 @@ public class SubmissionService {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
+        if (!submission.getTest().isInProgress()) {
+            throw new CannotSubmitWhenTestNotInProgressException();
+        }
+
         return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission, false));
+    }
+
+    @Transactional
+    public GetDetailedSubmissionResDto getDetailedByTestIdAndStudentId(Long testId, Long studentId) {
+
+        Submission submission = this.getByTestIdAndStudentId(testId, studentId);
+
+        if (!submission.isSubmitted()) {
+            throw new CannotViewNotSubmittedSubmissionException();
+        }
+
+        return new GetDetailedSubmissionResDto(submission,
+                fileService.getDownloadUrl(SubmissionType.CAPTURE.resolveSubmissionPath(submission)),
+                fileService.getDownloadUrl(SubmissionType.ANSWER.resolveSubmissionPath(submission)));
     }
 
 
     @Transactional
     public boolean updateConsentedByTestIdAndStudentId(Long testId, Long studentId, Boolean consented) {
+
         Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        if (!submission.getTest().isInProgress()) {
+            throw new CannotSubmitWhenTestNotInProgressException();
+        }
 
         submission.updateConsented(consented);
 
@@ -62,14 +84,17 @@ public class SubmissionService {
     }
 
     @Transactional
-    public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, String submitted) {
+    public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, SubmissionStatus submitted) {
         Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        if (!submission.getTest().isInProgress()) {
+            throw new CannotSubmitWhenTestNotInProgressException();
+        }
 
         submission.updateSubmitted(submitted);
 
         return true;
     }
-
 
     @Transactional
     public void uploadSubmission(Long testId, Long studentId, SubmissionType submissionType) {
@@ -82,9 +107,9 @@ public class SubmissionService {
     }
 
     private void convertFileIfVideo(Submission submission, SubmissionType submissionType) {
-        if(!submissionType.isVideo()) return;
+        if (!submissionType.isVideo()) return;
 
-        if(!fileService.exist(submissionType.resolveSubmissionPath(submission, false))){
+        if (!fileService.exist(submissionType.resolveSubmissionPath(submission, false))) {
             throw new UploadedFileNotFoundException();
         }
 
