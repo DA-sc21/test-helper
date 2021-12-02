@@ -222,7 +222,7 @@ class SubmissionServiceTest {
         when(fileService.getDownloadUrl(anyString())).thenReturn(downloadUrl);
 
         //when
-        GetDetailedSubmissionResDto actualSubmission = submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId());
+        GetDetailedSubmissionResDto actualSubmission = submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId(), true);
 
         //then
         verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
@@ -240,7 +240,7 @@ class SubmissionServiceTest {
         when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(expectedSubmission));
 
         //when
-        assertThrows(CannotViewNotSubmittedSubmissionException.class, ()-> submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId()));
+        assertThrows(CannotViewNotSubmittedSubmissionException.class, ()-> submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId(), true));
 
         //then
     }

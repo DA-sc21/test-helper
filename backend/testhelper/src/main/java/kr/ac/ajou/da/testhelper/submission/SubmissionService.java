@@ -5,7 +5,6 @@ import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
-import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionResDto;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotViewNotSubmittedSubmissionException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
@@ -38,7 +37,7 @@ public class SubmissionService {
     }
 
     @Transactional
-    public List<GetSubmissionResDto> getByTestIdAndStudentNumber(Long testId, String studentNumber) {
+    public List<Submission> getByTestIdAndStudentNumber(Long testId, String studentNumber) {
         return submissionRepository.findAllByTestIdAndStartWithStudentNumber(testId, studentNumber);
     }
 
@@ -55,7 +54,7 @@ public class SubmissionService {
     }
 
     @Transactional
-    public GetDetailedSubmissionResDto getDetailedByTestIdAndStudentId(Long testId, Long studentId) {
+    public GetDetailedSubmissionResDto getDetailedByTestIdAndStudentId(Long testId, Long studentId, Boolean includeCapture) {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
@@ -64,7 +63,7 @@ public class SubmissionService {
         }
 
         return new GetDetailedSubmissionResDto(submission,
-                fileService.getDownloadUrl(SubmissionType.CAPTURE.resolveSubmissionPath(submission)),
+                includeCapture ? fileService.getDownloadUrl(SubmissionType.CAPTURE.resolveSubmissionPath(submission)) : null,
                 fileService.getDownloadUrl(SubmissionType.ANSWER.resolveSubmissionPath(submission)));
     }
 
@@ -114,5 +113,11 @@ public class SubmissionService {
         }
 
         fileConvertService.convertToMp4(submission, submissionType);
+    }
+
+    @Transactional
+    public Submission getById(Long submissionId) {
+        return submissionRepository.findById(submissionId)
+                .orElseThrow(SubmissionNotFoundException::new);
     }
 }
