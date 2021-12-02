@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.course;
 
 import kr.ac.ajou.da.testhelper.account.Account;
+import kr.ac.ajou.da.testhelper.account.dto.AssistantDto;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessCourseByProfessor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,5 +53,14 @@ public class CourseController {
         courseService.updateCourseAssistants(courseId, reqDto.getAssistants());
 
         return ResponseEntity.ok().body(BooleanResponse.TRUE);
+    }
+
+    @GetMapping("/courses/{courseId}/assistants")
+    @AccessCourseByProfessor
+    public ResponseEntity<List<AssistantDto>> getCourseAssistant(@PathVariable Long courseId) {
+
+        Set<Account> assistants = courseService.getCourseAssistantsById(courseId);
+
+        return ResponseEntity.ok().body(assistants.stream().map(AssistantDto::new).collect(Collectors.toList()));
     }
 }

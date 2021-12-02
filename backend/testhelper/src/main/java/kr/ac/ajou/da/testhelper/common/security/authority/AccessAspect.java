@@ -79,6 +79,20 @@ public class AccessAspect {
         }
     }
 
+    @Before("execution(* kr.ac.ajou.da.testhelper..*Controller.*(..)) " +
+            "&& @annotation(AccessTestByProfessor)")
+    @Transactional
+    public void hasAccessToTestByProfessor(JoinPoint joinPoint) {
+
+        Long testId = resolveTestId(joinPoint);
+        Test test = testService.getTest(testId);
+        Account professor = resolveAccount();
+
+        if(!test.hasProfessor(professor)){
+            throw new NotAuthorizedException();
+        }
+    }
+
     private Long resolveCourseId(JoinPoint joinPoint) {
         return (Long) resolveParameter("courseId", joinPoint);
     }
