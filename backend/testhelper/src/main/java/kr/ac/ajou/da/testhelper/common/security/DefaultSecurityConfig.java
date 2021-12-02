@@ -65,6 +65,7 @@ public class DefaultSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/users/email/validate").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/email/confirm").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.PUT, "/users/password").permitAll()
                 .anyRequest().authenticated();
     }
 }

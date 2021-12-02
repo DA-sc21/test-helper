@@ -1,10 +1,12 @@
 package kr.ac.ajou.da.testhelper.account;
 
 import kr.ac.ajou.da.testhelper.account.dto.PostAccountReqDto;
+import kr.ac.ajou.da.testhelper.account.dto.PutAccountPasswordReqDto;
 import kr.ac.ajou.da.testhelper.account.exception.AccountNotFoundException;
 import kr.ac.ajou.da.testhelper.definition.PortalStatus;
 import kr.ac.ajou.da.testhelper.portal.PortalAccount;
 import kr.ac.ajou.da.testhelper.portal.account.PortalAccountService;
+import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,4 +61,18 @@ public class AccountService implements UserDetailsService {
     public List<Account> getAssistantsByEmailStartingWith(String email) {
         return accountRepository.findAllByEmailStartingWith(email);
     }
+    
+    @Transactional
+    public Account getByEmail(String email) {
+		return accountRepository.findByEmail(email)
+				.orElseThrow(AccountNotFoundException::new);
+	}
+
+    @Transactional
+	public boolean updatePasswordByEmail(PutAccountPasswordReqDto reqDto) {
+		Account account = getByEmail(reqDto.getEmail());
+		account.updatePassword(passwordEncoder.encode(reqDto.getPassword()));
+		return true;
+	}
+
 }
