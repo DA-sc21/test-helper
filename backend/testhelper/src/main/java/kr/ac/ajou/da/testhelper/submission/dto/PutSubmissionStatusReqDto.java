@@ -7,6 +7,7 @@ import lombok.*;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PutSubmissionSubmittedReqDto {
-	private SubmissionStatus submitted;
+public class PutSubmissionStatusReqDto {
+    private SubmissionStatus status;
 }
+
