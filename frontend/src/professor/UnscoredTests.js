@@ -6,18 +6,41 @@ import {baseUrl} from "../component/baseUrl";
 import Loading from '../component/Loading';
 import TestsRouter from './TestsRouter';
 
-function UnscoredTests(props){
-  let testName = props.location.state.testName;
+function UnscoredTests(){
   let {testId} = useParams();
   let path = '/tests/'+testId;
   const [students, setStudents] = useState([]);
+  const [testInfo, setTestInfo] = useState([]);
   const [loading, setLoading] = useState(false);
   const menus = [
     { name: "학생 답안지", path: `/tests/${testId}/students`},
   ];
   useEffect(()=>{
+    getTests();
     getStudentList();
   },[])
+
+  async function getTests(){
+    await axios
+    .get(baseUrl+'/tests?testStatus=ALL',{
+      withCredentials : true
+    })
+    .then((result)=>{ 
+      getTestInfo(result.data);
+      console.log(result.data);
+    })
+    .catch(()=>{ console.log("실패") })
+  }
+
+  function getTestInfo(data){
+    let temp = [];
+    for(let i=0; i<data.length; i++){
+      if(data[i].id === Number(testId)){
+        temp.push(data[i]);
+      }
+    }
+    setTestInfo(temp);
+  }
 
   async function getStudentList(){
     await axios
@@ -36,7 +59,7 @@ function UnscoredTests(props){
   return(
     <div style={{display: "flex", flexDirection: "row", textAlign:"center"}}>
     <div style={{display: "flex", flexDirection: "column", borderRight:"1px solid #e0e0e0", height:"91vh", width:"15%"}}>
-    <div style={{width:"100%", textAlign:"center", marginTop:"4%", fontSize:"20px", marginBottom:"2%"}}>{testName}</div>
+    <div style={{width:"100%", textAlign:"center", marginTop:"4%", fontSize:"20px", marginBottom:"2%"}}>{testInfo[0].name}</div>
     <div style={{borderBottom:"1px solid gray", width:"98%", marginLeft:"0.5%", boxShadow: "1px 1px 1px gray", marginBottom:"3%"}}></div>
     <Nav as="ul" className="flex-column" style={{width:"100%"}}>
       {
@@ -50,6 +73,10 @@ function UnscoredTests(props){
       }
     </Nav>
     </div>
+    <TestsRouter
+      path={path}
+      students={students}
+    />
     </div>
   )
 }

@@ -5,13 +5,15 @@ import StudentAnswerSheets from './StudentAnswerSheets';
 function TestsRouter (props){
     console.log(props);
     let path = props.path;
+    let students = props.students;
   
     return (
       <>
         <Route exact path={path+"/students"} 
           render ={()=>
             <StudentAnswerSheets
-              path={path} />
+              path={path}
+              students={students} />
           }
         />
       </>

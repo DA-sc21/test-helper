@@ -93,6 +93,7 @@ function TestCard(props){
   const [testState, setTestState] = useState("");
   let test_status_options={
     "CREATE" : "시험 생성중",
+    "INVITED" : "시험 생성 완료",
     "IN_PROGRESS" : "시험 진행중",
     "ENDED" : "시험 종료",
     "MARK" : "시험 채점중",
@@ -113,9 +114,6 @@ function TestCard(props){
       <Card>
         <Card.Body>
           <Card.Title>{props.test.name}</Card.Title>
-          <Card.Text>
-            {props.test.test_type}
-          </Card.Text>
           <hr />
           <Card.Text>
             {test_status_options[props.test.test_status]}

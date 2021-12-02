@@ -25,7 +25,7 @@ function App() {
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
           <Route path="/courses/:courseId" component={CourseInfo} />
-          <Route exact path="/tests/:testId" component={UnscoredTest} />
+          <Route path="/tests/:testId" component={UnscoredTest} />
           <Route exact path="/tests" component={Tests} />
           <Route exact path="/" component={Main} />
         </>
