@@ -11,13 +11,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +48,9 @@ public class AccountService implements UserDetailsService {
 
     @Transactional
     public boolean signUp(PostAccountReqDto reqDto) {
-//    	log.info(passwordEncoder.encode(reqDto.getPassword()));
+    	if(!verifyEmail(reqDto.getEmail()).isEmpty()) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 계정입니다. 비밀번호 찾기를 진행해주세요.");
+    	}
 		Account account = new Account(reqDto.getName(), reqDto.getEmail(), passwordEncoder.encode(reqDto.getPassword()), reqDto.getRole());
 		PortalAccount portalAccount = portalAccountService.getByEmail(reqDto.getEmail());
 		accountRepository.save(account);
@@ -53,6 +58,11 @@ public class AccountService implements UserDetailsService {
 		return true;
 	}
   
+    @Transactional
+    private Optional<Account> verifyEmail(String email) {
+		return accountRepository.findByEmail(email);
+	}
+
 	public List<Account> getByIds(List<Long> ids) {
         return accountRepository.findAllById(ids);
     }
@@ -74,10 +84,5 @@ public class AccountService implements UserDetailsService {
 		account.updatePassword(passwordEncoder.encode(password));
 		return true;
 	}
-//
-//	public boolean checkByEmail(String email) {
-//		getByEmail(email);
-//		return true;
-//	}
 
 }

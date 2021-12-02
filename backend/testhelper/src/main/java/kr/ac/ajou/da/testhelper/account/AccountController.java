@@ -11,7 +11,6 @@ import kr.ac.ajou.da.testhelper.account.dto.PostAccountReqDto;
 import kr.ac.ajou.da.testhelper.account.dto.PutAccountPasswordReqDto;
 import kr.ac.ajou.da.testhelper.account.dto.GetAssistantsReqDto;
 import kr.ac.ajou.da.testhelper.account.dto.GetAssistantsResDto;
-import kr.ac.ajou.da.testhelper.account.dto.PostAccountEmailReqDto;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +26,7 @@ public class AccountController {
 
 	@PostMapping("/users")
     public ResponseEntity<BooleanResponse> signUp(@RequestBody PostAccountReqDto reqDto) {
-
 		return ResponseEntity.ok().body(BooleanResponse.of(accountService.signUp(reqDto)));
-
     }
 
     @GetMapping("/assistants")
@@ -46,5 +43,5 @@ public class AccountController {
     public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto) {
     	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePasswordByEmail(reqDto.getEmail(), reqDto.getPassword())));
     }
-        
+            
 }
