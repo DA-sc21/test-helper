@@ -60,6 +60,8 @@ public class DefaultSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/sessions").permitAll()
+                .antMatchers("/dev/**").permitAll()
+                .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/email/validate").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/email/confirm").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
