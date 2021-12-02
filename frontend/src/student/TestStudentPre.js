@@ -38,19 +38,10 @@ function TestStudentPre(){
   }
 
   useEffect(()=>{
-    getStudentPassword();
+    var para = document.location.href.split("=");
+    studentLogin(para[1]);
     // getStudentRoom();
   },[]);
-
-  async function getStudentPassword(){
-    await axios
-    .get(baseUrl+'/dev/tests/'+testId+'/students/'+studentId+'/password')
-    .then((result)=>{
-      // console.log(result.data);
-      studentLogin(result.data);
-    })
-    .catch(()=>{ console.log("실패") })
-  }
 
   async function studentLogin(pw){
     let response = await fetch(baseUrl+`/examinee/sessions?password=${pw}&studentId=${studentId}&testId=${testId}`,{
