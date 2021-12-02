@@ -75,4 +75,9 @@ public class AccountService implements UserDetailsService {
 		return true;
 	}
 
+	public boolean checkByEmail(String email) {
+		getByEmail(email);
+		return true;
+	}
+
 }
