@@ -128,7 +128,12 @@ function TestCard(props){
           </Card.Text>
           <div className="row">
             {testState === "unscored"? 
-            <Button style={{backgroundColor:"#2c4b88", borderColor:"#2c4b88"}}>채점하기</Button>: 
+            <Button style={{backgroundColor:"#2c4b88", borderColor:"#2c4b88"}} onClick={()=>history.push({
+              pathname:`/tests/${props.test.id}`,
+              state:{
+                testName: props.test.name
+              }
+            })}>채점하기</Button>: 
             <>
             <Button className="col-md-4" variant="primary">문제출제</Button>
             <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
