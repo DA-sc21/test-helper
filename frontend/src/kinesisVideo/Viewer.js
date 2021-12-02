@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { store, view } from '@risingstack/react-easy-state';
 import AWS, { LexRuntimeV2 } from "aws-sdk";
 import { Button } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import { useInterval } from 'react-use';
@@ -30,7 +31,7 @@ function onStatsReport(report) {
 const Viewer = (props) => {
   moment.locale('ko')
   let options = {mimeType:'video/webm; codecs=vp9'};
-  let {testId, studentId} = useParams();
+  // let {testId, studentId} = useParams();
   let videoRecoder = null;
   let cnt = 0;
   let captureId = null;

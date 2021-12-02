@@ -38,22 +38,67 @@ function TestStudentPre(){
   }
 
   useEffect(()=>{
-    getStudentRoom();
+    getStudentPassword();
+    // getStudentRoom();
   },[]);
-  
-  async function getStudentRoom(){
+
+  async function getStudentPassword(){
     await axios
-    .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
-    .then((result)=>{ 
-      setConsented(result.data.consented)
-      setCredentials(result.data.credentials)
-      setRoom(result.data.room)
-      setStudent(result.data.room.student)
-      setTest(result.data.room.test)
-      setLoading(true);
-      console.log(result.data)
+    .get(baseUrl+'/dev/tests/'+testId+'/students/'+studentId+'/password')
+    .then((result)=>{
+      console.log(result.data);
+      studentLogin(result.data);
     })
     .catch(()=>{ console.log("실패") })
+  }
+
+  async function studentLogin(pw){
+    let response = await fetch(baseUrl+`/examinee/sessions?password=${pw}&studentId=${studentId}&testId=${testId}`,{
+      method: 'POST',
+      credentials : 'include'
+    })
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        getStudentRoom();
+      }
+      else{
+        console.log("student login failed.")
+      }
+    })
+    .catch(error => {console.error('Error:', error)});
+  }
+  
+  async function getStudentRoom(){
+    let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room',{
+      method: "GET",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        setConsented(res.room.consented);
+        setCredentials(res.credentials)
+        setRoom(res.room)
+        setStudent(res.room.student)
+        setTest(res.room.test)
+        setLoading(true);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    // await axios
+    // .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
+    // .then((result)=>{ 
+    //   setConsented(result.data.consented)
+    //   setCredentials(result.data.credentials)
+    //   setRoom(result.data.room)
+    //   setStudent(result.data.room.student)
+    //   setTest(result.data.room.test)
+    //   setLoading(true);
+    //   console.log(result.data)
+    // })
+    // .catch(()=>{ console.log("실패") })
   }
   
   if(!loading)return(<Loading></Loading>)

@@ -4,6 +4,7 @@ import { store } from '@risingstack/react-easy-state';
 import { Button } from "react-bootstrap";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import {baseUrl} from "../component/baseUrl";
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -318,7 +319,6 @@ const PCScreenShare = (props) => {
 async function UploadVideoToS3(testId,studentId,video){
 
   let preSignedUrl="";
-  let baseUrl="http://api.testhelper.com";
 
   await axios
     .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/upload-url')
