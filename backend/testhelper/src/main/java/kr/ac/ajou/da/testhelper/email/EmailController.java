@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
-import kr.ac.ajou.da.testhelper.email.dto.PostEmailConfirmReqDto;
+import kr.ac.ajou.da.testhelper.email.dto.PostCodeReqDto;
 import kr.ac.ajou.da.testhelper.email.dto.PostEmailReqDto;
 
 @RestController
@@ -18,13 +18,18 @@ public class EmailController {
 	private EmailService emailService;
 		
 	@PostMapping("/users/email/validate")
-	public ResponseEntity<BooleanResponse> sendEmail(@RequestBody PostEmailReqDto email) throws Exception {
-		return ResponseEntity.ok().body(BooleanResponse.of(emailService.sendEmail(email.getEmail())));
+	public ResponseEntity<BooleanResponse> sendCode(@RequestBody PostEmailReqDto email) throws Exception {
+		return ResponseEntity.ok().body(BooleanResponse.of(emailService.sendCode(email.getEmail())));
 	}
 	
 	@PostMapping("/users/email/confirm")
-	public ResponseEntity<BooleanResponse> confirmEmail(@RequestBody PostEmailConfirmReqDto reqDto) {
-		return ResponseEntity.ok().body(BooleanResponse.of(emailService.confirmEmail(reqDto)));
+	public ResponseEntity<BooleanResponse> confirmCode(@RequestBody PostCodeReqDto reqDto) {
+		return ResponseEntity.ok().body(BooleanResponse.of(emailService.confirmCode(reqDto)));
+	}
+	
+	@PostMapping("/users/email/password")
+	public ResponseEntity<BooleanResponse> sendPassword(@RequestBody PostEmailReqDto reqDto) throws Exception {
+		return ResponseEntity.ok().body(BooleanResponse.of(emailService.sendPassword(reqDto)));
 	}
 
 }

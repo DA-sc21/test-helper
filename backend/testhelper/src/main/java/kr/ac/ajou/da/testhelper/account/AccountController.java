@@ -44,12 +44,7 @@ public class AccountController {
     
     @PutMapping("/users/password")
     public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto) {
-    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePasswordByEmail(reqDto)));
+    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePasswordByEmail(reqDto.getEmail(), reqDto.getPassword())));
     }
-    
-    @PostMapping("/users/email/check")
-    public ResponseEntity<BooleanResponse> postAccountEmail(@RequestBody PostAccountEmailReqDto reqDto) {
-    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.checkByEmail(reqDto.getEmail())));
-    }
-
+        
 }

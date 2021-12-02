@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostEmailConfirmReqDto {
+public class PostCodeReqDto {
 	private String email;
 	private String code;
 }

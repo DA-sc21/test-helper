@@ -47,8 +47,8 @@ public class AccountService implements UserDetailsService {
     public boolean signUp(PostAccountReqDto reqDto) {
 //    	log.info(passwordEncoder.encode(reqDto.getPassword()));
 		Account account = new Account(reqDto.getName(), reqDto.getEmail(), passwordEncoder.encode(reqDto.getPassword()), reqDto.getRole());
-		accountRepository.save(account);
 		PortalAccount portalAccount = portalAccountService.getByEmail(reqDto.getEmail());
+		accountRepository.save(account);
 		portalAccount.updateJoined(PortalStatus.DONE);
 		return true;
 	}
@@ -69,15 +69,15 @@ public class AccountService implements UserDetailsService {
 	}
 
     @Transactional
-	public boolean updatePasswordByEmail(PutAccountPasswordReqDto reqDto) {
-		Account account = getByEmail(reqDto.getEmail());
-		account.updatePassword(passwordEncoder.encode(reqDto.getPassword()));
+	public boolean updatePasswordByEmail(String email, String password) {
+		Account account = getByEmail(email);
+		account.updatePassword(passwordEncoder.encode(password));
 		return true;
 	}
-
-	public boolean checkByEmail(String email) {
-		getByEmail(email);
-		return true;
-	}
+//
+//	public boolean checkByEmail(String email) {
+//		getByEmail(email);
+//		return true;
+//	}
 
 }

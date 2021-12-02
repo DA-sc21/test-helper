@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import kr.ac.ajou.da.testhelper.email.EmailServiceImpl;
-import kr.ac.ajou.da.testhelper.email.dto.PostEmailConfirmReqDto;
+import kr.ac.ajou.da.testhelper.email.dto.PostCodeReqDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -37,7 +37,7 @@ public class RedisService {
 		System.out.println("Redis value : " + stringValueOperations.get(key));
 	}
 	
-	public boolean isVerify(PostEmailConfirmReqDto reqDto) {
+	public boolean isVerify(PostCodeReqDto reqDto) {
 		String value = getRedisValue(reqDto.getEmail());
 		if(value == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "인증 코드가 만료되었습니다.");
