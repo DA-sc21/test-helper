@@ -43,6 +43,9 @@ email:
   username: testhelper@naver.com
   password:
 
+CLOUDCONVERT_API_KEY:
+CLOUDCONVERT_WEBHOOK_SIGNING_SECRET:
+
 server:
   port: 8081
 
