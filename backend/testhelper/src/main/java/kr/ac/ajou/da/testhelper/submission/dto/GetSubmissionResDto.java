@@ -17,6 +17,6 @@ public class GetSubmissionResDto {
         this.test_id = submission.getTest().getId();
         this.student_id = submission.getStudent().getId();
         this.supervised_by = submission.getSupervisedBy();
-        this.submitted = submission.getSubmitted();
+        this.submitted = submission.getStatus();
     }
 }

@@ -4,6 +4,7 @@ import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswerService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
@@ -35,6 +36,8 @@ class SubmissionServiceTest {
     private FileService fileService;
     @Mock
     private FileConvertService fileConvertService;
+    @Mock
+    private SubmissionAnswerService submissionAnswerService;
 
 
 
@@ -46,7 +49,8 @@ class SubmissionServiceTest {
         submissionRepository = mock(SubmissionRepository.class);
         fileService = mock(FileService.class);
         fileConvertService = mock(FileConvertService.class);
-        submissionService = new SubmissionService(submissionRepository, fileService, fileConvertService);
+        submissionAnswerService = mock(SubmissionAnswerService.class);
+        submissionService = new SubmissionService(submissionRepository, fileService, fileConvertService, submissionAnswerService);
     }
 
     @Test
@@ -213,7 +217,7 @@ class SubmissionServiceTest {
     void getDetailedByTestIdAndStudentId_SubmissionStatusDone_success() {
         //given
         Submission expectedSubmission = DummyFactory.createSubmission();
-        expectedSubmission.updateSubmitted(SubmissionStatus.DONE);
+        expectedSubmission.updateStatus(SubmissionStatus.DONE);
         kr.ac.ajou.da.testhelper.test.Test test = expectedSubmission.getTest();
         Student student = expectedSubmission.getStudent();
         String downloadUrl = "downloadUrl";
@@ -233,7 +237,7 @@ class SubmissionServiceTest {
     void getDetailedByTestIdAndStudentId_SubmissionStatusPending_thenThrow_CannotViewNotSubmittedSubmissionException() {
         //given
         Submission expectedSubmission = DummyFactory.createSubmission();
-        expectedSubmission.updateSubmitted(SubmissionStatus.PENDING);
+        expectedSubmission.updateStatus(SubmissionStatus.PENDING);
         kr.ac.ajou.da.testhelper.test.Test test = expectedSubmission.getTest();
         Student student = expectedSubmission.getStudent();
 

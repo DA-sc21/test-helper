@@ -3,7 +3,9 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswer;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
+import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -33,9 +36,9 @@ public class Submission {
     @Column(nullable = false)
     private Boolean consented = false;
     
-    @Column(nullable = false)
+    @Column(name="submitted", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private SubmissionStatus submitted;
+    private SubmissionStatus status;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -43,6 +46,11 @@ public class Submission {
 
     @Column(nullable = false)
     private Long supervisedBy;
+
+    private Integer score;
+
+    @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY)
+    private List<SubmissionAnswer> answers;
 
     public Submission(Long id, Student student, Test test, Long supervisedBy) {
         this.id = id;
@@ -65,11 +73,22 @@ public class Submission {
         this.setConsented(consented);
     }
 
-	public void updateSubmitted(SubmissionStatus submitted) {
-		this.setSubmitted(submitted);
+	public void updateStatus(SubmissionStatus submitted) {
+
+        if(SubmissionStatus.DONE.equals(submitted)){
+            if (!this.getTest().isInProgress()) {
+                throw new CannotSubmitWhenTestNotInProgressException();
+            }
+        }
+
+		this.setStatus(submitted);
 	}
 
     public boolean isSubmitted() {
-        return Objects.equals(SubmissionStatus.DONE, submitted);
+        return Objects.equals(SubmissionStatus.DONE, status);
+    }
+
+    public void updateScore(int score) {
+        this.setScore(score);
     }
 }

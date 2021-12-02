@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
+import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswerService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
@@ -22,6 +23,7 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final FileService fileService;
     private final FileConvertService fileConvertService;
+    private final SubmissionAnswerService submissionAnswerService;
 
     @Transactional
     public Submission getByTestIdAndStudentId(Long testId, Long studentId) {
@@ -83,19 +85,6 @@ public class SubmissionService {
     }
 
     @Transactional
-    public boolean updateSubmittedByTestIdAndStudentId(Long testId, Long studentId, SubmissionStatus submitted) {
-        Submission submission = getByTestIdAndStudentId(testId, studentId);
-
-        if (!submission.getTest().isInProgress()) {
-            throw new CannotSubmitWhenTestNotInProgressException();
-        }
-
-        submission.updateSubmitted(submitted);
-
-        return true;
-    }
-
-    @Transactional
     public void uploadSubmission(Long testId, Long studentId, SubmissionType submissionType) {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
@@ -119,5 +108,17 @@ public class SubmissionService {
     public Submission getById(Long submissionId) {
         return submissionRepository.findById(submissionId)
                 .orElseThrow(SubmissionNotFoundException::new);
+    }
+
+    @Transactional
+    public void updateStatusByTestIdAndStudentId(Long testId, Long studentId, SubmissionStatus status) {
+        Submission submission = getByTestIdAndStudentId(testId, studentId);
+
+        if(SubmissionStatus.MARKED.equals(status)){
+            int score = submissionAnswerService.getTotalScoreBySubmission(submission);
+            submission.updateScore(score);
+        }
+
+        submission.updateStatus(status);
     }
 }
