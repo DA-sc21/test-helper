@@ -46,7 +46,7 @@ function TestStudentPre(){
     await axios
     .get(baseUrl+'/dev/tests/'+testId+'/students/'+studentId+'/password')
     .then((result)=>{
-      console.log(result.data);
+      // console.log(result.data);
       studentLogin(result.data);
     })
     .catch(()=>{ console.log("실패") })
