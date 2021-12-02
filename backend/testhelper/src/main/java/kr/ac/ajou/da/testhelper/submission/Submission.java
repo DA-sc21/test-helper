@@ -3,6 +3,7 @@ package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
@@ -32,7 +34,8 @@ public class Submission {
     private Boolean consented = false;
     
     @Column(nullable = false)
-    private String submitted;
+    @Enumerated(value = EnumType.STRING)
+    private SubmissionStatus submitted;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -62,7 +65,11 @@ public class Submission {
         this.setConsented(consented);
     }
 
-	public void updateSubmitted(String submitted) {
+	public void updateSubmitted(SubmissionStatus submitted) {
 		this.setSubmitted(submitted);
 	}
+
+    public boolean isSubmitted() {
+        return Objects.equals(SubmissionStatus.DONE, submitted);
+    }
 }
