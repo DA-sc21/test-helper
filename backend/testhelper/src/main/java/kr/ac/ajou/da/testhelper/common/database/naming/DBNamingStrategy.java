@@ -8,7 +8,7 @@ public class DBNamingStrategy extends PhysicalNamingStrategyStandardImpl {
     @Override
     public Identifier toPhysicalTableName(Identifier name, JdbcEnvironment context) {
 
-        String tableName = name.getText().toUpperCase();
+        String tableName = camelToSnake(name.getText()).toUpperCase();
 
         return Identifier.toIdentifier(tableName);
     }
