@@ -44,8 +44,8 @@ public class Test {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TEST_ASSISTANT",
-            joinColumns = @JoinColumn(name="test_id"),
-            inverseJoinColumns = @JoinColumn(name="account_id"))
+            joinColumns = @JoinColumn(name = "test_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<Account> assistants = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -99,7 +99,7 @@ public class Test {
 
     public void updateStatus(TestStatus status) {
 
-        if(isEndingTestBeforeEndTime(status)){
+        if (isEndingTestBeforeEndTime(status)) {
             throw new CannotEndTestBeforeEndTimeException();
         }
 
@@ -120,7 +120,7 @@ public class Test {
 
     public void updateAssistants(List<Account> assistants) {
 
-        if(!isValidStatusForUpdatingAssistant()){
+        if (!isValidStatusForUpdatingAssistant()) {
             throw new CannotUpdateTestAssistantException();
         }
 
@@ -134,7 +134,7 @@ public class Test {
 
     public void update(TestType type, LocalDateTime startTime, LocalDateTime endTime, Long updatedBy) {
 
-        if(!isValidStatusForUpdating()){
+        if (!isValidStatusForUpdating()) {
             throw new CannotUpdateTestException();
         }
 
