@@ -91,10 +91,10 @@ function Test(props){
     if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
-      //현재시간>=시작시간 or 시작시간>=종료시간
-      alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
-    }
+    // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+    //   //현재시간>=시작시간 or 시작시간>=종료시간
+    //   alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
+    // }
     else{
       let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
       let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
@@ -114,20 +114,24 @@ function Test(props){
         method: 'POST',
         credentials : 'include',
       })
-      .then( res => {
+      .then((res) => res.json())
+      .then((res) => {
+        if(res.errorMessage != undefined){ //error
+          alert(res.errorMessage);
+        }
+        else{ //success
+          alert("시험이 생성되었습니다.");
+          setShow(false);
+          setLoading(false);
+          getTest();
+        }
         console.log("response:", res);
-        if(res.status === 200){
-            alert("시험이 생성되었습니다.");
-            setShow(false);
-            setLoading(false);
-            getTest();
-        }
-        else{
-          alert("시험 생성에 실패했습니다.");
-          console.log(res);
-        }
+        console.log(res.result);
+        console.log(res.errorMessage);
       })
-      .catch(error => {console.error('Error:', error)});  
+      .catch((error) => {
+        console.error("Error:", error);
+      });
     }
   }
 
@@ -335,10 +339,10 @@ const CheckTestInfo = (props) => {
     if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
-      //현재시간>=시작시간 or 시작시간>=종료시간
-      alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
-    }
+    // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
+    //   //현재시간>=시작시간 or 시작시간>=종료시간
+    //   alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
+    // }
     else{
       let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
       let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
@@ -359,32 +363,35 @@ const CheckTestInfo = (props) => {
         method: 'PATCH',
         credentials : 'include',
       })
-      .then( res => {
+      .then((res) => res.json())
+      .then((res) => {
+        if(res.errorMessage != undefined){ //error
+          alert(res.errorMessage);
+        }
+        else{ //success
+          alert("시험 정보가 수정되었습니다.");
+          setShow2(false);
+          history.push(props.path+'/tests');
+        }
         console.log("response:", res);
-        if(res.status === 200){
-            alert("시험 정보가 수정되었습니다.");
-            setShow2(false);
-            history.push(props.path+'/tests');
-        }
-        else{
-          alert("시험 정보 수정에 실패했습니다.");
-        }
+        console.log(res.result);
+        console.log(res.errorMessage);
       })
-      .catch(error => {console.error('Error:', error)});
-      
-      // await axios
-      // .patch(baseUrl+'/tests/'+props.id, null, { params:{
-      //     assistants: assistantList,
-      //     endTime: end_time,
-      //     startTime: start_time,
-      //     type: state.type
-      //   }},{
-      //     withCredentials : true
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+      // .then( res => {
+      //   console.log("response:", res);
+      //   if(res.status === 200){
+      //       alert("시험 정보가 수정되었습니다.");
+      //       setShow2(false);
+      //       history.push(props.path+'/tests');
+      //   }
+      //   else{
+      //     alert("시험 정보 수정에 실패했습니다.");
+      //   }
       // })
-      // .then((result)=>{
-      //   console.log(result.data);
-      // })
-      // .catch((e)=>{ console.log(e) })
+      // .catch(error => {console.error('Error:', error)});
     }
   }
 
