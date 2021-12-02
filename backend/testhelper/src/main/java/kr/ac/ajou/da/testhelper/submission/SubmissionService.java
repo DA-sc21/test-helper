@@ -52,7 +52,7 @@ public class SubmissionService {
             throw new CannotSubmitWhenTestNotInProgressException();
         }
 
-        return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission));
+        return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission, false));
     }
 
     @Transactional
