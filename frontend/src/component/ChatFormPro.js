@@ -34,7 +34,7 @@ function ChatFormPro(props) {
     msg["chatroom"]=chatroom
     // ToastsStore.success(msg.message);
     setMessages((messages) => [...messages, msg]);
-    if(msg.author==="Master"){
+    if((props.role==="Viewer" && msg.author==="Master") || (props.role==="Master" && msg.author==="Viewer")){
     props.setNewMessages([msg,...props.newMessages])
     }
   };
@@ -64,6 +64,7 @@ function ChatFormPro(props) {
     console.log("call history");
     props.setNewMessages([])
     getHistory();
+    console.log(props)
   }, []);
 
   async function getHistory(){
@@ -77,11 +78,11 @@ function ChatFormPro(props) {
   }
   // if(!loading)return(<Loading></Loading>)
   return (
-    <div className={props.show?"position-absolute top-100 end-0":"position-absolute top-10 end-0 d-none"}>
+    <div className={props.show?"position-absolute top-0 end-0":"position-absolute top-10 end-0 d-none"} style={{marginTop:"9%", marginRight:"1.5%"}}>
       {!loading
       ?<Loading></Loading>
       :
-      <ChatList messages={messages} role={props.role} chatRoomId={chatRoomId} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage}></ChatList>
+      <ChatList messages={messages} role={props.role} chatRoomId={chatRoomId} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage} cheating={props.cheating}></ChatList>
     }
 
       <SockJsClient

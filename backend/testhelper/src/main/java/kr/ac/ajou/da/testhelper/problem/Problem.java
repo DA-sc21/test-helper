@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,16 +28,18 @@ public class Problem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
+	@Column(nullable = false)
 	private Long problemNum;
 
+	@Column(nullable = false)
     private Long testId;
 	
 	@Column(nullable = false)
     private String question;
 	
+	@Column(nullable = false)
 	private Long point;
 	
-	@Column(nullable = false)
     private String attachedFile;
 	
 	public Problem(Long id, Long problemNum, Long testId, String question, Long point, String attachedFile) {
@@ -47,5 +50,19 @@ public class Problem {
         this.point = point;
         this.attachedFile = attachedFile;
     }
+	
+	public Problem(Long problemNum, Long testId, String question, Long point, String attachedFile) {
+        this.problemNum = problemNum;
+        this.testId = testId;
+        this.question = question;
+        this.point = point;
+        this.attachedFile = attachedFile;
+    }
+
+	public void updateTestProblem(TestProblemReqDto reqDto) {
+		this.setQuestion(reqDto.getQuestion());
+		this.setPoint(reqDto.getPoint());
+		this.setAttachedFile(reqDto.getAttachedFile());
+	}
 	
 }

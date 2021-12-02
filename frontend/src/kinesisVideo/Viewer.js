@@ -6,7 +6,6 @@ import axios from 'axios';
 import moment from 'moment';
 import { useInterval } from 'react-use';
 import 'moment/locale/ko';
-import Compress from "react-image-file-resizer";
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -52,6 +51,7 @@ const Viewer = (props) => {
   };
   const [dataChannel,setDataChannel] = useState();
 
+
   useEffect(() => {
     console.log(props);
     startPlayerForViewer(props);
@@ -61,8 +61,8 @@ const Viewer = (props) => {
     let currentTime = moment(); //현재 시간
     let testStartTime = moment(props.startTime);
     let testEndTime = moment(props.endTime);
-    // let testStartTime = moment("2021 11 17 22:53");//테스트
-    // let testEndTime = moment("2021 11 17 22:55");//테스트
+    // let testStartTime = moment("2021 11 19 21:39");//테스트
+    // let testEndTime = moment("2021 11 19 21:45");//테스트
     let startTimeDifference = moment.duration(testStartTime.diff(currentTime)).seconds();
     let endTimeDifference = moment.duration(testEndTime.diff(currentTime)).seconds();
     if(startTimeDifference===0){
@@ -83,27 +83,20 @@ const Viewer = (props) => {
   
   function capture(e){ //두손 사진 캡쳐 제출
     navigator.mediaDevices.getUserMedia({ video: true })
-    .then(mediaStream => {
+    .then(mediaStream =>{
         // Do something with the stream.
         const track = mediaStream.getVideoTracks()[0];
         let imageCapture = new ImageCapture(track);
-  
-        imageCapture.takePhoto()
-        .then(blob => {console.log(blob); //blob=캡쳐이미지
-          Compress.imageFileResizer(
-            blob, // the file from input
-            640, // width
-            480, // height
-            "JPG", // compress format WEBP, JPEG, PNG
-            70, // quality
-            0, // rotation
-            (uri) => {
-              checkHandDetection(uri)
-              console.log(uri);
-              // You upload logic goes here
-            },
-            "base64" // blob or base64 default base64
-          );
+        const photoSettings = {
+          imageHeight : 480,
+          imageWidth : 640,
+        }
+        imageCapture.takePhoto(photoSettings)
+        .then((blob) => 
+          {
+        console.log(blob); //blob=캡쳐이미지
+       
+        checkHandDetection(blob);
         })
         .catch(error => console.log(error));
     })

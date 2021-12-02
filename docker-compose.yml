@@ -6,15 +6,15 @@ services:
       context: backend/testhelper/
       dockerfile: Dockerfile
     image: data-server:latest
-    environment :
+    environment:
       - AWS_PROFILE=test-helper
       - ENV_PROFILE=${PROFILE:-prod}
     ports:
       - 8081:8081
     volumes:
       - ~/.aws/:/root/.aws:ro
-    
-  front: 
+
+  front:
     container_name: front
     build:
       context: frontend/
@@ -27,3 +27,9 @@ services:
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"

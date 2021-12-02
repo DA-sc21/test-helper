@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import AWS from "aws-sdk";
 import { store } from '@risingstack/react-easy-state';
 import { Button } from "react-bootstrap";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -24,6 +26,7 @@ function onStatsReport(report) {
 }
 
 const PCScreenShare = (props) => {
+  let {testId, studentId} = useParams();
   const localView = useRef(null);
   const screenStream = useRef(null);
   const viewer = {
@@ -52,7 +55,9 @@ const PCScreenShare = (props) => {
         videoRecoder.start(); //start recording video
         console.log(videoRecoder);
         stream.getVideoTracks()[0].addEventListener('ended', () => {
-          console.log('screensharing has ended')
+          console.log('pc screen sharing has ended');
+          videoRecoder.stop(); //stop recording video
+          videoRecoder.addEventListener("dataavailable",handleVideoData);
           stopPlayerForViewer(); 
         });
         screenStream.current.srcObject = stream;
@@ -60,9 +65,15 @@ const PCScreenShare = (props) => {
         startViewer(props);
     }).catch(function(e){
         //error
-        console.log("pc share error");
+        console.log("pc screen share error");
     });
   }
+
+  const handleVideoData = (e) => {
+    const { data } = e;
+    console.log(data);
+    UploadVideoToS3(testId,studentId,data);
+  };
 
   async function startViewer(props) {
     // Create KVS client
@@ -280,8 +291,8 @@ const PCScreenShare = (props) => {
     }
   
     if (viewer.peerConnectionStatsInterval) {
-        clearInterval(viewer.peerConnectionStatsInterval);
-        viewer.peerConnectionStatsInterval = null;
+      clearInterval(viewer.peerConnectionStatsInterval);
+      viewer.peerConnectionStatsInterval = null;
     }
   
     if (viewer.dataChannel) {
@@ -303,5 +314,27 @@ const PCScreenShare = (props) => {
     </div>
   );
 };
+
+async function UploadVideoToS3(testId,studentId,video){
+
+  let preSignedUrl="";
+  let baseUrl="http://api.testhelper.com";
+
+  await axios
+    .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/upload-url')
+    .then((result)=>{
+      preSignedUrl=result.data.uploadUrl;
+      console.log(preSignedUrl);
+    })
+    .catch(()=>{ console.log("실패") })
+   
+  await axios
+    .put(preSignedUrl,video)
+    .then((result)=>{
+      console.log("PC 공유화면 녹화영상 저장 성공")
+    })
+    .catch(()=>{ console.log("저장 실패") })
+  
+}
 
 export default PCScreenShare;

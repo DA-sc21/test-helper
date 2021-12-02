@@ -33,6 +33,14 @@ mybatis: #Mybatis 설정
 logging: # ROOT레벨 전체 로깅 레벨 결정
   level:
     root: info
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
+email:
+  username: testhelper@naver.com
+  password:
+
+CLOUDCONVERT_API_KEY:
+CLOUDCONVERT_WEBHOOK_SIGNING_SECRET:
 
 server:
   port: 8081
@@ -45,8 +53,12 @@ spring:
     hikari:
       username: server
       password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: localhost
+    port: 6379
 
 server:
+  fe: http://localhost:3000
   ai: http://localhost:5000
 
 --- #dev 환경
@@ -57,8 +69,12 @@ spring:
     hikari:
       username: server
       password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: redis
+    port: 6379
 
 server:
+  fe: http://localhost:3000
   ai: http://host.docker.internal:5000
 
 --- #prod 환경
@@ -69,6 +85,15 @@ spring:
     hikari:
       username: server
       password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: redis
+    port: 6379
 
 server:
+  fe: https://site.test-helper.com
   ai: https://ai.test-helper.com
+  servlet:
+    session:
+      cookie:
+        domain: .test-helper.com
+

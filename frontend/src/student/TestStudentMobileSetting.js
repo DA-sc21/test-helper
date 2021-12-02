@@ -16,14 +16,15 @@ function TestStudentMobileSetting(props){
   let [studentCard,setStudentCard]= useState("");
   let [face,setFace]= useState("");
 
+  let credentials=props.credentials;
+  let room=props.room;
+  let studentNum=props.student.studentNumber;
+  let video=props.video;
+  let audio=props.audio;
+  let id=props.room.device+props.student.id;
   let [capture_1,setCapture_1]= useState("");
-  let credentials=props.credentials
-  let room=props.room
-  let studentNum=props.student.studentNumber
-  let video=props.video
-  let audio=props.audio
-  let id=props.room.device+props.student.id
   let [ended,setEnded]=useState(false)
+  let [submitted,setSubmitted]=useState(false)
   let startTime=props.test.startTime;
   let endTime=props.test.endTime;
 
@@ -38,6 +39,17 @@ function TestStudentMobileSetting(props){
     durationEndTime < 0 ? setEnded(true) :setEnded(false) 
   }, 1000);
 
+  async function putSubmitted(){
+    await axios
+    .put(baseUrl+ "/tests/"+testId+'/students/'+studentId+'/submissions/submitted',{
+      "submitted": "DONE"
+    })
+    .then((result)=>{ 
+      console.log(result)
+      setSubmitted(true)
+    })
+    .catch(()=>{ console.log("실패") })
+  }
 
   return(
     <div className="m-4"> 
@@ -46,6 +58,13 @@ function TestStudentMobileSetting(props){
         </h4>
       </BrowserView>
       <MobileView>
+        { submitted?
+          <div style={{marginTop: '20%', marginLeft:'3%', marginRight: '3%'}}>
+            <p style={{marginBottom: '1%', fontSize: '20px', fontWeight: 'bold'}}>수고하셨습니다.</p>
+            <p style={{marginBottom: '20%', fontSize: '20px', fontWeight: 'bold'}}>시험이 종료되었습니다.</p>
+          </div>
+          :
+        <div>
         <h5>아래의 버튼을 클릭하면 학생증과 본인얼굴이 캡쳐됩니다.</h5>
         <Viewer 
           testId ={testId}
@@ -127,7 +146,22 @@ function TestStudentMobileSetting(props){
           <img id="frame" className="image col-5" alt="camera"></img>
         </div>
         }
-
+        {!ended?
+        null
+        :
+        <Button 
+            className="col-5 mt-2" 
+            variant="danger" 
+            onClick =
+              {(e) => {
+                putSubmitted()
+                }
+                
+              }>제출완료
+          </Button>
+        }
+        </div>
+      }
       </MobileView>
     </div>
   )

@@ -1,18 +1,16 @@
 package kr.ac.ajou.da.testhelper.test.verification;
 
-import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 import kr.ac.ajou.da.testhelper.definition.VerificationStatus;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.submission.SubmissionService;
-import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.verification.dto.GetTestStudentVerificationResDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,38 +26,30 @@ class TestStudentVerificationServiceTest {
     @Mock
     private SubmissionService submissionService;
 
-    private final Course course = new Course(1L, "name");
-    private final Student student = new Student(1L, "name", "201820000", "email@ajou.ac.kr");
-    private final kr.ac.ajou.da.testhelper.test.Test test = new kr.ac.ajou.da.testhelper.test.Test(1L,
-            TestType.MID,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            course);
-    private final Long supervisedBy = 1L;
-    private final Submission submission = new Submission(1L, student, test, supervisedBy);
-    private final List<Submission> submissions = new ArrayList<>();
-
     @BeforeEach
     void init() {
         submissionService = mock(SubmissionService.class);
         testStudentVerificationService = new TestStudentVerificationService(submissionService);
-
-        submissions.add(new Submission(1L, student, test, supervisedBy));
     }
 
     @Test
     void getList_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission);
+
         when(submissionService.getByTestIdAndSupervisedBy(anyLong(), anyLong())).thenReturn(submissions);
 
         //when
-        List<GetTestStudentVerificationResDto> res = testStudentVerificationService.getList(test.getId(), supervisedBy);
+        List<GetTestStudentVerificationResDto> res = testStudentVerificationService.getList(test.getId(), submission.getSupervisedBy());
 
         //then
         assertEquals(submissions.size(), res.size());
 
         if (submissions.size() > 0) {
-            assertAll( "Submission Info Correct",
+            assertAll("Submission Info Correct",
                     () -> assertEquals(submissions.get(0).getId(), res.get(0).getSubmissionId()),
                     () -> assertEquals(submissions.get(0).getVerified(), res.get(0).getVerified())
             );
@@ -70,6 +60,10 @@ class TestStudentVerificationServiceTest {
     @Test
     void update_verifiedTrue_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when
@@ -85,6 +79,10 @@ class TestStudentVerificationServiceTest {
     @Test
     void update_verifiedFalse_success() {
         //given
+        Submission submission = DummyFactory.createSubmission();
+        kr.ac.ajou.da.testhelper.test.Test test = submission.getTest();
+        Student student = submission.getStudent();
+
         when(submissionService.getByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(submission);
 
         //when
