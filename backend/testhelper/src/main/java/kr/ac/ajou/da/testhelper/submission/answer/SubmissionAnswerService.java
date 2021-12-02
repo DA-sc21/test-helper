@@ -3,8 +3,8 @@ package kr.ac.ajou.da.testhelper.submission.answer;
 import kr.ac.ajou.da.testhelper.problem.Problem;
 import kr.ac.ajou.da.testhelper.problem.ProblemService;
 import kr.ac.ajou.da.testhelper.submission.Submission;
-import kr.ac.ajou.da.testhelper.submission.SubmissionService;
 import kr.ac.ajou.da.testhelper.submission.answer.exception.SubmissionAnswerNotFoundException;
+import kr.ac.ajou.da.testhelper.submission.exception.SubmissionMarkIncompleteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class SubmissionAnswerService {
 
     private final SubmissionAnswerRepository submissionAnswerRepository;
-    private final SubmissionService submissionService;
     private final ProblemService problemService;
 
     @Transactional
-    public Integer getScore(Long submissionId, Long problemNum){
+    public Integer getScore(Long submissionId, Long problemNum) {
         Integer score = 0;
-        try{
+        try {
             score = getAnswer(submissionId, problemNum).getScore();
-        }catch (SubmissionAnswerNotFoundException ignured){}
+        } catch (SubmissionAnswerNotFoundException ignured) {
+        }
 
         return score;
     }
@@ -33,25 +33,39 @@ public class SubmissionAnswerService {
     }
 
     @Transactional
-    public void updateScore(Long submissionId, Long problemNum, Integer score) {
+    public void updateScore(Submission submission, Long problemNum, Integer score) {
         SubmissionAnswer answer = null;
 
-        try{
-            answer = getAnswer(submissionId, problemNum);
-        }catch (SubmissionAnswerNotFoundException ex){
-            answer = createAnswer(submissionId, problemNum);
+        try {
+            answer = getAnswer(submission.getId(), problemNum);
+        } catch (SubmissionAnswerNotFoundException ex) {
+            answer = createAnswer(submission, problemNum);
         }
 
         answer.updateScore(score);
     }
 
-    private SubmissionAnswer createAnswer(Long submissionId, Long problemNum) {
-        Submission submission = submissionService.getById(submissionId);
+    private SubmissionAnswer createAnswer(Submission submission, Long problemNum) {
         Problem problem = problemService.getByTestIdAndProblemNum(submission.getTest().getId(), problemNum);
 
-        SubmissionAnswer answer = new SubmissionAnswer(submission,problem);
+        SubmissionAnswer answer = new SubmissionAnswer(submission, problem);
         submissionAnswerRepository.save(answer);
         return answer;
     }
 
+    @Transactional
+    public int getTotalScoreBySubmission(Submission submission) {
+
+        if (isMarkNotComplete(submission)) {
+            throw new SubmissionMarkIncompleteException();
+        }
+
+        return submission.getAnswers().stream().map(SubmissionAnswer::getScore).reduce(Integer::sum)
+                .orElse(0);
+    }
+
+    private boolean isMarkNotComplete(Submission submission) {
+        int problemCount = problemService.getCountByTestId(submission.getTest().getId());
+        return problemCount != submission.getAnswers().size();
+    }
 }

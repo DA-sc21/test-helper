@@ -16,6 +16,6 @@ public class GetSubmissionResDto {
         this.id = submission.getId();
         this.student = new StudentDto(submission.getStudent());
         this.supervised_by = submission.getSupervisedBy();
-        this.submitted = submission.getSubmitted();
+        this.submitted = submission.getStatus();
     }
 }

@@ -33,7 +33,7 @@ public class SubmissionAnswer {
         this.problem = problem;
     }
 
-    private Integer score;
+    private Integer score = 0;
 
     public void updateScore(Integer score){
 

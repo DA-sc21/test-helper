@@ -52,4 +52,7 @@ public class ProblemService {
 		return true;
 	}
 
+    public int getCountByTestId(Long testId) {
+		return problemRepository.countByTestId(testId);
+    }
 }

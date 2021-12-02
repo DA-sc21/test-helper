@@ -13,4 +13,6 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
 	Optional<Problem> findByTestIdAndProblemNum(Long testId, Long problemNum);
 
     boolean existsByTestIdAndProblemNum(Long testId, Long problemNum);
+
+    int countByTestId(Long testId);
 }
