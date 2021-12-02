@@ -16,10 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @NoArgsConstructor
@@ -148,7 +145,7 @@ public class Test {
     }
 
     private boolean isValidStatusForUpdating() {
-        return List.of(TestStatus.CREATE, TestStatus.INVITED).contains(status);
+        return Arrays.asList(TestStatus.CREATE, TestStatus.INVITED).contains(status);
     }
 
     public boolean canUpdateAssistant() {
@@ -160,7 +157,7 @@ public class Test {
     }
 
     public boolean canStartTest() {
-        return List.of(TestStatus.INVITED, TestStatus.IN_PROGRESS).contains(status)
+        return Arrays.asList(TestStatus.INVITED, TestStatus.IN_PROGRESS).contains(status)
                 && LocalDateTime.now().isAfter(startTime.minusHours(2L));
     }
 

@@ -42,9 +42,6 @@ class TestServiceTest {
     private TestRoomService testRoomService;
 
     @Mock
-    private TestsMapper testsMapper;
-
-    @Mock
     private AccountMapper accountMapper;
 
     @Mock
@@ -52,6 +49,7 @@ class TestServiceTest {
 
     @Mock
     private AccountService accountService;
+
 
     @Mock
     private ExamineeService examineeService;
@@ -63,7 +61,6 @@ class TestServiceTest {
     private void init() {
         testRepository = mock(TestRepository.class);
         testRoomService = mock(TestRoomService.class);
-        testsMapper = mock(TestsMapper.class);
         accountMapper = mock(AccountMapper.class);
         courseService = mock(CourseService.class);
         accountService = mock(AccountService.class);
@@ -72,7 +69,6 @@ class TestServiceTest {
 
         testService = new TestService(testRepository,
                 testRoomService,
-                testsMapper,
                 accountMapper,
                 courseService,
                 accountService,
