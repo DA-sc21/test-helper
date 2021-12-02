@@ -4,9 +4,13 @@ import kr.ac.ajou.da.testhelper.definition.DeviceType;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.submission.SubmissionService;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
+import kr.ac.ajou.da.testhelper.test.Test;
+import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.room.dto.RoomDto;
 import kr.ac.ajou.da.testhelper.test.room.dto.StudentRoomDto;
+import kr.ac.ajou.da.testhelper.test.room.exception.CannotStartTestException;
 import kr.ac.ajou.da.testhelper.test.room.exception.RoomNotFoundException;
+import kr.ac.ajou.da.testhelper.test.room.exception.TestNotInProgressException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,15 +36,25 @@ public class TestRoomService {
             throw new RoomNotFoundException();
         }
 
+        if(!submission.getTest().isInProgress()){
+            throw new TestNotInProgressException();
+        };
+
         return new RoomDto(submission, deviceType);
     }
 
     @Transactional
-    public List<StudentRoomDto> createRoomsForStudents(Long testId, Long supervisedBy) {
+    public List<StudentRoomDto> createRoomsForStudents(Test test, Long supervisedBy) {
 
-        List<Submission> submissions = submissionService.getByTestIdAndSupervisedBy(testId, supervisedBy);
+        if(!test.canStartTest()){
+            throw new CannotStartTestException();
+        }
+
+        List<Submission> submissions = submissionService.getByTestIdAndSupervisedBy(test.getId(), supervisedBy);
 
         submissions.forEach(submission -> testRoomManagingService.createRoom(submission.resolveRoomId()));
+
+        test.updateStatus(TestStatus.IN_PROGRESS);
 
         return submissions.stream()
                 .map(StudentRoomDto::new)

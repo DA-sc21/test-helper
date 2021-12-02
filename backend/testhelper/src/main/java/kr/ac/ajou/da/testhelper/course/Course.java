@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.course;
 
 import kr.ac.ajou.da.testhelper.account.Account;
+import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,6 +35,9 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Test> tests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Student> students = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "COURSE_ASSISTANT",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -41,9 +45,11 @@ public class Course {
     )
     private Set<Account> assistants = new HashSet<>();
 
-    public Course(Long id, String name) {
+    public Course(Long id, String name, Account professor, Set<Account> assistants) {
         this.id = id;
         this.name = name;
+        this.professor = professor;
+        this.assistants = assistants;
     }
 
     public void updateAssistants(List<Account> assistants) {
@@ -57,5 +63,9 @@ public class Course {
 
     public boolean hasProfessor(Account account) {
         return professor.equals(account);
+    }
+
+    public void addTest(Test test) {
+        tests.add(test);
     }
 }

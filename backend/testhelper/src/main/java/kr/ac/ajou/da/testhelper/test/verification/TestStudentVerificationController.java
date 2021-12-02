@@ -44,8 +44,8 @@ public class TestStudentVerificationController {
 
     @PostMapping("/tests/{testId}/students/{studentId}/verification")
     @AccessExaminee
-    public String postTestStudentVerification(@PathVariable int testId, @PathVariable int studentId) throws SQLException {
-        return testStudentVerificationService.verification(testId, studentId);
+    public String postTestStudentVerification(@PathVariable Long testId, @PathVariable Long studentId) throws SQLException {
+        return testStudentVerificationService.verification(testId, studentId).name();
     }
 
 }
