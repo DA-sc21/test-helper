@@ -32,18 +32,18 @@ public class EmailServiceImpl {
 		
 		MimeMessage  message = emailSender.createMimeMessage();
 		message.addRecipients(RecipientType.TO, to);//보내는 대상
-	    message.setSubject("[Test-Helper] 회원가입을 위한 이메일 인증코드");//제목
+	    message.setSubject("[Test-Helper] 이메일 인증코드");//제목
 	    
 	    String msgg="";
 	    msgg+= "<div style='margin:100px;'>";
 	    msgg+= "<h1> 안녕하세요  Test-Helper 입니다. </h1>";
 	    msgg+= "<br>";
-	    msgg+= "<p>아래 코드를 회원가입 창으로 돌아가 입력해주세요.<p>";
+	    msgg+= "<p>사이트로 돌아가 아래 코드를 입력해주세요.<p>";
 	    msgg+= "<br>";
 	    msgg+= "<p>감사합니다.<p>";
 	    msgg+= "<br>";
 	    msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
-	    msgg+= "<h3 style='color:blue;'>회원가입 코드입니다.</h3>";
+	    msgg+= "<h3 style='color:blue;'>인증코드</h3>";
 	    msgg+= "<div style='font-size:130%'>";
 	    msgg+= "CODE : <strong>";
 	    msgg+= ePw + "</strong><div><br/> ";
