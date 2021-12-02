@@ -114,4 +114,10 @@ public class SubmissionService {
 
         fileConvertService.convertToMp4(submission, submissionType);
     }
+
+    @Transactional
+    public Submission getById(Long submissionId) {
+        return submissionRepository.findById(submissionId)
+                .orElseThrow(SubmissionNotFoundException::new);
+    }
 }
