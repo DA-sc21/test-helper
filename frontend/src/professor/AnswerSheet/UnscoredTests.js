@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, Route, Switch, BrowserRouter } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import axios from 'axios';
-import {baseUrl} from "../component/baseUrl";
-import Loading from '../component/Loading';
+import {baseUrl} from "../../component/baseUrl";
+import Loading from '../../component/Loading';
 import TestsRouter from './TestsRouter';
 
 function UnscoredTests(){
@@ -13,7 +13,7 @@ function UnscoredTests(){
   const [testInfo, setTestInfo] = useState([]);
   const [loading, setLoading] = useState(false);
   const menus = [
-    { name: "학생 답안지", path: `/tests/${testId}/students`},
+    { name: "답안지 채점", path: `/tests/${testId}/students`},
   ];
   useEffect(()=>{
     getTests();

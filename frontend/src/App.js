@@ -9,7 +9,7 @@ import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
 import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
-import UnscoredTest from './professor/UnscoredTests';
+import UnscoredTest from './professor/AnswerSheet/UnscoredTests';
 
 function App() {
   let isAuthorized = localStorage.getItem("isAuthorized");
