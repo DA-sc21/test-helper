@@ -109,6 +109,31 @@ function TestCard(props){
     }
   })
 
+  async function checkSuperviseTest(){
+    let response = await fetch(baseUrl+"/tests/"+props.test.id+"/students/room",{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        if(res.errorMessage != undefined){ //error
+          alert(res.errorMessage);
+        }
+        else{ //success
+          history.push({
+            pathname: "/tests/"+props.test.id+"/supervise",
+            state: {
+              testStartTime: props.test.start_time,
+              testEndTime: props.test.end_time
+          }});
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   return(
     <div className="col-md-4">
       <Card>
@@ -127,20 +152,15 @@ function TestCard(props){
           <div className="row">
             {testState === "unscored"? 
             <Button style={{backgroundColor:"#2c4b88", borderColor:"#2c4b88"}} onClick={()=>history.push({
-              pathname:`/tests/${props.test.id}`,
+              pathname:`/tests/${props.test.id}/unscored`,
               state:{
                 testName: props.test.name
               }
             })}>채점하기</Button>: 
             <>
-            <Button className="col-md-4" variant="primary">문제출제</Button>
-            <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
-              pathname: "/tests/"+props.test.id+"/supervise",
-              state: {
-                testStartTime: props.test.start_time,
-                testEndTime: props.test.end_time
-                }})}}>시험감독</Button>
-            <Button className="col-md-4" variant="success">채점하기</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}}>문제출제</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#3e4450", borderColor:"#3e4450"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}}>채점하기</Button>
             </>}
           </div>
         </Card.Body>

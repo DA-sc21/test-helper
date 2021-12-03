@@ -9,7 +9,7 @@ function TestsRouter (props){
   
     return (
       <>
-        <Route exact path={path+'/students'} 
+        <Route exact path={path+'/unscored/students'} 
           render ={()=>
             <StudentAnswerSheets
               path={path}

@@ -13,7 +13,7 @@ function UnscoredTests(){
   const [testInfo, setTestInfo] = useState([]);
   const [loading, setLoading] = useState(false);
   const menus = [
-    { name: "답안지 채점", path: `/tests/${testId}/students`},
+    { name: "답안지 채점", path: `/tests/${testId}/unscored/students`},
   ];
   useEffect(()=>{
     getTests();

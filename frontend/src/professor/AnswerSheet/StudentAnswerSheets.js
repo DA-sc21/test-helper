@@ -79,7 +79,7 @@ function StudentList(props){
   const handleClose = () => setShow(false);
   const handleShow = () => {setShow(true);}
   let scoring_status={
-    "PENDING" : "제출 전",
+    "PENDING" : "미제출",
     "DONE" : "제출 완료",
     "MARKED" : "채점 완료",
   }
@@ -123,13 +123,13 @@ function StudentList(props){
 
         <Modal show={show} fullscreen={true} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}-{props.student.name})</span></Modal.Title>
+            <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={(e)=>completeScoring(e)}>
+            <Button style={{backgroundColor:"#333c50", borderColor:"333c50"}} onClick={(e)=>completeScoring(e)}>
               채점 완료
             </Button>
           </Modal.Footer>
