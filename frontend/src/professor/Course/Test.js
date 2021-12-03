@@ -54,7 +54,7 @@ function Test(props){
   }
   async function getTest(){
     await axios
-    .get(baseUrl+'/tests',{
+    .get(baseUrl+'/tests?testStatus=ALL',{
         withCredentials : true
       })
     .then((result)=>{
@@ -69,7 +69,7 @@ function Test(props){
     let final = [];
     let quiz = [];
     for(let i=0; i<data.length; i++){
-      if(data[i].name === courseName){
+      if(data[i].name.indexOf(courseName) != -1){
         if(data[i].test_type === "MID"){
           mid.push(data[i]);
         }
@@ -124,6 +124,7 @@ function Test(props){
           setShow(false);
           setLoading(false);
           getTest();
+          inviteTest(res.testId);
         }
         console.log("response:", res);
         console.log(res.result);
@@ -133,6 +134,19 @@ function Test(props){
         console.error("Error:", error);
       });
     }
+  }
+
+  async function inviteTest(id){
+    let response = await fetch(baseUrl+'/tests/'+id+'/invitation',{
+      method: 'POST',
+      credentials : 'include',
+    })
+    .then((res) => {
+      console.log("response:", res);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
   }
 
   if(!loading)return(<Loading></Loading>)
@@ -398,7 +412,7 @@ const CheckTestInfo = (props) => {
   return(
     <div>
       <button className="testName" onClick={(e)=>getTestInfo(e)}>
-        {props.name} {test_type[props.type]}{quizNum}
+        {props.name}{quizNum}
       </button>
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Header closeButton>
