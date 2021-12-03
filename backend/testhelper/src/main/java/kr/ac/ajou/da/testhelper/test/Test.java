@@ -192,4 +192,12 @@ public class Test {
     private boolean isSubmissionsAllMarked() {
         return this.getSubmissions().stream().allMatch(Submission::isMarked);
     }
+
+    public boolean isMarked() {
+        return Objects.equals(TestStatus.MARK, this.status);
+    }
+
+    public boolean isGraded() {
+        return Objects.equals(TestStatus.GRADED, this.status);
+    }
 }

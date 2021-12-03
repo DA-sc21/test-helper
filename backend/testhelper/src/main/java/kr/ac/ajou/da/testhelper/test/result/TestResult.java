@@ -1,6 +1,7 @@
 package kr.ac.ajou.da.testhelper.test.result;
 
 import kr.ac.ajou.da.testhelper.submission.Submission;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class TestResult {
     @Id
