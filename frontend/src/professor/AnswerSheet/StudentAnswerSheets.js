@@ -71,20 +71,42 @@ function StudentAnswerSheets(props){
 
 function StudentList(props){
   console.log(props)
+  let history = useHistory();
   let path = props.path;
+  let studentId = props.student.id;
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {setShow(true);}
   let scoring_status={
     "PENDING" : "제출 전",
-    "MARKED" : "제출 완료",
-    "DONE" : "채점 완료",
+    "DONE" : "제출 완료",
+    "MARKED" : "채점 완료",
   }
   let scoring_status_css={
     "PENDING" : "secondary",
-    "MARKED" : "success",
-    "DONE" : "primary",
+    "DONE" : "success",
+    "MARKED" : "primary",
+  }
+
+  async function completeScoring(){
+    let response = await fetch(baseUrl+path+'/students/'+studentId+'/submissions/marked',{
+      method: 'POST',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.result === true){
+        alert("채점이 완료되었습니다.");
+        handleClose();
+        history.push(path+'/students');
+      }
+      else{
+        alert(res.errorMessage);
+      }
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
   }
 
   return(
@@ -107,7 +129,7 @@ function StudentList(props){
             <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={(e)=>completeScoring(e)}>
               채점 완료
             </Button>
           </Modal.Footer>
