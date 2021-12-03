@@ -75,9 +75,7 @@ function StudentList(props){
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => {setShow(true);getAnswerSheet();}
-  const [imageUrl, setImageUrl] = useState("");
-  const [submissionId, setSubmissionId] = useState("");
+  const handleShow = () => {setShow(true);}
   let scoring_status={
     "PENDING" : "제출 전",
     "MARKED" : "제출 완료",
@@ -87,19 +85,6 @@ function StudentList(props){
     "PENDING" : "secondary",
     "MARKED" : "success",
     "DONE" : "primary",
-  }
-  async function getAnswerSheet(){
-    await axios
-    .get(baseUrl+path+`/students/${props.student.id}/submissions?includeCapture=false`,{ //학생 전체 조회
-        withCredentials : true
-      })
-    .then((result)=>{
-      console.log(result.data);
-      setSubmissionId(result.data.id);
-      setImageUrl(result.data.answerSheetDownloadUrl);
-      setLoading(true);
-    })
-    .catch(()=>{ console.log("실패") })
   }
 
   return(
@@ -119,15 +104,7 @@ function StudentList(props){
             <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}-{props.student.name})</span></Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {loading?
-            <ScoringTests path={path} answerSheetUrl={imageUrl} submissionId={submissionId}></ScoringTests>
-            :
-            <div style={{textAlign:"center"}}>
-              <h3 style={{paddingTop:"5%", marginBottom:"2%"}}>정보를 불러오는 중입니다.</h3>
-              <Spinner style={{width:"40px", height:"40px"}} animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>}
+            <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
