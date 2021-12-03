@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,8 +29,13 @@ public class AnswerController {
     }
 	
 	@GetMapping("/tests/{testId}/answers")
-	@AccessTestByProctor
 	public ResponseEntity<List<Answer>> getAnswer(@PathVariable Long testId) {
-		return ResponseEntity.ok().body(answerService.getAnswer(testId));
+		return ResponseEntity.ok().body(answerService.getAnswerByTestId(testId));
+	}
+	
+	@DeleteMapping("/tests/{testId}/answers/{answerId}")
+	@AccessTestByProctor
+	public ResponseEntity<BooleanResponse> deleteAnswer(@PathVariable Long testId, @PathVariable Long answerId) {
+		return ResponseEntity.ok().body(BooleanResponse.of(answerService.deleteAnswer(answerId)));
 	}
 }
