@@ -10,6 +10,9 @@ import lombok.Setter;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostAnswerReqDto {
+public class ProblemWithAnswer {
+	private Long testId;
+	private Long problemNum;
+	private Long problemId;
 	private String file;
 }

@@ -23,18 +23,18 @@ public class Answer {
     private Long id;
 
     @Column(nullable = false)
-    private Long problemId;
+    private Long testId;
     
     private String file;
     
-    public Answer(Long id, Long problemId, String file) {
+    public Answer(Long id, Long testId, String file) {
     	this.id = id;
-    	this.problemId = problemId;
+    	this.testId = testId;
     	this.file = file;
     }
     
-    public Answer(Long problemId, String file) {
-    	this.problemId = problemId;
+    public Answer(Long testId, String file) {
+    	this.testId = testId;
     	this.file = file;
     }
 }
