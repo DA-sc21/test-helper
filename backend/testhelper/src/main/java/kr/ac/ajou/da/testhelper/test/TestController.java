@@ -9,6 +9,7 @@ import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
 import kr.ac.ajou.da.testhelper.test.dto.GetDetailedTestResDto;
 import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
+import kr.ac.ajou.da.testhelper.test.dto.PostTestResDto;
 import kr.ac.ajou.da.testhelper.test.dto.PutTestStatusReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,15 +54,15 @@ public class TestController {
 
     @PostMapping("/courses/{courseId}/tests")
     @AccessCourseByProfessor
-    public ResponseEntity<BooleanResponse> postTest(@PathVariable Long courseId,
-                                                    PostAndPatchTestReqDto reqDto,
-                                                    @AuthenticationPrincipal @ApiIgnore Account account) {
+    public ResponseEntity<PostTestResDto> postTest(@PathVariable Long courseId,
+                                                   PostAndPatchTestReqDto reqDto,
+                                                   @AuthenticationPrincipal @ApiIgnore Account account) {
 
         validate(reqDto);
 
-        testService.createTest(courseId, reqDto, account.getId());
+        Test test = testService.createTest(courseId, reqDto, account.getId());
 
-        return ResponseEntity.ok().body(BooleanResponse.TRUE);
+        return ResponseEntity.ok().body(new PostTestResDto(test.getId()));
     }
 
     @PatchMapping("/tests/{testId}")
