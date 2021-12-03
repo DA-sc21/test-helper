@@ -55,7 +55,7 @@ const AdminCourse = () => {
   return(
     <div className="box">
       <div className="content">
-        <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button>
+        {/* <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button>
         <p className="semester">{year}학년 {semester}학기</p>
         {course.map((data,i)=>(
         <Card key={i} className="cardbox" onClick={()=>history.push(`/courses/${data.id}`)}>
@@ -64,7 +64,7 @@ const AdminCourse = () => {
             <p className="courseName">{data.name}</p>
           </Card.Body>
         </Card>
-      ))}
+      ))} */}
       </div>
     </div>
   )
