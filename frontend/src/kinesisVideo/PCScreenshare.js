@@ -54,8 +54,8 @@ const PCScreenShare = (props) => {
 
   useInterval(() => {
     let currentTime = moment().format("YYYY-MM-DD HH:mm:ss"); //현재 시간
-    // let testEndTime = moment(props.endTime).format("YYYY-MM-DD HH:mm:ss");
-    let testEndTime = moment("2021 12 02 17:35").format("YYYY-MM-DD HH:mm:ss");//테스트
+    let testEndTime = moment(props.endTime).format("YYYY-MM-DD HH:mm:ss");
+    // let testEndTime = moment("2021 12 04 01:15").format("YYYY-MM-DD HH:mm:ss");//테스트
     // console.log(currentTime,testEndTime);
     if(currentTime === testEndTime){
       console.log("시험 종료");
@@ -361,10 +361,22 @@ async function UploadVideoToS3(testId,studentId,video){
   await axios
     .put(preSignedUrl,video)
     .then((result)=>{
-      console.log("PC 공유화면 녹화영상 저장 성공")
+      console.log("PC 공유화면 녹화영상 저장 성공");
+      convertWebmToMp4(); // convert webm to mp4
     })
     .catch(()=>{ console.log("저장 실패") })
   
+  async function convertWebmToMp4(){
+    let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO',{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+      })
+      .catch((error) => { console.error("실패") });
+  }
 }
 
 export default PCScreenShare;
