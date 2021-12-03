@@ -51,7 +51,19 @@ function Assistant(props){
     setCheckList(arr);
   }
 
-  async function searchAssistantInfo(){
+  async function searchAssistantByName(){
+    await axios
+    .get(baseUrl+`/assistants?name=${state.name}`,{
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log(result.data);
+      setAssistantInfo(result.data);
+    })
+    .catch((e)=>{ console.log(e) })
+  }
+
+  async function searchAssistantByEmail(){
     await axios
     .get(baseUrl+`/assistants?email=${state.email}`,{
         withCredentials : true
@@ -138,7 +150,18 @@ function Assistant(props){
         </Modal.Header>
         <Modal.Body>
           <div style={{height:"380px"}}>
-          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantInfo(e)}>검색</Button>
+          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByName(e)}>검색</Button>
+          <InputGroup className="mb-3" style={{width:"86.5%"}}>
+            <InputGroup.Text id="basic-addon1">조교 이름</InputGroup.Text>
+              <FormControl
+                placeholder="name"
+                aria-label="name"
+                aria-describedby="basic-addon1"
+                name="name" 
+                onChange={(e)=>onChangehandler(e)}
+            />
+          </InputGroup>
+          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByEmail(e)}>검색</Button>
           <InputGroup className="mb-3" style={{width:"86.5%"}}>
             <InputGroup.Text id="basic-addon1">조교 이메일</InputGroup.Text>
               <FormControl
