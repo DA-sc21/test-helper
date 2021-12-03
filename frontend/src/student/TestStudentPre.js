@@ -39,8 +39,12 @@ function TestStudentPre(){
 
   useEffect(()=>{
     var para = document.location.href.split("=");
-    studentLogin(para[1]);
-    // getStudentRoom();
+    if(document.location.href.indexOf("accessKey") != -1){
+      studentLogin(para[1]);
+    }
+    else{
+      getStudentRoom();
+    }
   },[]);
 
   async function studentLogin(pw){

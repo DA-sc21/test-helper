@@ -4,6 +4,7 @@ import AWS, { LexRuntimeV2 } from "aws-sdk";
 import { Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import {baseUrl} from "../component/baseUrl";
 import moment from 'moment';
 import { useInterval } from 'react-use';
 import 'moment/locale/ko';
@@ -31,7 +32,7 @@ function onStatsReport(report) {
 const Viewer = (props) => {
   moment.locale('ko')
   let options = {mimeType:'video/webm; codecs=vp9'};
-  // let {testId, studentId} = useParams();
+  let {testId, studentId} = useParams();
   let videoRecoder = null;
   let cnt = 0;
   let captureId = null;
@@ -59,20 +60,33 @@ const Viewer = (props) => {
   }, []);
 
   useInterval(() => {
-    let currentTime = moment(); //현재 시간
-    let testStartTime = moment(props.startTime);
-    let testEndTime = moment(props.endTime);
-    // let testStartTime = moment("2021 11 19 21:39");//테스트
-    // let testEndTime = moment("2021 11 19 21:45");//테스트
-    let startTimeDifference = moment.duration(testStartTime.diff(currentTime)).seconds();
-    let endTimeDifference = moment.duration(testEndTime.diff(currentTime)).seconds();
-    if(startTimeDifference===0){
+    let currentTime = moment().format("YYYY-MM-DD HH:mm:ss"); //현재 시간
+    let testStartTime = moment(props.startTime).format("YYYY-MM-DD HH:mm:ss"); //시작 시간
+    let testEndTime = moment(props.endTime).format("YYYY-MM-DD HH:mm:ss"); //종료시간
+    // let testStartTime = moment("2021 12 04 01:34").format("YYYY-MM-DD HH:mm:ss"); //테스트
+    // let testEndTime = moment("2021 12 04 01:35").format("YYYY-MM-DD HH:mm:ss"); //테스트
+    // console.log(currentTime,testEndTime);
+
+    // if(currentTime>testStartTime && currentTime<testEndTime){
+    //   startCapture();
+    // }
+    if(currentTime === testStartTime){
       startCapture();
     }
-    if(endTimeDifference===0){
+    if(currentTime === testEndTime){
+      console.log("시험 종료");
+      // setIsRecordEnded(true);
       stopCapture();
+      videoRecoder.stop(); //stop recording video
+      videoRecoder.addEventListener("dataavailable",handleVideoData);
     }
   }, 1000);
+
+  const handleVideoData = (e) => {
+    const { data } = e;
+    console.log(data);
+    UploadVideoToS3(testId,studentId,data);
+  };
   
   function startCapture(e){
     captureId=setInterval(capture, 3000);
@@ -373,5 +387,41 @@ const Viewer = (props) => {
     </div>
   );  
 };
+
+async function UploadVideoToS3(testId,studentId,video){
+
+  let preSignedUrl="";
+
+  let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/ROOM_VIDEO/upload-url',{
+    method: "GET",
+    credentials: "include",
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      preSignedUrl=res.uploadUrl;
+      console.log(preSignedUrl);
+    })
+    .catch((error) => { console.error("실패") });
+   
+  await axios
+    .put(preSignedUrl,video)
+    .then((result)=>{
+      console.log("모바일 카메라 녹화영상 저장 성공");
+      convertWebmToMp4(); // convert webm to mp4
+    })
+    .catch(()=>{ console.log("저장 실패") })
+  
+  async function convertWebmToMp4(){
+    let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/ROOM_VIDEO',{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+      })
+      .catch((error) => { console.error("실패") });
+  }
+}
 
 export default Viewer;
