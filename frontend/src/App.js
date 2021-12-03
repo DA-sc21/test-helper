@@ -9,17 +9,19 @@ import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
 import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
+import AdminLogin from './admin/AdminLogin/AdminLogin';
 
 function App() {
-  let isAuthorized = localStorage.getItem("isAuthorized");
+  let isAuthorized = sessionStorage.getItem("isAuthorized");
   return (
     <div className="App">
-      {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
       <Switch>
         <Route path="/signup" component={SignUp} />
         <Route path="/login" component={Login} />
+        <Route path="/admin" component= {AdminLogin} />
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
         <>
+        {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
           <NavBar></NavBar>
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
