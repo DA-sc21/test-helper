@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { baseUrl } from "../../component/baseUrl";
-import axios from 'axios';
 
 function AdminLogin(){
   let history = useHistory();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [islogined, setIslogined] = useState(false);
+  const [state, setState] = useState([]);
 
   const enterEvent = (e) => {
     if (e.key === "Enter") {
@@ -16,44 +13,30 @@ function AdminLogin(){
     }
   };
 
-  useEffect(() => {
-    if (sessionStorage.getItem("isAuthorized")) {
-      setIslogined(true);
-    } else {
-      setIslogined(false);
-    }
-  }, []);
-
-  const onChangehandler = (e) => {
-    let { name, value } = e.target;
-    if (name === "email") {
-      setEmail(value);
-    } else if (name === "password") {
-      setPassword(value);
-    }
-  };
+  function onChangehandler(e){
+    let { name , value} = e.target;
+    setState({
+      ...state,
+      [name]: value,
+    });
+    console.log(state);
+  }
   
   async function submitForm(e){
-    let data = {
-      email: email,
-      password: password,
-    };
-    let email = email.split('@');
-    let response = await fetch(baseUrl+`/admin/sessions?password=${password}&username=${email[0]}%40${email[1]}`,{
+    let email = state.username.split('@');
+    let response = await fetch(baseUrl+`/admin/sessions?password=${state.password}&username=${email[0]}%40${email[1]}`,{
       method: 'POST',
       credentials : 'include'
     })
     .then( res => {
       console.log("response:", res);
       if(res.status === 200){
-        setIslogined(true);
         alert("관리자 로그인에 성공했습니다.");
         sessionStorage.setItem("isAuthorized", "true");
-        history.push("/admin/course");
+        history.push("/admin/courses");
       }
       else{
-        setIslogined(false);
-        alert("관리자 로그인에 실패했습니다.");
+        alert("올바른 정보를 입력해주세요.");
       }
     })
     .catch(error => {console.error('Error:', error)});
@@ -69,12 +52,12 @@ function AdminLogin(){
           <Form>
             <Form.Group className="w-75 mb-3">
               <Form.Label style={{fontWeight:"bold"}}>이메일</Form.Label>
-              <Form.Control type="email" placeholder="" name="username" onChange={(e)=>onChangehandler(e)}/>
+              <Form.Control type="email" placeholder="" name="username" onKeyPress={(e) => enterEvent(e)} onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
 
             <Form.Group className="w-75 mb-3">
               <Form.Label style={{fontWeight:"bold"}}>비밀번호</Form.Label>
-              <Form.Control type="password" placeholder="" name="password" onChange={(e)=>onChangehandler(e)}/>
+              <Form.Control type="password" placeholder="" name="password" onKeyPress={(e) => enterEvent(e)} onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
           </Form>
         </div>
