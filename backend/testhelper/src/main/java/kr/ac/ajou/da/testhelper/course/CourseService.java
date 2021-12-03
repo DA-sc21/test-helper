@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +34,11 @@ public class CourseService {
         List<Account> assistants = accountService.getByIds(assistantIds);
 
         course.updateAssistants(assistants);
+    }
+
+    public Set<Account> getCourseAssistantsById(Long courseId) {
+        Course course = this.get(courseId);
+
+        return course.getAssistants();
     }
 }

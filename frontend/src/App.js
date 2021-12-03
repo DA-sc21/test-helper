@@ -8,6 +8,8 @@ import TestStudentPre from './student/TestStudentPre';
 import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
 import CreateProblems from './professor/CreateProblems';
+import Course from './professor/Course/Course';
+import CourseInfo from './professor/Course/CourseInfo';
 
 function App() {
   let isAuthorized = localStorage.getItem("isAuthorized");
@@ -22,6 +24,8 @@ function App() {
           <NavBar></NavBar>
           <Route exact path="/tests/:testId/problems" component={CreateProblems} />
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
+          <Route exact path="/courses" component={Course} />
+          <Route path="/courses/:courseId" component={CourseInfo} />
           <Route exact path="/tests" component={Tests} />
           <Route exact path="/" component={Main} />
         </>
