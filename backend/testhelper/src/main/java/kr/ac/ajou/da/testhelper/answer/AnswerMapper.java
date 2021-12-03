@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import kr.ac.ajou.da.testhelper.answer.dto.ProblemWithAnswer;
+import kr.ac.ajou.da.testhelper.answer.dto.GetAnswerResDto;
 
 @Mapper
 public interface AnswerMapper {
@@ -16,5 +16,5 @@ public interface AnswerMapper {
 			+ "INNER JOIN ANSWER AS b "
 			+ "ON a.id = b.problem_id "
 			+ "WHERE a.test_id = ${testId} AND a.problem_num = ${problemNum}")
-	List<ProblemWithAnswer> getAnswerByTestIdAndProblemNum(@Param("testId") Long testId, @Param("problemNum") Long problemNum) throws SQLException;
+	List<GetAnswerResDto> getAnswerByTestIdAndProblemNum(@Param("testId") Long testId, @Param("problemNum") Long problemNum) throws SQLException;
 }

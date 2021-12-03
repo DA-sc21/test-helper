@@ -10,9 +10,8 @@ import lombok.Setter;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemWithAnswer {
+public class GetAnswerResDto {
+	private Long id;
 	private Long testId;
-	private Long problemNum;
-	private Long problemId;
 	private String file;
 }

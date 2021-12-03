@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.ac.ajou.da.testhelper.answer.dto.PostAnswerReqDto;
-import kr.ac.ajou.da.testhelper.answer.dto.ProblemWithAnswer;
+import kr.ac.ajou.da.testhelper.answer.dto.GetAnswerResDto;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class AnswerController {
     }
 	
 	@GetMapping("/tests/{testId}/answers")
-	public ResponseEntity<List<Answer>> getAnswer(@PathVariable Long testId) {
+	public ResponseEntity<List<GetAnswerResDto>> getAnswer(@PathVariable Long testId) {
 		return ResponseEntity.ok().body(answerService.getAnswerByTestId(testId));
 	}
 	
