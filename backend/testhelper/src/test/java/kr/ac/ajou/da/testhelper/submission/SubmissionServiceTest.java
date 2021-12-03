@@ -1,11 +1,18 @@
 package kr.ac.ajou.da.testhelper.submission;
 
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
+import kr.ac.ajou.da.testhelper.file.FileConvertService;
 import kr.ac.ajou.da.testhelper.file.FileService;
 import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswerService;
+import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
+import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
+import kr.ac.ajou.da.testhelper.submission.exception.CannotViewNotSubmittedSubmissionException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
+import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,9 +33,11 @@ class SubmissionServiceTest {
     @Mock
     private SubmissionRepository submissionRepository;
     @Mock
-    private SubmissionMapper submissionMapper;
-    @Mock
     private FileService fileService;
+    @Mock
+    private FileConvertService fileConvertService;
+    @Mock
+    private SubmissionAnswerService submissionAnswerService;
 
 
 
@@ -38,10 +47,10 @@ class SubmissionServiceTest {
     @BeforeEach
     void init() {
         submissionRepository = mock(SubmissionRepository.class);
-        submissionMapper = mock(SubmissionMapper.class);
         fileService = mock(FileService.class);
-        submissionMapper = mock(SubmissionMapper.class);
-        submissionService = new SubmissionService(submissionRepository, submissionMapper, fileService);
+        fileConvertService = mock(FileConvertService.class);
+        submissionAnswerService = mock(SubmissionAnswerService.class);
+        submissionService = new SubmissionService(submissionRepository, fileService, fileConvertService, submissionAnswerService);
     }
 
     @Test
@@ -147,5 +156,96 @@ class SubmissionServiceTest {
         //then
         verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
         verify(fileService, never()).getUploadUrl(anyString());
+    }
+
+    @Test
+    @Disabled
+    void uploadSubmission_success() {
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        SubmissionType submissionType = SubmissionType.ROOM_VIDEO; //change to not video
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+
+        //when
+        submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
+
+        //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileService, never()).exist(anyString());
+        verify(fileConvertService,never()).convertToMp4(any(Submission.class), any(SubmissionType.class));
+
+    }
+
+    @Test
+    void uploadSubmission_isVideo_convertToMp4() {
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        SubmissionType submissionType = SubmissionType.ROOM_VIDEO;
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+        when(fileService.exist(anyString())).thenReturn(true);
+
+        //when
+        submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
+
+        //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileService, times(1)).exist(anyString());
+        verify(fileConvertService,times(1)).convertToMp4(any(Submission.class), any(SubmissionType.class));
+    }
+
+    @Test
+    void uploadSubmission_fileNotFound_thenThrow_UploadedFileNotFoundException() {
+        //given
+        Submission submission = DummyFactory.createSubmission();
+        SubmissionType submissionType = SubmissionType.ROOM_VIDEO;
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(submission));
+        when(fileService.exist(anyString())).thenReturn(false);
+
+        //when
+        assertThrows(UploadedFileNotFoundException.class, ()->{
+            submissionService.uploadSubmission(submission.getTest().getId(), submission.getStudent().getId(), submissionType);
+        });
+
+        //then
+
+    }
+
+    @Test
+    void getDetailedByTestIdAndStudentId_SubmissionStatusDone_success() {
+        //given
+        Submission expectedSubmission = DummyFactory.createSubmission();
+        expectedSubmission.updateStatus(SubmissionStatus.DONE);
+        kr.ac.ajou.da.testhelper.test.Test test = expectedSubmission.getTest();
+        Student student = expectedSubmission.getStudent();
+        String downloadUrl = "downloadUrl";
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(expectedSubmission));
+        when(fileService.getDownloadUrl(anyString())).thenReturn(downloadUrl);
+
+        //when
+        GetDetailedSubmissionResDto actualSubmission = submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId(), true);
+
+        //then
+        verify(submissionRepository, times(1)).findByTestIdAndStudentId(anyLong(), anyLong());
+        verify(fileService, times(2)).getDownloadUrl(anyString());
+    }
+
+    @Test
+    void getDetailedByTestIdAndStudentId_SubmissionStatusPending_thenThrow_CannotViewNotSubmittedSubmissionException() {
+        //given
+        Submission expectedSubmission = DummyFactory.createSubmission();
+        expectedSubmission.updateStatus(SubmissionStatus.PENDING);
+        kr.ac.ajou.da.testhelper.test.Test test = expectedSubmission.getTest();
+        Student student = expectedSubmission.getStudent();
+
+        when(submissionRepository.findByTestIdAndStudentId(anyLong(), anyLong())).thenReturn(Optional.of(expectedSubmission));
+
+        //when
+        assertThrows(CannotViewNotSubmittedSubmissionException.class, ()-> submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId(), true));
+
+        //then
     }
 }

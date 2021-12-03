@@ -16,10 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @NoArgsConstructor
@@ -47,8 +44,8 @@ public class Test {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TEST_ASSISTANT",
-            joinColumns = @JoinColumn(name="test_id"),
-            inverseJoinColumns = @JoinColumn(name="account_id"))
+            joinColumns = @JoinColumn(name = "test_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<Account> assistants = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -73,11 +70,13 @@ public class Test {
                 TestType testType,
                 LocalDateTime startTime,
                 LocalDateTime endTime,
+                TestStatus status,
                 Course course) {
         this.id = id;
         this.testType = testType;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.status = status;
         this.course = course;
     }
 
@@ -100,7 +99,7 @@ public class Test {
 
     public void updateStatus(TestStatus status) {
 
-        if(isEndingTestBeforeEndTime(status)){
+        if (isEndingTestBeforeEndTime(status)) {
             throw new CannotEndTestBeforeEndTimeException();
         }
 
@@ -121,7 +120,7 @@ public class Test {
 
     public void updateAssistants(List<Account> assistants) {
 
-        if(!isValidStatusForUpdatingAssistant()){
+        if (!isValidStatusForUpdatingAssistant()) {
             throw new CannotUpdateTestAssistantException();
         }
 
@@ -135,7 +134,7 @@ public class Test {
 
     public void update(TestType type, LocalDateTime startTime, LocalDateTime endTime, Long updatedBy) {
 
-        if(!isValidStatusForUpdating()){
+        if (!isValidStatusForUpdating()) {
             throw new CannotUpdateTestException();
         }
 
@@ -146,10 +145,23 @@ public class Test {
     }
 
     private boolean isValidStatusForUpdating() {
-        return Objects.equals(TestStatus.CREATE, status);
+        return Arrays.asList(TestStatus.CREATE, TestStatus.INVITED).contains(status);
     }
 
     public boolean canUpdateAssistant() {
         return isValidStatusForUpdatingAssistant();
+    }
+
+    public boolean canSendInvitation() {
+        return Objects.equals(TestStatus.CREATE, status);
+    }
+
+    public boolean canStartTest() {
+        return Arrays.asList(TestStatus.INVITED, TestStatus.IN_PROGRESS).contains(status)
+                && LocalDateTime.now().isAfter(startTime.minusHours(2L));
+    }
+
+    public boolean isInProgress() {
+        return Objects.equals(TestStatus.IN_PROGRESS, status);
     }
 }
