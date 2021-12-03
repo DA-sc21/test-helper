@@ -19,10 +19,14 @@ class TestResultServiceTest {
     @Mock
     private TestService testService;
 
+    @Mock
+    private TestResultRepository testResultRepository;
+
     @BeforeEach
     void init() {
         testService = mock(TestService.class);
-        testResultService = new TestResultService(testService);
+        testResultRepository = mock(TestResultRepository.class);
+        testResultService = new TestResultService(testService, testResultRepository);
     }
 
     @Test
@@ -33,7 +37,7 @@ class TestResultServiceTest {
         when(testService.getTest(anyLong())).thenReturn(test);
 
         //when
-        testResultService.grade(test.getId());
+        testResultService.updateTestResult(test.getId());
 
         //then
         verify(testService, times(1)).getTest(anyLong());

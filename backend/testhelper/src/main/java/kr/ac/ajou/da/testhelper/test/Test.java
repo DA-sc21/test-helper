@@ -8,7 +8,8 @@ import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.exception.CannotEndTestBeforeEndTimeException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestAssistantException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
-import lombok.AccessLevel;
+import kr.ac.ajou.da.testhelper.test.result.TestResult;
+import kr.ac.ajou.da.testhelper.test.result.exception.CannotResolveTestResultWhenSubmissionsMarkIncompleteException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +24,7 @@ import java.util.*;
 @NoArgsConstructor
 @Table(name = "TEST")
 @Getter
-@Setter(value = AccessLevel.PRIVATE)
+@Setter
 public class Test {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +56,10 @@ public class Test {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "result_id")
+    private TestResult result;
 
     @Column(nullable = false)
     private Long createdBy;
@@ -171,5 +176,20 @@ public class Test {
 
     public void resolveResult() {
 
+        if (!isSubmissionsAllMarked()) {
+            throw new CannotResolveTestResultWhenSubmissionsMarkIncompleteException();
+        }
+
+        if (Objects.isNull(this.result)) {
+            this.setResult(new TestResult());
+        }
+
+        this.result.update(this.getSubmissions());
+
+        setStatus(TestStatus.MARK);
+    }
+
+    private boolean isSubmissionsAllMarked() {
+        return this.getSubmissions().stream().allMatch(Submission::isMarked);
     }
 }

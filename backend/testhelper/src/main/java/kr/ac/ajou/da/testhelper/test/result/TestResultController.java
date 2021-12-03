@@ -5,7 +5,7 @@ import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -14,11 +14,11 @@ public class TestResultController {
 
     private final TestResultService testResultService;
 
-    @PostMapping("/tests/{testId}/result")
+    @PutMapping("/tests/{testId}/result")
     @AccessTestByProfessor
-    public ResponseEntity<BooleanResponse> postTestResult(@PathVariable Long testId){
+    public ResponseEntity<BooleanResponse> putTestResult(@PathVariable Long testId){
 
-        testResultService.grade(testId);
+        testResultService.updateTestResult(testId);
 
         return ResponseEntity.ok().body(BooleanResponse.TRUE);
     }

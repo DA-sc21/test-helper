@@ -11,11 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TestResultService {
 
     private final TestService testService;
+    private final TestResultRepository testResultRepository;
 
     @Transactional
-    public void grade(Long testId) {
+    public void updateTestResult(Long testId) {
         Test test = testService.getTest(testId);
 
         test.resolveResult();
+
+        testResultRepository.save(test.getResult());
     }
 }
