@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.exception.CannotEndTestBeforeEndTimeException;
@@ -42,10 +43,13 @@ public class Test {
     @Enumerated(EnumType.STRING)
     private TestStatus status = TestStatus.CREATE;
 
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY)
+    private List<Submission> submissions = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TEST_ASSISTANT",
-            joinColumns = @JoinColumn(name="test_id"),
-            inverseJoinColumns = @JoinColumn(name="account_id"))
+            joinColumns = @JoinColumn(name = "test_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<Account> assistants = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -99,7 +103,7 @@ public class Test {
 
     public void updateStatus(TestStatus status) {
 
-        if(isEndingTestBeforeEndTime(status)){
+        if (isEndingTestBeforeEndTime(status)) {
             throw new CannotEndTestBeforeEndTimeException();
         }
 
@@ -120,7 +124,7 @@ public class Test {
 
     public void updateAssistants(List<Account> assistants) {
 
-        if(!isValidStatusForUpdatingAssistant()){
+        if (!isValidStatusForUpdatingAssistant()) {
             throw new CannotUpdateTestAssistantException();
         }
 
@@ -134,7 +138,7 @@ public class Test {
 
     public void update(TestType type, LocalDateTime startTime, LocalDateTime endTime, Long updatedBy) {
 
-        if(!isValidStatusForUpdating()){
+        if (!isValidStatusForUpdating()) {
             throw new CannotUpdateTestException();
         }
 
@@ -163,5 +167,9 @@ public class Test {
 
     public boolean isInProgress() {
         return Objects.equals(TestStatus.IN_PROGRESS, status);
+    }
+
+    public void resolveResult() {
+
     }
 }
