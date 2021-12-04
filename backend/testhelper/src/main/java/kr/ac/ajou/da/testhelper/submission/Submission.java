@@ -7,18 +7,17 @@ import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswer;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
 import kr.ac.ajou.da.testhelper.test.Test;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Submission {
     @Id
@@ -35,8 +34,8 @@ public class Submission {
 
     @Column(nullable = false)
     private Boolean consented = false;
-    
-    @Column(name="submitted", nullable = false)
+
+    @Column(name = "submitted", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private SubmissionStatus status;
 
@@ -59,7 +58,7 @@ public class Submission {
         this.supervisedBy = supervisedBy;
     }
 
-    public String resolveRoomId(){
+    public String resolveRoomId() {
         return this.id.toString();
     }
 
@@ -69,26 +68,30 @@ public class Submission {
                 : VerificationStatus.REJECTED);
     }
 
-    public void updateConsented(boolean consented){
+    public void updateConsented(boolean consented) {
         this.setConsented(consented);
     }
 
-	public void updateStatus(SubmissionStatus submitted) {
+    public void updateStatus(SubmissionStatus submitted) {
 
-        if(SubmissionStatus.DONE.equals(submitted)){
+        if (SubmissionStatus.DONE.equals(submitted)) {
             if (!this.getTest().isInProgress()) {
                 throw new CannotSubmitWhenTestNotInProgressException();
             }
         }
 
-		this.setStatus(submitted);
-	}
+        this.setStatus(submitted);
+    }
 
     public boolean isSubmitted() {
-        return Objects.equals(SubmissionStatus.DONE, status);
+        return Arrays.asList(SubmissionStatus.DONE, SubmissionStatus.MARKED).contains(status);
     }
 
     public void updateScore(int score) {
         this.setScore(score);
+    }
+
+    public boolean isMarked() {
+        return Objects.equals(SubmissionStatus.MARKED, status);
     }
 }

@@ -33,7 +33,12 @@ public class PortalAccount {
 	
 	@Column(nullable = false)
     @Enumerated(EnumType.STRING)
-	private PortalStatus joined;
+	private PortalStatus joined = PortalStatus.PENDING;
+	
+	public PortalAccount(String name, String email) {
+		this.name = name;
+		this.email = email;
+	}
 	
 	public PortalAccount(Long id, String name, String email, PortalStatus joined) {
 		this.id = id;
@@ -41,4 +46,9 @@ public class PortalAccount {
 		this.email = email;
 		this.joined = joined;
 	}
+	
+	public void updateJoined(PortalStatus joined){
+        this.setJoined(joined);
+    }
+
 }
