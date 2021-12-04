@@ -93,4 +93,8 @@ public class Account implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+	public void updatePassword(String password) {
+		this.setPassword(password);
+	}
 }

@@ -1,4 +1,4 @@
-package kr.ac.ajou.da.testhelper.email.dto;
+package kr.ac.ajou.da.testhelper.answer.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,8 @@ import lombok.Setter;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostEmailConfirmReqDto {
-	private String email;
-	private String code;
+public class GetAnswerResDto {
+	private Long id;
+	private Long testId;
+	private String file;
 }
