@@ -53,15 +53,15 @@ public class TestController {
 
     @PostMapping("/courses/{courseId}/tests")
     @AccessCourseByProfessor
-    public ResponseEntity<BooleanResponse> postTest(@PathVariable Long courseId,
-                                                    PostAndPatchTestReqDto reqDto,
-                                                    @AuthenticationPrincipal @ApiIgnore Account account) {
+    public ResponseEntity<PostTestResDto> postTest(@PathVariable Long courseId,
+                                                   PostAndPatchTestReqDto reqDto,
+                                                   @AuthenticationPrincipal @ApiIgnore Account account) {
 
         validate(reqDto);
 
-        testService.createTest(courseId, reqDto, account.getId());
+        Test test = testService.createTest(courseId, reqDto, account.getId());
 
-        return ResponseEntity.ok().body(BooleanResponse.TRUE);
+        return ResponseEntity.ok().body(new PostTestResDto(test.getId()));
     }
 
     @PatchMapping("/tests/{testId}")
