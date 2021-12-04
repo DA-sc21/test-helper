@@ -68,17 +68,22 @@ function SuperviseTest(props){
   }
 
   async function createTestRooms(){
-    await axios
-    .post(baseUrl+'/tests/'+testId+'/students/room',{withCredentials : true})
-    .then((result)=>{
-      getStudentName(result.data.students);
-      sortTestRooms(result.data.students);
-      setStudentInfo(result.data.students);
-      setCredentials(result.data.credentials);
-      console.log(result.data);
-      setLoading(true);
-    })
-    .catch(()=>{ console.log("실패") })
+    let response = await fetch(baseUrl+"/tests/"+testId+"/students/room",{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        getStudentName(res.students);
+        sortTestRooms(res.students);
+        setStudentInfo(res.students);
+        setCredentials(res.credentials);
+        setLoading(true);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
 
   function sortTestRooms(arr){
@@ -119,17 +124,27 @@ function SuperviseTest(props){
 
   async function exitTest(e){
     history.push('/tests');
-    await axios
-    .put(baseUrl+'/tests/'+testId+'/status?status=ENDED',{withCredentials : true})
-    .then((result)=>{
-      console.log(result.data);
+    let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
+      method: 'PUT',
+      credentials : 'include',
     })
-    .catch(()=>{ console.log("실패") })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
+
+    // await axios
+    // .put(baseUrl+'/tests/'+testId+'/status?status=ENDED',{withCredentials : true})
+    // .then((result)=>{
+    //   console.log(result.data);
+    // })
+    // .catch(()=>{ console.log("실패") })
   }
 
   if(!loading)return(<Loading></Loading>)
   return(
-    <div className="conatiner p-3" style={{backgroundColor:"#E8F5FF"}}>
+    <div className="conatiner p-3" style={{backgroundColor:"#f3f3f3"}}>
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <ToastContainer
@@ -150,7 +165,7 @@ function SuperviseTest(props){
           <ChattingModal studentId="0" cheating={false}></ChattingModal>
           <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={(e)=> exitTest(e)}>종료</Button>
         </div>
-        <div className="row mt-3" style={{backgroundColor:"#E8F5FF"}}>
+        <div className="row mt-3" style={{backgroundColor:"#f3f3f3"}}>
           {
             verifications.map((verification,index)=>{
 
@@ -165,9 +180,12 @@ function SuperviseTest(props){
 }
 
 function StudentCard(props){
+  console.log(props)
   let {testId} = useParams();
   let [studentCard,setStudentCard] = useState("");
   let [face,setface] = useState("");
+  let [capture_1,setcapture_1] = useState("");
+  let [answer_1,setanswer_1] = useState("");
   let verification_status_options={
     "REJECTED" : "거절",
     "PENDING" : "보류",
@@ -191,6 +209,8 @@ function StudentCard(props){
   function getIdentificationImgae(e){
     getimages("student_card",setStudentCard);
     getimages("face",setface);
+    getimages("capture_1",setcapture_1);
+    getimages("answer_1",setanswer_1);
   }
   async function getimages(target,setfunc){
     testId=String(testId).padStart(5,"0");
@@ -235,6 +255,17 @@ function StudentCard(props){
               </Accordion.Item>
             </Accordion>
           </div>
+          <div className="row">
+          <Accordion>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"#61dafb00", outline:"0", fontWeight:"bold", width:"100%", textAlign:"left"}} onClick={(e)=>getIdentificationImgae(e)}>답안지 제출 사진</Button></Accordion.Header>
+                <Accordion.Body>
+                  <Image className="col-md-5" style={{height:"270px", width:"290px", marginRight:"1.5%"}} src={capture_1} />
+                  <Image className="col-md-5" style={{height:"270px", width:"290px", marginLeft:"1.5%"}} src={answer_1} />
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </div>
         </Card.Footer>
       </Card>
     </div>
@@ -260,7 +291,7 @@ function ChattingModal(props) {
           부정행위경고
           </Button>
           :
-          <Button className="col-md-4" variant="success" onClick={handleShow}>
+          <Button className="col-md-4" variant="outline-dark" onClick={handleShow}>
           채팅
           </Button>
       }
@@ -352,8 +383,8 @@ function StudentsList(props) {
                     <div className="row ">
                       <div className="col-md-6">{index+1}. {props.studentInfo[index].student.name}</div>
                       <div className="col-md-6 d-flex justify-content-end"> 
-                        {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
-                        {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />}
+                        {/* {props.audio[index] === true ? <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_on.png" /> : <img style ={{width: '20px', height: '20px', marginRight: '5%'}} src="/img/audio_off.png" />}
+                        {props.pc[index] === true ? <img style ={{width: '20px', height: '20px'}} src="/img/pc_on.png" /> : <img style ={{width: '20px', height: '20px'}} src="/img/pc_off.png" />} */}
                         <Badge bg={verification_status_css[verification.verified]} className="mx-3">{verification_status_options[verification.verified]}</Badge>
                       </div>
                     </div>
@@ -387,7 +418,7 @@ function AnswerSheetSubmissionList(props) {
   }
   async function getSubmissions(){
     await axios
-    .get(baseUrl+'/tests/'+props.testId+'/submissions',{
+    .get(baseUrl+'/tests/'+props.testId+'/submissions?studentNumber=2',{
       withCredentials : true
     })
     .then((result)=>{ 

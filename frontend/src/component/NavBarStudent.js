@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ToastContainer, Navbar , Container, Button  } from 'react-bootstrap';
 import ChatForm from "../component/ChatForm"
 import ChatAlarm from './ChatAlarm';
+import { BrowserView, MobileView } from 'react-device-detect';
 
 function NavBarStudent(){
   let [showNotice,setShowNotice]=useState(false)
@@ -25,17 +26,20 @@ function NavBarStudent(){
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <ChatForm testId={testId} role="Viewer" chatroom="0" show={showNotice} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
-      <ChatForm testId={testId} role="Viewer" chatroom={studentId} show={showChat} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
-      <ToastContainer className="p-3 chatAlarmContainer positionTop" position="top-center" style={{zIndex:2000}}>
-        {
-          newMessages.map((message,index)=>{
-          let chatroom=message.chatroom
-          return(
-          <ChatAlarm key={index} newMessages={newMessages} newMessage={message} chatroom={chatroom} setNewMessages={setNewMessages} ></ChatAlarm>
-          )
-        })}
-      </ToastContainer>
+      <BrowserView> 
+        <ChatForm testId={testId} role="Viewer" chatroom="0" show={showNotice} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
+        <ChatForm testId={testId} role="Viewer" chatroom={studentId} show={showChat} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
+        <ToastContainer className="p-3 chatAlarmContainer positionTop" position="top-center" style={{zIndex:2000}}>
+          {
+            newMessages.map((message,index)=>{
+            let chatroom=message.chatroom
+            return(
+            <ChatAlarm key={index} newMessages={newMessages} newMessage={message} chatroom={chatroom} setNewMessages={setNewMessages} ></ChatAlarm>
+            )
+          })}
+        </ToastContainer>
+      </BrowserView>
+
     </div>
   )
 }

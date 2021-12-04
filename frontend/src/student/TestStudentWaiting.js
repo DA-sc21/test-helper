@@ -88,9 +88,10 @@ function TestStudentWaiting(props){
           <h4>Setting현황</h4>
           <ListGroup>
             {props.tabCompleted.map((completed,index)=>{
+              if (index===4){return}
               return (
                 <ListGroup.Item key={index} action variant="info">
-                  {props.tabTitles[index] +" 성공여부 "+props.tabCompleted[index]}
+                  {props.tabTitles[index] +" 성공여부 : true "}
                 </ListGroup.Item>
               )
             })}
