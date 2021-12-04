@@ -9,6 +9,7 @@ import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
 import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
+import UnscoredTest from './professor/AnswerSheet/UnscoredTests';
 
 function App() {
   let isAuthorized = localStorage.getItem("isAuthorized");
@@ -24,6 +25,7 @@ function App() {
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
           <Route path="/courses/:courseId" component={CourseInfo} />
+          <Route path="/tests/:testId/unscored" component={UnscoredTest} />
           <Route exact path="/tests" component={Tests} />
           <Route exact path="/" component={Main} />
         </>
