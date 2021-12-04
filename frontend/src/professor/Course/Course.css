@@ -64,3 +64,11 @@
   border-color: #4c5272;
   box-shadow: 1px 1px 1px #929394;
 }
+.restoreCourseBt{
+  float: right;
+  margin-top: 2%;
+  margin-right: 8%;
+  background-color: #b2b6ce;
+  border-color: #b2b6ce;
+  box-shadow: 1px 1px 1px #929394;
+}

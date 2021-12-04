@@ -74,14 +74,36 @@ function TestCard(props){
   }
   let history = useHistory()
 
+  async function checkSuperviseTest(){
+    let response = await fetch(baseUrl+"/tests/"+props.test.id+"/students/room",{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        if(res.errorMessage != undefined){ //error
+          alert(res.errorMessage);
+        }
+        else{ //success
+          history.push({
+            pathname: "/tests/"+props.test.id+"/supervise",
+            state: {
+              testStartTime: props.test.start_time,
+              testEndTime: props.test.end_time
+          }});
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   return(
     <div className="col-md-4">
       <Card>
         <Card.Body>
           <Card.Title>{props.test.name}</Card.Title>
-          <Card.Text>
-            {props.test.test_type}
-          </Card.Text>
           <hr />
           <Card.Text>
             {test_status_options[props.test.test_status]}
@@ -94,12 +116,7 @@ function TestCard(props){
           </Card.Text>
           <div className="row">
             <Button className="col-md-4" variant="primary">문제출제</Button>
-            <Button className="col-md-4" variant="danger" onClick={()=>{history.push({
-              pathname: "/tests/"+props.test.id+"/supervise",
-              state: {
-                testStartTime: props.test.start_time,
-                testEndTime: props.test.end_time
-                }})}}>시험감독</Button>
+            <Button className="col-md-4" variant="danger" onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
             <Button className="col-md-4" variant="success">채점하기</Button>
           </div>
         </Card.Body>
