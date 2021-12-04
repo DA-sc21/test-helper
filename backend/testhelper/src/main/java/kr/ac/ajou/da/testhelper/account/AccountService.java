@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.account;
 
+import kr.ac.ajou.da.testhelper.account.dto.GetAssistantsReqDto;
 import kr.ac.ajou.da.testhelper.account.dto.PostAccountReqDto;
 import kr.ac.ajou.da.testhelper.account.exception.AccountNotFoundException;
 import kr.ac.ajou.da.testhelper.definition.PortalStatus;
@@ -7,7 +8,6 @@ import kr.ac.ajou.da.testhelper.portal.PortalAccount;
 import kr.ac.ajou.da.testhelper.portal.account.PortalAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -66,8 +66,8 @@ public class AccountService implements UserDetailsService {
     }
 
     @Transactional
-    public List<Account> getAssistantsByEmailStartingWith(String email) {
-        return accountRepository.findAllAssistantsByEmailStartingWith(email);
+    public List<Account> getAssistantsByNameAndEmailStartingWith(GetAssistantsReqDto reqDto) {
+        return accountRepository.findAllAssistantsByNameAndEmailStartingWith(reqDto.getName(), reqDto.getEmail());
     }
     
     @Transactional

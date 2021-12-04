@@ -32,7 +32,7 @@ public class AccountController {
     @GetMapping("/assistants")
     @IsProfessor
     public ResponseEntity<List<GetAssistantsResDto>> getAssistants(GetAssistantsReqDto reqDto){
-        List<Account> assistants = accountService.getAssistantsByEmailStartingWith(reqDto.getEmail());
+        List<Account> assistants = accountService.getAssistantsByNameAndEmailStartingWith(reqDto);
 
         return ResponseEntity.ok().body(assistants.stream()
                 .map(GetAssistantsResDto::new)

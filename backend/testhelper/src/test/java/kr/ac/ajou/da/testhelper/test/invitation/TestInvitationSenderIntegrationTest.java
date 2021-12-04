@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Arrays;
 
 @SpringBootTest
 @Disabled
@@ -28,7 +28,7 @@ class TestInvitationSenderIntegrationTest {
         Examinee examinee = createExaminee(email);
 
         //when
-        testInvitationSender.sendInvitations(List.of(examinee));
+        testInvitationSender.sendInvitations(Arrays.asList(examinee));
 
         //then
     }
