@@ -41,7 +41,8 @@ public class ExamineeService implements UserDetailsService {
         List<Examinee> examinees = new LinkedList<>();
 
         for(int i = 0; i<students.size(); i++){
-            examinees.add(Examinee.create(students.get(i), test, supervisor.get(i% supervisor.size())));
+            // examinees.add(Examinee.create(students.get(i), test, supervisor.get(i% supervisor.size())));
+            examinees.add(Examinee.create(students.get(i), test, assistants.get(i% assistants.size())));
         }
 
         examineeRepository.saveAll(examinees);
