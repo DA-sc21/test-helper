@@ -7,10 +7,7 @@ import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswer;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
 import kr.ac.ajou.da.testhelper.test.Test;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -19,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Submission {
     @Id
@@ -90,5 +88,9 @@ public class Submission {
 
     public void updateScore(int score) {
         this.setScore(score);
+    }
+
+    public boolean isMarked() {
+        return Objects.equals(SubmissionStatus.MARKED, status);
     }
 }
