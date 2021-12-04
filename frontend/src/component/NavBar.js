@@ -67,7 +67,7 @@ function NavBar(){
           Signed in as: <a href="#login" style={{textUnderlinePosition:"under"}}>윤대균 교수</a>
           </Navbar.Text>
         </Navbar.Collapse>
-        <Button style={{marginLeft:"1%", backgroundColor:"#eeeeee", borderColor:"#eeeeee", color:"black", boxShadow:"1px 1px 1px #d4d4d4"}} onClick={(e)=>logout(e)}>로그아웃</Button>
+        <Button style={{marginLeft:"1%", backgroundColor:"#ffffff00", borderColor:"#b6b6b6", color:"black", color:"#b6b6b6", boxShadow:"1px 1px 1px #b6b6b6"}} onClick={(e)=>logout(e)}>로그아웃</Button>
       </Container>
     </Navbar>
   )
