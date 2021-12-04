@@ -12,6 +12,7 @@ function Course(){
   const [course, setCourse] = useState([]);
   const [year, setYear] = useState(0);
   const [semester, setSemester] = useState(0);
+  const [isSorted, setIsSorted] = useState(false);
 
   useEffect(()=>{
     getDate();
@@ -48,23 +49,37 @@ function Course(){
       return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
     });
     setCourse(courseList);
+    setIsSorted(true);
+    history.push('/courses');
     console.log(courseList);
+  }
+  function restoreCourse(){
+    let courseList = course.sort(function(a, b) { // 오름차순
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+    });
+    setCourse(courseList);
+    setIsSorted(false);
+    history.push('/courses');
   }
 
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="box">
       <div className="content">
-        <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button>
+        {isSorted === false?
+        <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button> : 
+        <Button className="restoreCourseBt" onClick={(e)=>restoreCourse(e)} style={{backgroundColor:"#b2b6ce", borderColor:"#b2b6ce", color:"black"}}>기본순 정렬</Button>
+        }
         <p className="semester">{year}학년 {semester}학기</p>
-        {course.map((data,i)=>(
-        <Card key={i} className="cardbox" onClick={()=>history.push(`/courses/${data.id}`)}>
+        {course.map((data,i)=>{
+        console.log(data)
+        return <Card key={i} className="cardbox" onClick={()=>history.push(`/courses/${data.id}`)}>
           <div className="cardline"></div>
           <Card.Body>
             <p className="courseName">{data.name}</p>
           </Card.Body>
         </Card>
-      ))}
+        })}
       </div>
     </div>
   )
