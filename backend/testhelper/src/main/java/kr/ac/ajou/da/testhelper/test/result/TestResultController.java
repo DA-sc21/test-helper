@@ -3,6 +3,7 @@ package kr.ac.ajou.da.testhelper.test.result;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.test.result.dto.GetTestResultResDto;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class TestResultController {
 
         return ResponseEntity.ok().body(new GetTestResultResDto(testResultService.get(testId)));
     }
-
+  
     @PutMapping("/tests/{testId}/result")
     @AccessTestByProfessor
     public ResponseEntity<BooleanResponse> putTestResult(@PathVariable Long testId){
