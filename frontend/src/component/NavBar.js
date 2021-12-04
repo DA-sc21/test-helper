@@ -1,19 +1,41 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Navbar , Nav , NavDropdown , Container , Button  } from 'react-bootstrap';
 import { baseUrl } from "./baseUrl";
 import axios from 'axios';
 
 function NavBar(){
+  let history = useHistory();
   async function logout(e){
-    await axios
-    .delete(baseUrl+'/sessions',{
-      withCredentials : true
+    let response = await fetch(baseUrl+'/sessions',{
+      method: 'DELETE',
+      credentials : 'include'
     })
-    .then((result)=>{
-      console.log(result.data);
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        alert("로그아웃 되었습니다.");
+        localStorage.removeItem('isAuthorized');
+        localStorage.clear();
+        history.push("/login");
+      }
+      else{
+        alert("로그아웃에 실패했습니다.");
+      }
     })
-    .catch(()=>{ console.log("실패") })
+    .catch(error => {console.error('Error:', error)});
+    // await axios
+    // .delete(baseUrl+'/sessions',{
+    //   withCredentials : true
+    // })
+    // .then((result)=>{
+    //   console.log(result.data);
+    //   alert("로그아웃 되었습니다.");
+    //   localStorage.removeItem('isAuthorized');
+    //   localStorage.clear();
+    //   history.push("/login");
+    // })
+    // .catch(()=>{ console.log("실패") })
   }
   return(
     <Navbar bg="dark" variant="dark" expand="lg" style={{height:"9vh"}}>

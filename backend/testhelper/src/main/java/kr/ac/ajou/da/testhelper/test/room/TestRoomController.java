@@ -37,7 +37,7 @@ public class TestRoomController {
                                                                          @AuthenticationPrincipal @ApiIgnore Account account) {
 
         Test test = testService.getTest(testId);
-        List<StudentRoomDto> studentRooms = testRoomService.createRoomsForStudents(test.getId(), account.getId());
+        List<StudentRoomDto> studentRooms = testRoomService.createRoomsForStudents(test, account.getId());
 
         return ResponseEntity.ok(new PostTestStudentRoomResDto(
                 temporaryCredentialService.createTemporaryCredential(),

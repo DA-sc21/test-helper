@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.examinee;
 
+import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.*;
@@ -40,6 +41,20 @@ public class Examinee implements UserDetails {
         this.student = student;
         this.test = test;
         this.supervisedBy = supervisedBy;
+    }
+
+    public static Examinee create(Student student, Test test, Account supervisedBy){
+        return new Examinee(student, test, supervisedBy.getId());
+    }
+
+    private Examinee(Student student, Test test, Long supervisedBy) {
+        this.student = student;
+        this.test = test;
+        this.supervisedBy = supervisedBy;
+    }
+
+    public String getEmail(){
+        return student.getEmail();
     }
 
     @Override
