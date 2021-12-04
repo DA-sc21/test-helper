@@ -43,4 +43,15 @@ public class TestResultService {
         test.updateStatus(TestStatus.GRADED);
 
     }
+
+    @Transactional
+    public TestResult get(Long testId) {
+        Test test = testService.getTest(testId);
+
+        if(!test.doesResultExist()){
+            throw new TestResultNotFoundException();
+        }
+
+        return test.getResult();
+    }
 }

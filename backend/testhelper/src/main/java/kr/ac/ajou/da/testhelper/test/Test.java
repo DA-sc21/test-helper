@@ -200,4 +200,9 @@ public class Test {
     public boolean isGraded() {
         return Objects.equals(TestStatus.GRADED, this.status);
     }
+
+    public boolean doesResultExist() {
+        return Arrays.asList(TestStatus.MARK, TestStatus.GRADED).contains(this.status)
+                && !Objects.isNull(this.result);
+    }
 }

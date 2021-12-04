@@ -18,9 +18,9 @@ function App() {
       <Switch>
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
         <>
-        {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
-        <Route path="/signup" component={SignUp} />
-        <Route path="/login" component={Login} />
+          {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
+          <Route path="/signup" component={SignUp} />
+          <Route path="/login" component={Login} />
           <NavBar></NavBar>
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
