@@ -462,4 +462,3 @@ function AnswerSheetSubmissionList(props) {
 }
 
 export default SuperviseTest
-s
