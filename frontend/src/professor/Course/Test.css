@@ -4,6 +4,7 @@
   box-shadow:2px 2px 2px #b9b9b9;
   display:inline-block;
   margin-bottom: 1%;
+  border-color: #b9b9b9f3;
 }
 .noTestCard{
   height:17%;
@@ -11,6 +12,7 @@
   box-shadow:2px 2px 2px #b9b9b9;
   display:inline-block;
   margin-bottom: 1%;
+  border-color: #b9b9b9f3;
 }
 .testName{
   font-size: 18px;
@@ -59,5 +61,5 @@
   box-shadow: 2px 2px 2px rgb(204, 204, 204);
 }
 .tableHead{
-  background-color: #6b6b81;
+  background-color: #7d89a3;
 }

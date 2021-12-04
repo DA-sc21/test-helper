@@ -11,7 +11,7 @@ function Assistant(props){
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => {setShow(true);setAssistantInfo([]);}
+  const handleShow = () => {setShow(true);setAssistantInfo([]);setState([]);}
   const [state, setState] = useState([]);
   const [assistant, setAssistant] = useState([]);
   const [assistantInfo, setAssistantInfo] = useState([]);
@@ -51,11 +51,21 @@ function Assistant(props){
     setCheckList(arr);
   }
 
-  async function searchAssistantInfo(){
-    let email = state.email.split('@');
-
+  async function searchAssistantByName(){
     await axios
-    .get(baseUrl+`/assistants?email=${email[0]}%40${email[1]}`,{
+    .get(baseUrl+`/assistants?name=${state.name}`,{
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log(result.data);
+      setAssistantInfo(result.data);
+    })
+    .catch((e)=>{ console.log(e) })
+  }
+
+  async function searchAssistantByEmail(){
+    await axios
+    .get(baseUrl+`/assistants?email=${state.email}`,{
         withCredentials : true
       })
     .then((result)=>{
@@ -76,19 +86,24 @@ function Assistant(props){
       }
     }
     console.log(assistantList);
-    await axios
-    .put(baseUrl+path+`/assistants?assistants=${assistantList}`,{
-        withCredentials : true
-      })
-    .then((result)=>{
-      console.log(result.data);
-      alert("조교 등록이 완료되었습니다");
-      setShow(false);
-      setLoading(false);
-      // history.push(path+'/assistants');
-      updateAssistantList();
+    let response = await fetch(baseUrl+path+`/assistants?assistants=${assistantList}`,{
+      method: 'PUT',
+      credentials : 'include',
     })
-    .catch((e)=>{ console.log(e) })
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        alert("조교 등록이 완료되었습니다");
+        setShow(false);
+        setLoading(false);
+        // history.push(path+'/assistants');
+        updateAssistantList();
+      }
+      else{
+        alert("조교 등록에 실패했습니다.");
+      }
+    })
+    .catch(error => {console.error('Error:', error)}); 
   }
 
   async function updateAssistantList(){
@@ -111,7 +126,7 @@ function Assistant(props){
       <h4 style={{marginBottom:"3%", textAlign:"left"}}>조교 정보</h4>
       <div style={{width:"85%", height:"70%", borderRadius:"10px"}}>
         <Table striped bordered hover>
-          <thead>
+          <thead style={{backgroundColor:"#9b9b9b"}}>
           <tr>
           <th>#</th>
           <th>이름</th>
@@ -135,8 +150,19 @@ function Assistant(props){
         </Modal.Header>
         <Modal.Body>
           <div style={{height:"380px"}}>
-          <Button variant="secondary" style={{float:"right"}} onClick={(e)=>searchAssistantInfo(e)}>검색</Button>
-          <InputGroup className="mb-3" style={{width:"87%"}}>
+          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByName(e)}>검색</Button>
+          <InputGroup className="mb-3" style={{width:"86.5%"}}>
+            <InputGroup.Text id="basic-addon1">조교 이름</InputGroup.Text>
+              <FormControl
+                placeholder="name"
+                aria-label="name"
+                aria-describedby="basic-addon1"
+                name="name" 
+                onChange={(e)=>onChangehandler(e)}
+            />
+          </InputGroup>
+          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByEmail(e)}>검색</Button>
+          <InputGroup className="mb-3" style={{width:"86.5%"}}>
             <InputGroup.Text id="basic-addon1">조교 이메일</InputGroup.Text>
               <FormControl
                 placeholder="email"
@@ -180,7 +206,7 @@ function Assistant(props){
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={(e)=>submitForm(e)}>
+          <Button variant="secondary" onClick={(e)=>submitForm(e)}>
             등록
           </Button>
         </Modal.Footer>
