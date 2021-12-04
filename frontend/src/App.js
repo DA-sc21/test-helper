@@ -10,6 +10,8 @@ import Login from './professor/Login/Login';
 import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
 import AdminLogin from './admin/AdminLogin/AdminLogin';
+import AdminCourseList from './admin/Course/CourseList';
+import AdminCourseMod from './admin/Course/CourseMod';
 
 function App() {
   let isAuthorized = sessionStorage.getItem("isAuthorized");
@@ -18,8 +20,10 @@ function App() {
       <Switch>
         <Route path="/signup" component={SignUp} />
         <Route path="/login" component={Login} />
-        <Route path="/admin" component= {AdminLogin} />
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
+        <Route exact path="/admin/courses" component={AdminCourseList} />
+        <Route exact path="/admin/courses/:id" component={AdminCourseMod} />
+        <Route path="/admin" component= {AdminLogin} />
         <>
         {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
           <NavBar></NavBar>

@@ -2,72 +2,59 @@ import React, { useState, useEffect } from 'react';
 import {coursePaginate} from "./CoursePaginate";
 import { Card, Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
-import {baseUrl} from "../../component/baseUrl";
-import Loading from '../../component/Loading';
+import CourseFooter from './CourseFooter';
+import "./Course.css"
 
-const AdminCourse = () => {
+const AdminCourse = (props) => {
   let history = useHistory();
-  const [loading, setLoading] = useState(false);
-  const [course, setCourse] = useState([]);
-  const [year, setYear] = useState(0);
-  const [semester, setSemester] = useState(0);
+  const [course, setCourse] = useState(props.course);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(()=>{
-    getDate();
-    getCoursesList();
+
   },[])
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        console.log(currentPage);
+    }
+    const pagedCourses = coursePaginate(course, currentPage, pageSize);
 
-  function getDate(){
-    let now = new Date();
-    let year = now.getFullYear();
-    let month = now.getMonth()+1;
-    setYear(year);
-    if(month>0 && month<=8){
-      setSemester(1);
-    }
-    else if(month>=9 && month<=12){
-      setSemester(2);
-    }
-  }
-  
-  async function getCoursesList(){
-    await axios
-    .get(baseUrl+'/courses',{
-        withCredentials : true
-      })
-    .then((result)=>{
-      console.log(result.data);
-      setCourse(result.data);
-      setLoading(true);
-    })
-    .catch((e)=>{ console.log("실패") })
-  }
-  function sortCourse(){
-    let courseList = course.sort(function(a, b) { // 오름차순
-      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+    const courseList = pagedCourses.map((data,index)=>{
+        return(
+            <Card key={index} className="cardbox" onClick={()=>history.push(`/admin/courses/${data.id}`)}>
+              <div className="cardline"></div>
+              <Card.Body>
+                <p className="index">{(currentPage-1)*10+index+1}</p>
+                <p className="courseName">{data.name}</p>
+                <p className="professorName">{data.professor.name}</p>
+              </Card.Body>
+            </Card>
+        )
     });
-    setCourse(courseList);
-    console.log(courseList);
+
+    if(course.length === 0){
+        return(
+        <div className={""}>
+            <p>no classes</p>
+        </div>
+        );
+    }
+    else{
+        console.log(currentPage)
+        return (
+            <div className="content">
+            <div className="content">
+                <h4 className="courseCount">총 {course.length} 개의 수업이 있습니다.</h4>
+                {courseList}
+                <CourseFooter itemsCount={course.length} pageSize={pageSize} currentPage={currentPage}
+                              onPageChange={handlePageChange} />
+            </div>
+            </div>
+        );
+    }
+
   }
 
-  if(!loading)return(<Loading></Loading>)
-  return(
-    <div className="box">
-      <div className="content">
-        {/* <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button>
-        <p className="semester">{year}학년 {semester}학기</p>
-        {course.map((data,i)=>(
-        <Card key={i} className="cardbox" onClick={()=>history.push(`/courses/${data.id}`)}>
-          <div className="cardline"></div>
-          <Card.Body>
-            <p className="courseName">{data.name}</p>
-          </Card.Body>
-        </Card>
-      ))} */}
-      </div>
-    </div>
-  )
-}
 
 export default AdminCourse;
