@@ -72,7 +72,7 @@ function TestStudentPre(){
       .then((res) => res.json())
       .then((res) => {
         console.log("response:", res);
-        setConsented(res.room.consented);
+        // setConsented(res.room.consented);
         setCredentials(res.credentials)
         setRoom(res.room)
         setStudent(res.room.student)
@@ -106,7 +106,7 @@ function TestStudentPre(){
             tabTitles.map((tabtitle,index)=>{
               return(
                 <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
+                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle}</Nav.Link>
                 </Nav.Item>
               )
             })
