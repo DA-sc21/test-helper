@@ -1,4 +1,4 @@
-package kr.ac.ajou.da.testhelper.email.dto;
+package kr.ac.ajou.da.testhelper.portal.account.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostEmailConfirmReqDto {
+public class PostPortalAccountReqDto {
+	private String name;
 	private String email;
-	private String code;
 }
