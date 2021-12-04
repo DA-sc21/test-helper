@@ -17,12 +17,11 @@ function Tests(){
     getTests();
   },[]);
 
-  let accountId=1;
-  let testStatus='"Mark"';
+  let testStatus='ALL';
 
   async function getTests(){
     await axios
-    .get(baseUrl+'/tests?accountId='+accountId+'&testStatus='+testStatus,{
+    .get(baseUrl+'/tests?testStatus='+testStatus,{
       withCredentials : true
     })
     .then((result)=>{ 

@@ -28,11 +28,22 @@ function CreateProblems(){
   
 
   async function createProblems(point,problemNum,question){
-    let attachedFile=""
+
+    const data = {
+      "attachedFile": "",
+      "point": point,
+      "problemNum": problemNum,
+      "question": question
+    };
+
     console.log(point,problemNum,question)
-    let response = await fetch(baseUrl+`/tests/`+testId+`problems?attachedFile=${attachedFile}&point=${point}&problemNum=${problemNum}&question=${question}`,{
+      let response = await fetch(baseUrl+`/tests/`+testId+`/problems`,{
       method: 'POST',
       credentials : 'include',
+      body: JSON.stringify(data),
+      headers: {
+        "content-type": "application/json",
+      },
     })
     .then( res => {
       console.log("response:", res);
@@ -49,6 +60,40 @@ function CreateProblems(){
 
   }
 
+  async function updateProblems(point,problemNum,question){
+
+    const data = {
+      "attachedFile": "",
+      "point": point,
+      "problemNum": problemNum,
+      "question": question
+    };
+
+    console.log(point,problemNum,question)
+      let response = await fetch(baseUrl+`/tests/`+testId+`/problems`,{
+      method: 'PUT',
+      credentials : 'include',
+      body: JSON.stringify(data),
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+    .then( res => {
+      console.log("response:", res);
+      getProblems();
+      if(res.status === 200){
+          alert("문제가 수정되었습니다.");
+        }
+        else{
+          alert("문제 수정에 실패했습니다.");
+        }
+      }
+    )
+    .catch(error => {console.error('Error:', error)});
+
+  }
+
+
   return(
     <div className="row"> 
       <div className="col-md-1"></div>
@@ -58,16 +103,24 @@ function CreateProblems(){
             <tr className="row">
               <th className="col-md-2">문제번호</th>
               <th className="col-md-2">문제배점</th>
-              <th className="col-md-8"> 문제내용</th>
+              <th className="col-md-6"> 문제내용</th>
+              <th className="col-md-2"> 수정</th>
             </tr>
           </thead>
           <tbody >
             {problems.map((problem,index)=>{
               return (
-                <tr className="row">
+                <tr className="row" key={index}>
                   <td className="col-md-2">{problem.problemNum}</td>
                   <td className="col-md-2">{problem.point}</td>
-                  <td className="col-md-8">{problem.question}</td>
+                  <td className="col-md-6">{problem.question}</td>
+                  <td className="col-md-2">
+                    <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
+
+                    {/* <Button variant="primary" onClick={updateProblems}>
+                      문제수정
+                    </Button> */}
+                    </td>
                 </tr>
               )
             })}
@@ -86,8 +139,6 @@ function ProblemModal(props) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-
 
   return (
     <>
@@ -123,21 +174,74 @@ function ProblemModal(props) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            닫기
           </Button>
-          <Button variant="primary" onClick={handleClose}>
-            저장
-          </Button>
-          <Button className="col-md-4" variant="success" onClick={()=>{
+          <Button variant="success" onClick={()=>{
             let point=document.querySelector("#point").value
             let problemNum=document.querySelector("#problemNum").value
             let question=document.querySelector("#question").value
             props.createProblems(point,problemNum,question)
-          }}>문제생성</Button>
+          }}>저장</Button>
         </Modal.Footer>
       </Modal>
     </>
   );
 }
+
+function ProblemUpdateModal(props) {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Button variant="primary" onClick={handleShow}>
+        문제수정
+      </Button>
+
+      <Modal show={show} onHide={handleClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>문제수정</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Row>
+              <Col>
+              <Form.Group className="mb-3" controlId="problemNum">
+                <Form.Label>문제 번호</Form.Label>
+                <Form.Control type="number" defaultValue={props.problemNum} />
+              </Form.Group>
+              </Col>
+              <Col>
+              <Form.Group className="mb-3" controlId="point">
+                <Form.Label>문제 배점</Form.Label>
+                <Form.Control type="number" defaultValue={props.point} />
+              </Form.Group>
+              </Col>
+            </Row>
+            <Form.Group className="mb-3" controlId="question">
+              <Form.Label>문제내용</Form.Label>
+              <Form.Control as="textarea" rows={3} defaultValue={props.question} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            닫기
+          </Button>
+          <Button variant="success" onClick={()=>{
+            let point=document.querySelector("#point").value
+            let problemNum=document.querySelector("#problemNum").value
+            let question=document.querySelector("#question").value
+            props.updateProblems(point,problemNum,question)
+          }}>저장</Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+
 
 export default CreateProblems
