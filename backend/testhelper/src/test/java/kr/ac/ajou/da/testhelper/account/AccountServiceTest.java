@@ -2,6 +2,8 @@ package kr.ac.ajou.da.testhelper.account;
 
 import kr.ac.ajou.da.testhelper.account.exception.AccountNotFoundException;
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
+import kr.ac.ajou.da.testhelper.portal.account.PortalAccountService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,11 +27,15 @@ class AccountServiceTest {
 
     @Mock
     private AccountRepository accountRepository;
+    
+    @Mock
+    private PortalAccountService portalAccountService;
 
     @BeforeEach
     void init(){
         accountRepository = mock(AccountRepository.class);
-        accountService = new AccountService(accountRepository);
+        portalAccountService = mock(PortalAccountService.class);
+        accountService = new AccountService(accountRepository, portalAccountService);
     }
 
     @Test

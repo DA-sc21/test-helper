@@ -68,13 +68,24 @@ function ChatFormPro(props) {
   }, []);
 
   async function getHistory(){
-    await axios
-      .get(baseUrl + "/history/" + testId + "/" + chatRoomId)
-      .then((response) => {
-        // console.log(response);
-        setMessages(response.data);
-        setLoading(true);
-      });
+    // await axios
+    //   .get(baseUrl + "/history/" + testId + "/" + chatRoomId)
+    //   .then((response) => {
+    //     // console.log(response);
+    //     setMessages(response.data);
+    //     setLoading(true);
+    //   });
+    let response = await fetch(baseUrl + "/history/" + testId + "/" + chatRoomId,{
+      method: 'GET',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("response:", res);
+      setMessages(res);
+      setLoading(true);
+    })
+    .catch(error => {console.error('Error:', error)});
   }
   // if(!loading)return(<Loading></Loading>)
   return (
@@ -106,4 +117,3 @@ function ChatFormPro(props) {
 }
 
 export default ChatFormPro;
-

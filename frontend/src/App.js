@@ -12,24 +12,26 @@ import CourseInfo from './professor/Course/CourseInfo';
 import AdminLogin from './admin/AdminLogin/AdminLogin';
 import AdminCourseList from './admin/Course/CourseList';
 import AdminCourseMod from './admin/Course/CourseMod';
+import UnscoredTest from './professor/AnswerSheet/UnscoredTests';
 
 function App() {
   let isAuthorized = sessionStorage.getItem("isAuthorized");
   return (
     <div className="App">
       <Switch>
-        <Route path="/signup" component={SignUp} />
-        <Route path="/login" component={Login} />
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
         <Route exact path="/admin/courses" component={AdminCourseList} />
         <Route exact path="/admin/courses/:id" component={AdminCourseMod} />
         <Route path="/admin" component= {AdminLogin} />
         <>
-        {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
+          {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
+          <Route path="/signup" component={SignUp} />
+          <Route path="/login" component={Login} />
           <NavBar></NavBar>
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
           <Route path="/courses/:courseId" component={CourseInfo} />
+          <Route path="/tests/:testId/unscored" component={UnscoredTest} />
           <Route exact path="/tests" component={Tests} />
           <Route exact path="/" component={Main} />
         </>

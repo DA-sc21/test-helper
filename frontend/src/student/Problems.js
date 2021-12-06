@@ -13,13 +13,26 @@ export function Problems(props){
 	},[]);
 	
 	async function getProblems(){
-		await axios
-		.get(baseUrl+'/tests/'+testId+'/problems')
-		.then((result)=>{ 
-			setProblems(result.data)
-			console.log(result.data)
-		})
-		.catch(()=>{ console.log("실패") })
+		let response = await fetch(baseUrl+'/tests/'+testId+'/problems',{
+			method: 'GET',
+			credentials : 'include',
+		  })
+		  .then((res) => res.json())
+		  .then((res) => {
+			console.log("response:", res);
+			setProblems(res)
+		// 	console.log(result.data)
+		  })
+		  .catch(error => {console.error('Error:', error)});
+	
+		  
+		// await axios
+		// .get(baseUrl+'/tests/'+testId+'/problems')
+		// .then((result)=>{ 
+		// 	setProblems(result.data)
+		// 	console.log(result.data)
+		// })
+		// .catch(()=>{ console.log("실패") })
 	}
 
 	async function getimages(Fileurl){
@@ -30,7 +43,7 @@ export function Problems(props){
       .then((result)=>{
         console.log(result.data)
       })
-			.catch(()=>{ console.log("실패") })
+		.catch(()=>{ console.log("실패") })
 			
   
 	}
@@ -58,7 +71,9 @@ export function Problems(props){
 								// getimages(problem.attachedFile)
 								return (
 									<Tab.Pane eventKey={"#link"+index}>
-									{problem.question}
+									{problem.question.split("\n").map((line)=>{
+										return <div>{line}</div>
+									})}
 									<br/>
 									{/* <Image className="col-md-5" src={problem.attachedFile} /> */}
 									</Tab.Pane>

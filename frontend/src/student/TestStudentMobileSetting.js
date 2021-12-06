@@ -1,3 +1,4 @@
+
 import React ,{useState} from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
@@ -39,14 +40,22 @@ function TestStudentMobileSetting(props){
     durationEndTime < 0 ? setEnded(true) :setEnded(false) 
   }, 1000);
 
+  const data={
+    "submitted": "DONE"
+  }
   async function putSubmitted(){
-    await axios
-    .put(baseUrl+ "/tests/"+testId+'/students/'+studentId+'/submissions/submitted',{
-      "submitted": "DONE"
+    let response = await fetch(baseUrl+ "/tests/"+testId+'/students/'+studentId+'/submissions/submitted',{
+      method:"PUT",
+      credentials : 'include',
+      body: JSON.stringify(data),
+      headers:{
+        "content-type" :"application/json"
+      }
     })
-    .then((result)=>{ 
-      console.log(result)
-      setSubmitted(true)
+    .then((res)=>{
+      if(res.status === 200){
+        setSubmitted(true);
+      }
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -82,14 +91,35 @@ function TestStudentMobileSetting(props){
         <div className="container">
           {!ended?
           <div className="row">
-          <Button 
+          {/* <Button 
             className="col-5" 
             variant="primary" 
             onClick =
               {(e) => capture(e,testId,studentNum,setStudentCard,"student_card")
               }>학생증사진등록
+          </Button> */}
+         
+          <Button 
+            className="col-5" 
+            variant="primary" 
+            onClick =
+              {(e) => {
+               
+                let camera=document.querySelector("#camera")
+                let frame=document.querySelector("#frame")
+                camera.addEventListener("change",function(e){
+                  let file=e.target.files[0];
+                  UploadImageToS3(testId,studentNum,file,"student_card")
+                  frame.src=URL.createObjectURL(file)})
+                camera.click();
+                }
+                
+              }>학생증 등록
           </Button>
-          <div className="col-2"></div>
+          <div className="col-2">
+            <input type="file" accept="image/*" capture="camera" id="camera" className="d-none" />
+          </div>
+          {/* <div className="col-2"></div> */}
           <Button 
             className="col-5" 
             variant="danger" 
@@ -134,7 +164,8 @@ function TestStudentMobileSetting(props){
         {!ended?
         <div className="row mt-5">
           <div>사진 재등록을 원하신다면 버튼을 다시 누르시면 됩니다.</div>
-          <img src={studentCard} className="image col-5" alt="studentCard"></img>
+          {/* <img src={studentCard} className="image col-5" alt="studentCard"></img> */}
+          <img id="frame" className="image col-5" alt="camera"></img>
           <div className="col-2"></div>
           <img src={face} className="image col-5" alt="face"></img>
         </div>
@@ -172,8 +203,11 @@ function capture(e,testId,studentId,setTarget,target){ //학생증&본인얼굴 
   .then(mediaStream => {
       const track = mediaStream.getVideoTracks()[0];
       let imageCapture = new ImageCapture(track);
-     
-      imageCapture.takePhoto()
+      const photoSettings = {
+        imageHeight : 480,
+        imageWidth : 640,
+      }
+      imageCapture.takePhoto(photoSettings)
       .then(blob => {console.log(blob); 
         //blob = 캡쳐 이미지
         setTarget(URL.createObjectURL(blob))
@@ -189,14 +223,28 @@ async function UploadImageToS3(testId,studentId,img,target){
   let preSignedUrl="";
   testId=String(testId).padStart(5,"0")
 
-  await axios
-    .get(baseUrl+'/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/'+target+'.jpg')
-    .then((result)=>{
-      preSignedUrl=result.data;
-    })
-    .catch(()=>{ console.log("실패") })
+  let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/'+target+'.jpg',{
+    method: "GET",
+    credentials: "include"
+  })
+  .then(res => res.text())
+  .then((res)=>{
+    preSignedUrl=res;
+    console.log(res)
+    // console.log(preSignedUrl);
+  })
+  .catch((error)=> {console.log(error)})
+
+  // await axios
+  //   .get(baseUrl+'/s3-upload-url?objectKey=test/'+testId+'/submission/'+studentId+'/'+target+'.jpg')
+  //   .then((result)=>{
+  //     preSignedUrl=result.data;
+  //   })
+  //   .catch(()=>{ console.log("실패") })
     // console.log("presigned-url is",preSignedUrl)
-   
+   console.log(preSignedUrl);
+
+  
   await axios
     .put(preSignedUrl,img)
     .then((result)=>{
