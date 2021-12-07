@@ -47,6 +47,24 @@ function StudentAnswerSheets(props){
     setStudents(allStudents);
   }
 
+  async function sendScoringTest(){
+    let response = await fetch(baseUrl+path+'/grade',{
+      method: 'POST',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.result === true){
+        alert("채점 결과가 전송되었습니다.");
+      }
+      else{
+        alert(res.errorMessage);
+      }
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
+  }
+
   return(
     <div style={{marginLeft:"7%", marginTop:"1%", width:"70%"}}>
       <Button variant="light" style={{marginRight:"10%", float:"right", color:"black", borderColor:"gray"}} onClick={(e)=>searchStudentNumber(e)}>검색</Button>
@@ -58,10 +76,11 @@ function StudentAnswerSheets(props){
         />
       </InputGroup>
       <Button style={{marginRight:"2.5%", float:"right", backgroundColor:"#3d4657", borderColor:"#3d4657"}} onClick={(e)=>checkAllStudentList(e)}>전체 목록</Button>
-      <div style={{marginTop:"5%", marginBottom:"0.2%", width:"90%", fontSize:"19px", textAlign:"left"}}>
+      <Button style={{float:"left", backgroundColor:"#467fca", borderColor:"#467fca"}} onClick={(e)=>sendScoringTest(e)}>채점 결과 전송</Button>
+      <div style={{marginTop:"6%", marginBottom:"0.2%", width:"90%", fontSize:"19px", textAlign:"left"}}>
         <span style={{marginLeft:"5.7%"}}>학번</span>
         <span style={{marginLeft:"6%"}}>이름</span>
-        <span style={{marginRight:"2.5%", float:"right"}}>채점 여부</span>
+        <span style={{marginRight:"0%", float:"right"}}>제출/채점 여부</span>
       </div>
       {students.map((data,idx)=>{
       return <StudentList key={idx} student={data.student} submitted={data.submitted} path={path}/>; })}

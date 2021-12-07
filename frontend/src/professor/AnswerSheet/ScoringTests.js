@@ -124,19 +124,23 @@ function ScoringTests(props){
 			  problems.map((problem,index)=>{
 				return (
 				  <Tab.Pane key={index} eventKey={"#problem"+index}>
-					<span style={{fontSize:"20px"}}>{problem.question} ({problem.point}점)</span>
-					<br/>
-                    {/* <Image className="col-md-5" src={problem.attachedFile} /> */}
-                    <Image src={imageUrl} style={{width:"35%", marginTop:"1%"}}/>
-                    <Button variant="light" style={{float:"right", marginTop:"43%", color:"black", borderColor:"gray"}} onClick={(e)=>enterScore(e,index+1)}>입력</Button>
-                    <InputGroup style={{width:"30%", float:"right", marginTop:"43%"}}>
-                      <InputGroup.Text>점수</InputGroup.Text>
-                      <FormControl
-                        name="score"
-                        defaultValue={score[index]}
-                        onChange={(e)=>onChangehandler(e)}
-                      />
-                    </InputGroup>
+					  <span style={{fontSize:"18px"}}>
+              {problem.question.split("\n").map((line)=>{
+							  return <div>{line}</div>
+							})}
+            </span>
+					  <br/>
+            {/* <Image className="col-md-5" src={problem.attachedFile} /> */}
+            <Image src={imageUrl} style={{width:"35%", marginTop:"0%"}}/>
+            <Button variant="light" style={{float:"right", marginTop:"43%", color:"black", borderColor:"gray"}} onClick={(e)=>enterScore(e,index+1)}>입력</Button>
+            <InputGroup style={{width:"30%", float:"right", marginTop:"43%"}}>
+            <InputGroup.Text>점수</InputGroup.Text>
+              <FormControl
+                name="score"
+                defaultValue={score[index]}
+                onChange={(e)=>onChangehandler(e)}
+              />
+            </InputGroup>
 				  </Tab.Pane>
 				)
 			  })
