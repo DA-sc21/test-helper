@@ -46,12 +46,13 @@ public class PortalCourse {
     @JoinColumn(name = "professor_id", nullable = false)
     private PortalAccount professor;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PORTAL_ASSISTANT",
-            joinColumns = @JoinColumn(name = "course_id"),
-            inverseJoinColumns = @JoinColumn(name = "account_id")
-    )
-    private Set<PortalAccount> assistants = new HashSet<>();
+//	@ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "PORTAL_ASSISTANT",
+//            joinColumns = @JoinColumn(name = "course_id"),
+//            inverseJoinColumns = @JoinColumn(name = "account_id")
+//    )
+//    private Set<PortalAccount> assistants = new HashSet<>();
+	private Long assistant_id;
 	
 	@Enumerated(EnumType.STRING)
 	private PortalStatus registered;
@@ -69,7 +70,7 @@ public class PortalCourse {
 		this.code = code;
 		this.name = name;
 		this.professor = professor;
-		this.assistants = assistant;
+//		this.assistants = assistant;
 		this.registered = registered;
 		this.students = students;
 	}
