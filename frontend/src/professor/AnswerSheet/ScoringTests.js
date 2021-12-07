@@ -124,7 +124,7 @@ function ScoringTests(props){
 			  problems.map((problem,index)=>{
 				return (
 				  <Tab.Pane key={index} eventKey={"#problem"+index}>
-					  <span style={{fontSize:"18px"}}>
+					  <span style={{fontSize:"17px"}}>
               {problem.question.split("\n").map((line)=>{
 							  return <div>{line}</div>
 							})}
