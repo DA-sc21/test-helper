@@ -74,6 +74,10 @@ dependencies {
 	//cloud convert
 	implementation 'com.cloudconvert:cloudconvert-java:1.0.7'
 
+	//excel
+	implementation 'org.apache.poi:poi:4.1.2'
+	implementation 'org.apache.poi:poi-ooxml:4.1.2'
+
 }
 
 bootRun{

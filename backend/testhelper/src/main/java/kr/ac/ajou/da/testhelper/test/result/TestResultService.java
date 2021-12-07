@@ -6,6 +6,7 @@ import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.result.exception.CannotGradeTestIfTestIsNotMarkedException;
 import kr.ac.ajou.da.testhelper.test.result.exception.CannotResendTestGradeException;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,5 +54,10 @@ public class TestResultService {
         }
 
         return test.getResult();
+    }
+
+    public Workbook getExcel(Long testId) {
+
+
     }
 }

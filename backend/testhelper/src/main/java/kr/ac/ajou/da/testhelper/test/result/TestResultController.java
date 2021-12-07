@@ -4,8 +4,14 @@ import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.test.result.dto.GetTestResultResDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayOutputStream;
 
 @RequiredArgsConstructor
 @RestController
@@ -15,14 +21,34 @@ public class TestResultController {
 
     @GetMapping("/tests/{testId}/result")
     @AccessTestByProfessor
-    public ResponseEntity<GetTestResultResDto> getTestResult(@PathVariable Long testId){
+    public ResponseEntity<GetTestResultResDto> getTestResult(@PathVariable Long testId) {
 
         return ResponseEntity.ok().body(new GetTestResultResDto(testResultService.get(testId)));
     }
 
+    @GetMapping("/tests/{testId}/result/excel")
+    @AccessTestByProfessor
+    public ResponseEntity<ByteArrayResource> getTestResultExcel(@PathVariable Long testId) {
+
+        Workbook workbook = testResultService.getExcel(testId);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        HttpHeaders header = new HttpHeaders();
+
+        header.setContentType(new MediaType("application", "force-download"));
+        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TestResult.xlsx");
+
+        workbook.write(stream);
+        workbook.close();
+
+        return ResponseEntity.ok()
+                .headers(header)
+                .body(new ByteArrayResource(stream.toByteArray()));
+    }
+
     @PutMapping("/tests/{testId}/result")
     @AccessTestByProfessor
-    public ResponseEntity<BooleanResponse> putTestResult(@PathVariable Long testId){
+    public ResponseEntity<BooleanResponse> putTestResult(@PathVariable Long testId) {
 
         testResultService.updateTestResult(testId);
 
@@ -31,7 +57,7 @@ public class TestResultController {
 
     @PostMapping("/tests/{testId}/grade")
     @AccessTestByProfessor
-    public ResponseEntity<BooleanResponse> postTestGrade(@PathVariable Long testId){
+    public ResponseEntity<BooleanResponse> postTestGrade(@PathVariable Long testId) {
 
         testResultService.gradeTest(testId);
 
