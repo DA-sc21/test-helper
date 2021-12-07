@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button} from 'react-bootstrap';
+import { Card, Button,Table} from 'react-bootstrap';
 import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
@@ -7,7 +7,7 @@ import Loading from '../../component/Loading';
 import AdminCourse from './Course';
 import "./Course.css"
 
-const AdminCourseList = () => {
+const AdminCourseListSearchByCode = (props) => {
   let history = useHistory();
   const [loading, setLoading] = useState(false);
   const [course, setCourse] = useState([]);
@@ -22,16 +22,11 @@ const AdminCourseList = () => {
         alert("관리자 로그인 후 사용 가능합니다.");
         document.location.href="/admin";
     }
-
+    setSearchValue(props.match.params.code); // 바뀔수도 있음 !
     getDate();
-    getCoursesList();
+    getCoursesListSearchByCourseCode();
   },[])
 
-  // const enterEvent = (e) => {
-  //   if (e.key === "Enter") {
-  //     search();
-  //   }
-  // };
 
   function getDate(){
     let now = new Date();
@@ -51,20 +46,20 @@ const AdminCourseList = () => {
     history.push("/admin")
   }
 
-  async function getCoursesList(){
+  //주소 바꾸기 !!!!!
+  async function getCoursesListSearchByCourseCode(){
     let response = await fetch(baseUrl+'/admin/university/classes',{
-			method: 'GET',
-			credentials : 'include',
-		  })
-		  .then((res) => res.json())
-		  .then((result) => {
-			console.log("response:", result);
-			setCourse(result.data);
-      setLoading(true);
-		// 	console.log(result.data)
-		  })
-		  .catch(error => {console.error('Error:', error)});
-
+        method: 'GET',
+        credentials : 'include',
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log("response:", result);
+        setCourse(result.data);
+        setLoading(true);
+        // 	console.log(result.data)
+      })
+      .catch(error => {console.error('Error:', error)});
   }
 
 
@@ -148,4 +143,4 @@ const AdminCourseList = () => {
   }
 }
 
-export default AdminCourseList;
+export default AdminCourseListSearchByCode;
