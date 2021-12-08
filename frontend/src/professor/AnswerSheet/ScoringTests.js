@@ -9,7 +9,7 @@ function ScoringTests(props){
   const [loading, setLoading] = useState(false);
   const [problems, setProblems] = useState([]);
   const [state, setState] = useState([]);
-  const [score, setScore] = useState([]);
+  const [score, setScore] = useState(0);
   const [imageUrl, setImageUrl] = useState("");
   const [submissionId, setSubmissionId] = useState("");
   const [TestAnswerSheetUrl, setTestAnswerSheetUrl] = useState([]);
@@ -54,30 +54,25 @@ function ScoringTests(props){
       console.log(result.data);
       setSubmissionId(result.data.id);
       setImageUrl(result.data.answerSheetDownloadUrl);
-      getAllAnswerSheetScore(problem, result.data.id);
+      setLoading(true); 
     })
     .catch(()=>{ console.log("실패") })
   }
 
-  async function getAllAnswerSheetScore(data, id){
-    let temp = [];
-    for(let i=1; i<=data.length; i++){
-      let response = await fetch(baseUrl+'/submissions/'+id+'/problems/'+i+'/score',{
-        method: 'GET',
-        credentials : 'include',
-        })
-        .then((res) => res.json())
-        .then((res) => {
-          console.log("response:", res);
-          temp.push(res.score);
-        })
-        .catch(error => {console.error('Error:', error)});
-    }
-    if(data.length>0){
-      console.log(temp);
-      setScore(temp);
-    }
-    setLoading(true); 
+  async function getAnswerSheetScore(e, id){
+    console.log(id)
+    let response = await fetch(baseUrl+'/submissions/'+submissionId+'/problems/'+id+'/score',{
+      method: 'GET',
+      credentials : 'include',
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        setState({
+          "score": res.score,
+        });
+      })
+      .catch(error => {console.error('Error:', error)});
   }
 
   async function getTestAnswerSheet(){
@@ -113,8 +108,6 @@ function ScoringTests(props){
       .then((res) => {
         if(res.result === true){
           alert("점수 입력에 성공했습니다.");
-          setLoading(false);
-          getAllAnswerSheetScore(problems,submissionId);
         }
         else{
           alert(res.errorMessage);
@@ -139,15 +132,15 @@ function ScoringTests(props){
           <span className="visually-hidden">Loading...</span>
         </Spinner>
       </div>:
-	<Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
+	<Tab.Container id="list-group-tabs-example">
 	  <Row>
 		<Col sm={2}>
 		  <ListGroup>
 			{
 			  problems.map((problem,index)=>{
 				return (
-				  <ListGroup.Item key={index} action href={"#problem"+index}>
-					문제 {problem.problemNum} ({problem.point}점)
+				  <ListGroup.Item key={index} action href={"#problem"+index} onClick={(e)=>getAnswerSheetScore(e,index+1)}>
+            문제 {problem.problemNum} ({problem.point}점)
 				  </ListGroup.Item>
 				)})
 			  }
@@ -186,7 +179,7 @@ function ScoringTests(props){
             <InputGroup.Text>점수</InputGroup.Text>
               <FormControl
                 name="score"
-                defaultValue={score[index]}
+                value={state.score}
                 onChange={(e)=>onChangehandler(e)}
               />
             </InputGroup>
