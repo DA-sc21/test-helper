@@ -11,9 +11,6 @@ import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
 import AdminLogin from './admin/adminLogin/AdminLogin';
 import AdminCourseList from './admin/Course/CourseList';
-import AdminCourseListSearchByCode from './admin/Course/CourseListSearchByCourseCode';
-import AdminCourseListSearchByCourseName from './admin/Course/CourseListSearchByCourseName';
-import AdminCourseListSearchByProf from './admin/Course/CourseListSearchByProf';
 import UnscoredTest from './professor/AnswerSheet/UnscoredTests';
 
 function App() {
@@ -23,9 +20,6 @@ function App() {
       <Switch>
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
         <Route exact path="/admin/courses" component={AdminCourseList} />
-        <Route exact path="/recordlist/searchbycourse/:name" component={AdminCourseListSearchByCourseName} />
-        <Route exact path="/admin/courses/searchbycode/:code" component={AdminCourseListSearchByCode} />
-        <Route exact path="/admin/courses/searchbyprofessor/:name" component={AdminCourseListSearchByProf} />
         <Route path="/admin" component= {AdminLogin} />
         <>
           {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}

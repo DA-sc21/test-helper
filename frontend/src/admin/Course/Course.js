@@ -8,7 +8,7 @@ import "./Course.css"
 
 const AdminCourse = (props) => {
   let history = useHistory();
-  const [course, setCourse] = useState(props.course);
+  const [course, setCourse] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -21,9 +21,9 @@ const AdminCourse = (props) => {
     "PENDING" : "secondary",
     "DONE" : "success",
   }
-  // useEffect(()=>{
-
-  // },[])
+  useEffect(()=>{
+    // setCourse(props.course);
+  },[])
 
   async function registerSubject(e){
     let response = await fetch(baseUrl+`/admin/`,{
@@ -56,14 +56,14 @@ const AdminCourse = (props) => {
         }
         return(
               // <tr onClick={()=>history.push(`/admin/courses/${data.id}`)}>
-              <tr>
+              <tr key={index}>
               <td>{(currentPage-1)*10+index+1}</td>
               <td>{data.code}</td>
               <td>{data.name}</td>
-              <td>{data.professor.name}</td>
+              <td>{data.professor.name}({data.professor.email})</td>
               <td><Badge className="registerStatus" bg={register_status_css[data.professor.joined]}>{register_status[data.professor.joined]}</Badge></td>
               <td><Badge className="registerStatus" bg={register_status_css[data.registered]}>{register_status[data.registered]}</Badge></td>
-              <td><Button button type="button" className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e)}>수업 등록/미등록</Button></td>
+              <td><Button className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e)}>수업 등록/미등록</Button></td>
               </tr>
         )
     });

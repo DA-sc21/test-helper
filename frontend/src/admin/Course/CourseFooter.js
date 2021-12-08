@@ -3,16 +3,27 @@ import React, { useState, useEffect } from 'react';
 import "./Course.css"
 
 const CourseFooter= (props) => {
-    const [itemsCount, setItemsCount] = useState(props.itemsCount);
-    const [pageSize, setPageSize] = useState(props.pageSize);
-    const [currentPage, setCurrentPage] = useState(props.currentPage);
-    const [onPageChange, setOnPageChange] = useState(props.onPageChange);
+    const [itemsCount, setItemsCount] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [onPageChange, setOnPageChange] = useState(1);
     const [activePage, setActivePage] = useState(1);
 
     function handlePageChange(pageNumber) {
         setActivePage(pageNumber);
     }
 
+    useEffect(()=>{
+        if(!sessionStorage.getItem("isAdmin")){
+            alert("관리자 로그인 후 사용 가능합니다.");
+            document.location.href="/admin";
+        }
+        setItemsCount(props.itemsCount);
+        setPageSize(props.pageSize);
+        setCurrentPage(props.currentPage);
+        setOnPageChange(props.onPageChange);
+        setActivePage(1);
+      },[])
 
     const pageCount = Math.ceil(props.itemsCount/pageSize);
         if(pageCount === 1) return null;

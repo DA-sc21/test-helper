@@ -10,13 +10,16 @@ import "./Course.css"
 const AdminCourseList = () => {
   let history = useHistory();
   const [loading, setLoading] = useState(false);
+  const [allCourse, setAllCourse] = useState([]);
   const [course, setCourse] = useState([]);
   const [sortValue, setSortValue] = useState("course");
   const [searchOption, setSearchOption] = useState("byCourseName");
   const [searchValue, setSearchValue] = useState("");
+  const [searchFlag, setSearchFlag] = useState(false);
   const [year, setYear] = useState(0);
   const [semester, setSemester] = useState(0);
   const [registerStatus, setResisterStatus] = useState("all");
+
 
   useEffect(()=>{
     if(!sessionStorage.getItem("isAdmin")){
@@ -26,6 +29,7 @@ const AdminCourseList = () => {
 
     getDate();
     getCoursesList();
+    sortCourse(sortValue);
   },[])
 
   function getDate(){
@@ -54,7 +58,8 @@ const AdminCourseList = () => {
       .then((res) => res.json())
 		  .then((result) => {
 			console.log("response:", result)
-			setCourse(result);
+      setAllCourse(result);
+      setCourse(result);
       setLoading(true);
 		// 	console.log(result.data)
 		  })
@@ -62,10 +67,47 @@ const AdminCourseList = () => {
 
   }
 
+  function buttonCss(status) {
+      return registerStatus===status ? "primary" : "outline-primary"  
+  }
+
+  function buttonSortCss(status) {
+    return sortValue===status ? "secondary" : "outline-primary"  
+  }
+  function imageClick(e){
+  document.location.href="/admin/courses";
+  }
+
+  function handleSearchOption(e){
+    setSearchOption(e.target.value);
+  }
 
   function handleSearch(e){
-    setSearchOption(e.target.value);
-   }
+    setSearchFlag(true);
+    if(searchOption==="byCourseName"){
+      const filterList = allCourse.filter((data) => {
+        return data.name.includes(searchValue);
+      });
+      console.log(filterList);
+      setCourse(filterList);
+    }
+    else if(searchOption==="byCourseCode"){
+      const filterList = allCourse.filter((data) => {
+        return data.code.includes(searchValue);
+      });
+      console.log(filterList);
+      setCourse(filterList);
+    }
+    else{
+      const filterList = allCourse.filter((data) => {
+        return data.professor.name.includes(searchValue);
+      });
+      console.log(filterList);
+      setCourse(filterList);
+    }
+    sortCourse(sortValue);
+    console.log(searchFlag);
+  }
 
    function handleValueChange(e){
       let nextState = {};
@@ -73,36 +115,9 @@ const AdminCourseList = () => {
       setSearchValue(e.target.value);
     } 
 
-    function renderSearch(){
-        if(searchOption==="byCourseName"){
-            return(
-                <Link to ={`/admin/courses/searchbycourse/${searchValue}`}>
-                    <button className={"courseSearch"}>Search</button>
-                </Link>
-            );
-        }
-        else if(searchOption==="byCourseCode"){
-            return(
-                <Link to ={`/admin/courses/searchbycode/${searchValue}`}>
-                    <button className={"courseSearch"}>Search</button>
-                </Link>
-            );
-        }
-        else{
-            return(
-                <Link to ={`/admin/courses/searchbyprofessor/${searchValue}`}>
-                    <button className={"courseSearch"}>Search</button>
-                </Link>
-            );
-        }
-    }
-
-
-
-  if(!loading)return(<Loading></Loading>)
-  else{
-    const sortCourse = (value) => {
-        let courseList = course.sort(function(a, b) { 
+    function sortCourse(value){
+      setSearchValue("");
+      let courseList = course.sort(function(a, b) { 
             if (value==="course"){
                 return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
             }
@@ -111,48 +126,57 @@ const AdminCourseList = () => {
         return courseList
     }
 
-    let courseList = sortCourse(sortValue);
-    if (registerStatus === "register"){
-      courseList=courseList.filter((data)=>data.registered === "DONE")
-    }
-    else if(registerStatus == "unregister"){
-      courseList=courseList.filter((data)=>data.registered === "PENDING")
+    function sortRegister(value){
+      setSearchValue("");
+      let courseList = allCourse;
+      if (value === "register"){
+        courseList=courseList.filter((data)=>data.registered === "DONE")
+        setCourse(courseList);
+      }
+      else if(value == "unregister"){
+        courseList=courseList.filter((data)=>data.registered === "PENDING")
+        setCourse(courseList);
+      }
+      else{
+        setCourse(courseList);
+      }
+
     }
 
-    // console.log(courseList)
-
+  if(!loading)return(<Loading></Loading>)
    return(
       <div className="content">
-        <Link to={`/admin/courses`}><img src={'/img/admin_logo.png'} className = {"logo"} alt={"admin page"}/></Link>
+        <div className = "logodiv">
+        <img src={'/img/admin_logo.png'} className = {"logo"} alt={"admin page"} onClick={(e)=>imageClick(e)}/>
         <Button className="logout" onClick={(e)=>logout(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>로그아웃</Button>
+        </div>
         <div className="content">
-        <p className="semester">{year}학년 {semester}학기</p>
-        <div className="showCourse">
-        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setResisterStatus(e.target.value)} style={{borderColor:"#4c5272"}} value = "allr"> 모든 수업 조회</Button>
-        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setResisterStatus(e.target.value)} style={{borderColor:"#4c5272"}} value = "register">등록된 수업 조회</Button>
-        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setResisterStatus(e.target.value)} style={{borderColor:"#4c5272"}} value = "unregister">등록되지 않은 수업 조회</Button>
-        </div>
-        <br />
-        <div className="showCourse">
-        {sortValue=== "course"?
-        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{borderColor:"#4c5272", backgroundColor:"#b2b6ce"}} value = "professor">교수 이름순 정렬</Button>:
-        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{borderColor:"#4c5272", backgroundColor:"#b2b6ce"}} value = "course">과목 이름순 정렬</Button> 
-        }
-        </div>
-        <br />
-        <select className="searchOption" onChange={handleSearch}>
+        <Button variant={buttonCss("all")}  onClick={(e)=>{setResisterStatus(e.target.value); sortRegister(e.target.value);}} style={{borderColor:"#4c5272"}} value = "all"> {year}학년 {semester}학기 모든 수업 조회</Button>
+        <select className="searchOption" onChange={handleSearchOption}>
             <option value = "byCourseName">과목 이름 검색</option>
             <option value="byCourseCode">과목 코드 검색</option>
             <option value="byProfessorName">교수 이름 검색</option>
          </select>
         <input type="text" className="searchField" placeholder="search" name="search" onChange={(e)=>handleValueChange(e)} value={searchValue} required />
-        {renderSearch()}
+        <Button className={"btn btn-secondary search"} onClick={(e)=>{handleSearch(e.target.value)}} style={{borderColor:"#4c5272"}} value = "professor">search</Button>
+        <br />
+        <div className="showCourse">
+        <span className = {"sortSpan"}> 전체 수업 중 등록된 수업 조회 / 미등록된 수업 조회</span>
+        <Button variant={buttonCss("register")} className = {"CourseBt"} onClick={(e)=>{setResisterStatus(e.target.value); sortRegister(e.target.value);}} style={{borderColor:"#4c5272"}} value = "register">등록된 수업 조회</Button>
+        <Button variant={buttonCss("unregister")} className = {"CourseBt"} onClick={(e)=>{setResisterStatus(e.target.value); sortRegister(e.target.value);}} style={{borderColor:"#4c5272"}} value = "unregister">등록되지 않은 수업 조회</Button>
         </div>
-        <p className="courseCount">총 {courseList.length} 개의 수업이 있습니다.</p>
-        <AdminCourse course={courseList}/>
+
+        <div className="showCourse">
+        <span className = {"sortSpan"}>가나다순 정렬</span>
+        <Button variant={buttonSortCss("course")} className={"CourseBt"} onClick={(e)=>{setSortValue(e.target.value); sortCourse(e.target.value)}} style={{borderColor:"#4c5272"}} value = "course">과목 이름순 정렬</Button> 
+        <Button variant={buttonSortCss("professor")} className={"CourseBt"} onClick={(e)=>{setSortValue(e.target.value); sortCourse(e.target.value)}} style={{borderColor:"#4c5272"}} value = "professor">교수 이름순 정렬</Button>
+        </div>
+        <br />
+        </div>
+        <p className="courseCount">총 {course.length} 개의 수업이 있습니다.</p>
+        <AdminCourse course={course}/>
       </div>
   )
-  }
 }
 
 export default AdminCourseList;

@@ -1,3 +1,12 @@
+.sortSpan{
+  margin-right : auto;
+  margin-top : 3vh;
+  font-weight : 700;
+}
+
+.logodiv{
+  display : "flex";
+}
 .logo{
     width : 30%;
     height : 30%;
@@ -10,6 +19,7 @@
 .btn-register{
   font-size : 0.8rem;
 }
+
 .box{
     text-align: center;
     background-color: rgb(243, 243, 243);
@@ -25,12 +35,16 @@
 .showCourse{
   margin-left: auto;
   margin-right: auto;
-  display: inline-block;
+  display: flex;
+  box-shadow: 5px 3px 3px;
+
 }
+
   .semester{
     font-size: 35px;
     font-weight: bold;
   }
+
   .index{
     text-align: left;
     margin-top: 1%;
@@ -65,23 +79,26 @@
 .logout{
   font-size: 13px;
     width : 10vw;
+    height : 10vh;
     text-align: center;
     background-color: rgb(243, 243, 243);
-    margin-left : 65vw;
+    margin-left : 20px;
     overflow : "auto";
 }
-
-.sortCourseBt{
+.search{
+  margin-left : 1vw;
+}
+.CourseBt{
   margin: 0.7rem;
   padding: 0.5rem 0.5rem;
   width : 16vw;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
-  background-color: rgb(243, 243, 243);
   display: inline-block;
   overflow:"auto";
 }
+
 
 .searchOption{
     width : 18vw;
