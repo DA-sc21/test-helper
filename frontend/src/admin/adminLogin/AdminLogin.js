@@ -7,6 +7,12 @@ function AdminLogin(){
   let history = useHistory();
   const [state, setState] = useState([]);
 
+  useEffect(() => {
+    if (sessionStorage.getItem("isAdmin")) {
+      history.push("/admin/courses");
+    }
+  }, []);
+
   const enterEvent = (e) => {
     if (e.key === "Enter") {
       submitForm();
@@ -19,7 +25,7 @@ function AdminLogin(){
       ...state,
       [name]: value,
     });
-    console.log(state);
+    // console.log(state);
   }
   
   async function submitForm(e){
@@ -32,7 +38,7 @@ function AdminLogin(){
       console.log("response:", res);
       if(res.status === 200){
         alert("관리자 로그인에 성공했습니다.");
-        sessionStorage.setItem("isAuthorized", "true");
+        sessionStorage.setItem("isAdmin", "true");
         history.push("/admin/courses");
       }
       else{
