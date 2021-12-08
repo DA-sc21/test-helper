@@ -13,7 +13,8 @@ const CourseFooter= (props) => {
         setActivePage(pageNumber);
     }
 
-    const pageCount = Math.ceil(itemsCount/pageSize);
+
+    const pageCount = Math.ceil(props.itemsCount/pageSize);
         if(pageCount === 1) return null;
         let pages;
         if(pageCount > 5 && currentPage>5){

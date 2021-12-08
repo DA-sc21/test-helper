@@ -16,6 +16,7 @@ const AdminCourseList = () => {
   const [searchValue, setSearchValue] = useState("");
   const [year, setYear] = useState(0);
   const [semester, setSemester] = useState(0);
+  const [registerStatus, setResisterStatus] = useState("all");
 
   useEffect(()=>{
     if(!sessionStorage.getItem("isAdmin")){
@@ -26,12 +27,6 @@ const AdminCourseList = () => {
     getDate();
     getCoursesList();
   },[])
-
-  // const enterEvent = (e) => {
-  //   if (e.key === "Enter") {
-  //     search();
-  //   }
-  // };
 
   function getDate(){
     let now = new Date();
@@ -56,10 +51,10 @@ const AdminCourseList = () => {
 			method: 'GET',
 			credentials : 'include',
 		  })
-		  .then((res) => res.json())
+      .then((res) => res.json())
 		  .then((result) => {
-			console.log("response:", result);
-			setCourse(result.data);
+			console.log("response:", result)
+			setCourse(result);
       setLoading(true);
 		// 	console.log(result.data)
 		  })
@@ -116,22 +111,35 @@ const AdminCourseList = () => {
         return courseList
     }
 
-    const courseList = sortCourse(sortValue);
+    let courseList = sortCourse(sortValue);
+    if (registerStatus === "register"){
+      courseList=courseList.filter((data)=>data.registered === "DONE")
+    }
+    else if(registerStatus == "unregister"){
+      courseList=courseList.filter((data)=>data.registered === "PENDING")
+    }
+
+    // console.log(courseList)
 
    return(
       <div className="content">
+        <Link to={`/admin/courses`}><img src={'/img/admin_logo.png'} className = {"logo"} alt={"admin page"}/></Link>
+        <Button className="logout" onClick={(e)=>logout(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>로그아웃</Button>
         <div className="content">
-        <Link to ={`/admin/courses`}>
-          <h1>관리자 페이지</h1>
-          <h3>수업 조회</h3>
-        </Link>
-            <Button className="logout" onClick={(e)=>logout(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>로그아웃</Button>
+        <p className="semester">{year}학년 {semester}학기</p>
+        <div className="showCourse">
+        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setResisterStatus(e.target.value)} style={{borderColor:"#4c5272"}} value = "allr"> 모든 수업 조회</Button>
+        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setResisterStatus(e.target.value)} style={{borderColor:"#4c5272"}} value = "register">등록된 수업 조회</Button>
+        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setResisterStatus(e.target.value)} style={{borderColor:"#4c5272"}} value = "unregister">등록되지 않은 수업 조회</Button>
         </div>
-        <div className="content">
-        <Button className="sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}} value = "course">과목 이름순 정렬</Button>
-        <Button className="sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}} value = "professor">교수 이름순 정렬</Button>
-        <Button className="sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}} value = "professor">등록된 수업 정렬</Button>
-        <Button className="sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}} value = "professor">등록되지 않은 수업 정렬</Button>
+        <br />
+        <div className="showCourse">
+        {sortValue=== "course"?
+        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{borderColor:"#4c5272", backgroundColor:"#b2b6ce"}} value = "professor">교수 이름순 정렬</Button>:
+        <Button button type="button" className="btn btn-light shadow-sm sortCourseBt" onClick={(e)=>setSortValue(e.target.value)} style={{borderColor:"#4c5272", backgroundColor:"#b2b6ce"}} value = "course">과목 이름순 정렬</Button> 
+        }
+        </div>
+        <br />
         <select className="searchOption" onChange={handleSearch}>
             <option value = "byCourseName">과목 이름 검색</option>
             <option value="byCourseCode">과목 코드 검색</option>
@@ -140,8 +148,7 @@ const AdminCourseList = () => {
         <input type="text" className="searchField" placeholder="search" name="search" onChange={(e)=>handleValueChange(e)} value={searchValue} required />
         {renderSearch()}
         </div>
-        <p className="semester">{year}학년 {semester}학기</p>
-        <p className="courseCount">총 {course.length} 개의 수업이 있습니다.</p>
+        <p className="courseCount">총 {courseList.length} 개의 수업이 있습니다.</p>
         <AdminCourse course={courseList}/>
       </div>
   )

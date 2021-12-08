@@ -12,6 +12,7 @@ const AdminCourse = (props) => {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   
+
   let register_status={
     "PENDING" : "등록 대기",
     "DONE" : "등록 완료",
@@ -20,9 +21,9 @@ const AdminCourse = (props) => {
     "PENDING" : "secondary",
     "DONE" : "success",
   }
-  useEffect(()=>{
+  // useEffect(()=>{
 
-  },[])
+  // },[])
 
   async function registerSubject(e){
     let response = await fetch(baseUrl+`/admin/`,{
@@ -44,25 +45,30 @@ const AdminCourse = (props) => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        console.log(currentPage);
+        // console.log(currentPage);
     }
-    const pagedCourses = coursePaginate(course, currentPage, pageSize);
+
+    const pagedCourses = coursePaginate(props.course, currentPage, pageSize);
 
     const courseList = pagedCourses.map((data,index)=>{
+        if(!currentPage){
+          setCurrentPage(1);
+        }
         return(
-              <tr onClick={()=>history.push(`/admin/courses/${data.id}`)}>
+              // <tr onClick={()=>history.push(`/admin/courses/${data.id}`)}>
+              <tr>
               <td>{(currentPage-1)*10+index+1}</td>
               <td>{data.code}</td>
               <td>{data.name}</td>
               <td>{data.professor.name}</td>
-              <td><Badge className="registerStatus" bg={register_status_css[data.registered]}>{register_status[data.registered]}</Badge></td>
               <td><Badge className="registerStatus" bg={register_status_css[data.professor.joined]}>{register_status[data.professor.joined]}</Badge></td>
-              <td><Button className="sortCourseBt" onClick={(e)=>registerSubject(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>과목등록/미등록</Button></td>
+              <td><Badge className="registerStatus" bg={register_status_css[data.registered]}>{register_status[data.registered]}</Badge></td>
+              <td><Button button type="button" className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e)}>수업 등록/미등록</Button></td>
               </tr>
         )
     });
 
-    if(course.length === 0){
+    if(props.course.length === 0){
         return(
         <div className={""}>
             <p>no classes</p>
@@ -70,14 +76,12 @@ const AdminCourse = (props) => {
         );
     }
     else{
-        console.log(currentPage)
         return (
             <div className="content">
               <Table responsive="md">
                 <thead>
                 <tr>
                   <th>#</th>
-                  <th>index</th>
                   <th>과목 코드</th>
                   <th>과목 이름</th>
                   <th>교수 이름</th>
@@ -90,7 +94,7 @@ const AdminCourse = (props) => {
               {courseList}
               </tbody>
               </Table>
-              <CourseFooter itemsCount={course.length} pageSize={pageSize} currentPage={currentPage}
+              <CourseFooter itemsCount={props.course.length} pageSize={pageSize} currentPage={currentPage}
                               onPageChange={handlePageChange} />
             </div>
         );

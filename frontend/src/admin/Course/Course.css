@@ -1,18 +1,32 @@
-h1{
-    margin-top: 4vh;
+.logo{
+    width : 40%;
+    height : 40%;
+    margin-top : 4vh;
     margin-bottom: 4vh;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: cover;
 }
-
+.btn-register{
+  font-size : 0.8rem;
+}
 .box{
     text-align: center;
     background-color: rgb(243, 243, 243);
     height: 91vh;
     overflow: "auto";
   }
-  .content{
+.content{
     display: inline-block;
-    width: 90%;
-  }
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.showCourse{
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+}
   .semester{
     font-size: 35px;
     font-weight: bold;
@@ -38,26 +52,6 @@ h1{
     font-weight: bold;
   }
 
-  .cardbox{
-    border-radius: 1px;
-    display: inline-block;
-    width: 90%;
-    height: 130px;
-    margin-bottom: 2%;
-  }
-  .cardbox:hover{
-    box-shadow: 2px 3px 2px rgba(111, 54, 54, 0.247);
-    cursor:pointer;
-    text-decoration: underline;
-  }
-  .cardline{
-    float: left;
-    margin-top: 0;
-    background-color: rgb(82, 82, 94);
-    width: 12px;
-    height: 100%;
-  }
-  
   .menuLink{
     font-size: 18px;
     color: black;
@@ -69,30 +63,36 @@ h1{
   }
 
 .logout{
-    width : 15vw;
+  font-size: 13px;
+    width : 10vw;
     text-align: center;
     background-color: rgb(243, 243, 243);
     margin-left : 65vw;
-    margin-bottom : 3vh;
     overflow : "auto";
 }
 
 .sortCourseBt{
-    width : 18vw;
-    height : 5vh;
-    text-align: center;
-    background-color: rgb(243, 243, 243);
-    overflow:"auto";
+  margin: 0.7rem;
+  padding: 0.5rem 0.5rem;
+  width : 16vw;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  background-color: rgb(243, 243, 243);
+  display: inline-block;
+  overflow:"auto";
 }
 
 .searchOption{
     width : 18vw;
     height : 5vh;
+    margin : 10px;
 }
 
 .courseSearch{
     width : 18vw;
     height : 5vh;
+    margin : 10px;
 }
 .searchField{
     width : 25vw;
@@ -108,9 +108,7 @@ table.pageCount{
     margin : 20px auto 10px auto;
 }
 
-/* td.active{
-    border : solid 3px #800000	;
-} */
+
 button.page-link{
     border : 0;
     outline : 0;
