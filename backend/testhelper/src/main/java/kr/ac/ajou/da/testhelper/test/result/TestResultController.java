@@ -3,6 +3,7 @@ package kr.ac.ajou.da.testhelper.test.result;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.test.result.dto.GetTestResultResDto;
+import kr.ac.ajou.da.testhelper.test.result.exception.FailedToCreateTestResultExcelException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.core.io.ByteArrayResource;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,20 +32,24 @@ public class TestResultController {
     @AccessTestByProfessor
     public ResponseEntity<ByteArrayResource> getTestResultExcel(@PathVariable Long testId) {
 
-        Workbook workbook = testResultService.getExcel(testId);
+        Workbook workbook = testResultService.createTestResultWorkbook(testId);
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        HttpHeaders header = new HttpHeaders();
+        try{
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            HttpHeaders header = new HttpHeaders();
 
-        header.setContentType(new MediaType("application", "force-download"));
-        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TestResult.xlsx");
+            header.setContentType(new MediaType("application", "force-download"));
+            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TestResult.xlsx");
 
-        workbook.write(stream);
-        workbook.close();
+            workbook.write(stream);
+            workbook.close();
 
-        return ResponseEntity.ok()
-                .headers(header)
-                .body(new ByteArrayResource(stream.toByteArray()));
+            return ResponseEntity.ok()
+                    .headers(header)
+                    .body(new ByteArrayResource(stream.toByteArray()));
+        }catch (IOException ex){
+            throw new FailedToCreateTestResultExcelException();
+        }
     }
 
     @PutMapping("/tests/{testId}/result")
