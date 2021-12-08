@@ -63,7 +63,7 @@ const AdminCourse = (props) => {
               <td>{data.professor.name}({data.professor.email})</td>
               <td><Badge className="registerStatus" bg={register_status_css[data.professor.joined]}>{register_status[data.professor.joined]}</Badge></td>
               <td><Badge className="registerStatus" bg={register_status_css[data.registered]}>{register_status[data.registered]}</Badge></td>
-              <td><Button className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e)}>수업 등록/미등록</Button></td>
+              <td><Button className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e)} disabled={data.professor.joined==="PENDING"}>수업 등록/미등록</Button></td>
               </tr>
         )
     });
