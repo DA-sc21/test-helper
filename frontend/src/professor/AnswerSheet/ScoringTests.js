@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ListGroup , Col, Tab , Row, Image, InputGroup, FormControl, Button, Spinner } from 'react-bootstrap'
+import { ListGroup , Col, Tab , Row, Image, InputGroup, FormControl, Button, Spinner, Pagination } from 'react-bootstrap'
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
@@ -12,8 +12,13 @@ function ScoringTests(props){
   const [score, setScore] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
   const [submissionId, setSubmissionId] = useState("");
+  const [TestAnswerSheetUrl, setTestAnswerSheetUrl] = useState([]);
+  const [TestAnswerSheetImgUrl, setTestAnswerSheetImgUrl] = useState("");
+  const [active, setActive] = useState(1);
+  const [items, setItems] = useState([]);
 
   useEffect(()=>{
+    getTestAnswerSheet();
     getProblems();
   },[]);
 
@@ -75,6 +80,30 @@ function ScoringTests(props){
     setLoading(true); 
   }
 
+  async function getTestAnswerSheet(){
+    let temp = [];
+    let response = await fetch(baseUrl+path+'/answers',{
+      method: 'GET',
+      credentials : 'include',
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        temp=res;
+      })
+      .catch(error => {console.error('Error:', error)});
+
+    let url = [];
+    for(let i =0; i<temp.length; i++){
+      url.push(temp[i].file);
+      if(i==0){
+        setTestAnswerSheetImgUrl(temp[i].file);
+      }
+    }
+    console.log(url);
+    setTestAnswerSheetUrl(url);
+  }
+
   async function enterScore(e,problemNum){
     let response = await fetch(baseUrl+'/submissions/'+submissionId+'/problems/'+problemNum+'/score?score='+state.score,{
         method: 'PUT',
@@ -93,6 +122,12 @@ function ScoringTests(props){
         console.log("response:", res);
       })
       .catch(error => {console.error('Error:', error)});
+  }
+
+  function changeTestAnswerSheet(id){
+    setActive(id+1);
+    setTestAnswerSheetImgUrl(TestAnswerSheetUrl[id]);
+    console.log(TestAnswerSheetUrl[id]);
   }
 	
   return(
@@ -129,11 +164,25 @@ function ScoringTests(props){
 							  return <div>{line}</div>
 							})}
             </span>
-					  <br/>
             {/* <Image className="col-md-5" src={problem.attachedFile} /> */}
-            <Image src={imageUrl} style={{width:"35%", marginTop:"0%"}}/>
-            <Button variant="light" style={{float:"right", marginTop:"43%", color:"black", borderColor:"gray"}} onClick={(e)=>enterScore(e,index+1)}>입력</Button>
-            <InputGroup style={{width:"30%", float:"right", marginTop:"43%"}}>
+            <div style={{float:"right", marginRight:"38%", marginTop:"1%", backgroundColor:"#ffb649", width:"100px", textAlign:"center", padding:"2px", borderRadius:"5px", fontWeight:"bold"}}>시험 답안지</div>
+            <div style={{marginLeft:"13%", marginTop:"1%", backgroundColor:"#59a5fc", width:"100px", textAlign:"center", padding:"2px", borderRadius:"5px", fontWeight:"bold"}}>학생 답안지</div>
+            <div style={{border:"1px solid gray", float:"right", width:"35%", height:"70vh", marginRight:"25%", borderRadius:"5px"}}>
+              <Pagination style={{marginBottom:"0%"}}>
+                {TestAnswerSheetUrl.map((data,idx)=>(
+                  <Pagination.Item key={idx+1} active={idx+1 === active} onClick={()=>changeTestAnswerSheet(idx)}>
+                  {idx+1}
+                </Pagination.Item>
+                ))}
+              </Pagination>
+              {TestAnswerSheetImgUrl != ""? 
+                <Image src={TestAnswerSheetImgUrl} style={{width:"100%", height:"92%", marginTop:"0%"}}/>:
+                <h4 style={{marginTop:"50%", textAlign:"center"}}>등록된 답안이 없습니다.</h4>}
+            </div>
+            <Image src={imageUrl} style={{width:"35%", height:"70vh", marginTop:"0%"}}/>
+              
+            <Button style={{marginTop:"1%", backgroundColor:"#575757", borderColor:"gray"}} onClick={(e)=>enterScore(e,index+1)}>입력</Button>
+            <InputGroup style={{float:"left", width:"30%", marginTop:"1%"}}>
             <InputGroup.Text>점수</InputGroup.Text>
               <FormControl
                 name="score"
