@@ -9,7 +9,7 @@ import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
 import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
-import AdminLogin from './admin/AdminLogin/AdminLogin';
+import AdminLogin from './admin/adminLogin/AdminLogin';
 import AdminCourseList from './admin/Course/CourseList';
 import AdminCourseListSearchByCode from './admin/Course/CourseListSearchByCourseCode';
 import AdminCourseListSearchByCourseName from './admin/Course/CourseListSearchByCourseName';
