@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
 import ApexCharts from 'react-apexcharts';
+import download from "downloadjs";
 
 function TestResult(props){
   let path = props.path;
   const [loading, setLoading] = useState(false);
-  const [testResult, setTestResult] = useState();
+  const [average, setAverage] = useState("");
+  const [max, setMax] = useState("");
+  const [min, setMin] = useState("");
   const [isTestResult, setIsTestResult] = useState(false);
   const [series, setSeries] = useState([]);
-//   const series = [{
-//     data: [70, 90, 15]
-//   }] 
   const options ={
     chart: {
         height: 350,
@@ -27,7 +27,7 @@ function TestResult(props){
     colors: ['#2e5fff', '#ff537e', '#595b6e'],
       plotOptions: {
         bar: {
-          columnWidth: '45%',
+          columnWidth: '40%',
           distributed: true,
         }
       },
@@ -39,9 +39,9 @@ function TestResult(props){
       },
       xaxis: {
         categories: [
-          ["평균값", ],
-          ["최댓값", ],
-          ["최솟값", ]
+          ["평균값", average+"점"],
+          ["최댓값", max+"점"],
+          ["최솟값", min+"점"]
         ],
         labels: {
           style: {
@@ -70,7 +70,10 @@ function TestResult(props){
             alert(res.errorMessage);
           }
         else{ //success
-          setTestResult(res);
+          setIsTestResult(true);
+          setAverage(res.average);
+          setMax(res.max);
+          setMin(res.min);
           let data = [{
             data: [res.average, res.max, res.min]
           }];
@@ -81,13 +84,36 @@ function TestResult(props){
       .catch(error => {console.error('Error:', error)});
   }
 
+  async function downloadTestResultExcel(){
+    fetch(baseUrl+path+"/result/excel",{
+      method: 'GET',
+      credentials : 'include',
+    })
+    .then(res => res.json())
+    .then(res =>{
+      if(res.errorMessage != undefined){ //error
+        alert(res.errorMessage);
+      }
+      else{
+        fetch(baseUrl+path+"/result/excel",{
+          method: 'GET',
+          credentials : 'include',
+        })
+        .then(res => res.blob())
+        .then(blob => download(blob, 'test_result.xlsx'))
+        .catch(error => {console.error('Error:', error)});
+      }
+    })
+  }
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div style={{width:"80%"}}>
       {isTestResult?
         <div>
-          <p style={{marginTop:"2%", fontSize:"27px"}}>시험 결과</p>
-          <div style={{marginTop:"3%", marginLeft:"13%"}}>
+          <Button style={{float:"right", marginRight:"15%", backgroundColor:"#3d4657", borderColor:"#3d4657"}} onClick={()=>downloadTestResultExcel()}>시험 결과 Excel 다운로드</Button>
+          <p style={{marginTop:"3%", fontSize:"29px", marginLeft:"25%"}}>시험 결과</p>
+          <div style={{marginTop:"5%", marginLeft:"10%"}}>
             <ApexCharts options={options} series={series} width={900} type="bar" height={350} />
           </div>
         </div>:

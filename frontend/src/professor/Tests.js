@@ -57,7 +57,7 @@ function Tests(){
     let temp = [];
     console.log(temp);
     for(let i=0; i<data.length; i++){
-      if(data[i].test_status === "ENDED" || data[i].test_status === "MARK"){
+      if(data[i].test_status === "ENDED" || data[i].test_status === "MARK" || data[i].test_status === "GRADED"){
         temp.push(data[i]);
       }
     }
