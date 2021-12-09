@@ -32,6 +32,14 @@ public enum TestResultWorkbookHeader {
     },
     PROBLEM_SCORE(3, "문제별 점수") {
         @Override
+        public void resolveHeader(Row row, Test test) {
+            for(int i =0; i<test.getProblems().size(); i++){
+                row.createCell(this.getColumn()+i)
+                        .setCellValue(test.getProblems().get(i).getQuestion());
+            }
+        }
+
+        @Override
         void resolveRow(Row row, Submission submission) {
             for(int i =0; i<submission.getAnswers().size(); i++){
                 row.createCell(this.getColumn()+i)
@@ -48,7 +56,7 @@ public enum TestResultWorkbookHeader {
     }
 
     public void resolveHeader(Row row, Test test){
-
+        row.createCell(this.getColumn()).setCellValue(this.getHeaderName());
     }
 
     abstract void resolveRow(Row row, Submission submission);

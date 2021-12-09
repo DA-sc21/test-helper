@@ -4,16 +4,13 @@ import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.test.result.dto.GetTestResultResDto;
 import kr.ac.ajou.da.testhelper.test.result.exception.FailedToCreateTestResultExcelException;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
@@ -31,24 +28,22 @@ public class TestResultController {
 
     @GetMapping("/tests/{testId}/result/excel")
     @AccessTestByProfessor
-    public ResponseEntity<ByteArrayResource> getTestResultExcel(@PathVariable Long testId) {
+    public void getTestResultExcel(@PathVariable Long testId,
+                                   HttpServletResponse response) {
 
         Workbook workbook = testResultService.createTestResultWorkbook(testId);
 
-        try{
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            HttpHeaders header = new HttpHeaders();
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;");
 
-            header.setContentType(new MediaType("application", "force-download"));
-            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TestResult.xlsx");
-
-            workbook.write(stream);
+        try {
+            workbook.write(response.getOutputStream());
             workbook.close();
 
-            return ResponseEntity.ok()
-                    .headers(header)
-                    .body(new ByteArrayResource(stream.toByteArray()));
-        }catch (IOException ex){
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+
+        } catch (IOException ex) {
             throw new FailedToCreateTestResultExcelException();
         }
     }
