@@ -11,6 +11,7 @@ const AdminCourse = (props) => {
   const [course, setCourse] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isInfoShown, setIsInfoShown] = useState(false);
   const [show, setShow] = useState(false);
   const [id, setId] = useState(0);
   const handleClose = () => setShow(false);
@@ -136,7 +137,13 @@ const AdminCourse = (props) => {
                   <th>교수자 등록 상태</th>
                   <th>조교 등록 상태</th>
                   <th>수업 등록 상태 </th>
-                  <th>수업 등록 상태 변경</th>
+                  <th onMouseEnter={() => setIsInfoShown(true)}
+                      onMouseLeave={() => setIsInfoShown(false)}>수업 등록 상태 변경
+                      {isInfoShown && (
+                       <div className={"divRegister"}>
+                         교수자, 조교 모두 등록 시 수업 등록/미등록이 가능합니다.
+                      </div>
+                  )}</th>
               </tr>
               </thead>
               <tbody>
