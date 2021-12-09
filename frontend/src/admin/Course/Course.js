@@ -65,7 +65,7 @@ const AdminCourse = (props) => {
       .then( res => {
         console.log("response:", res);
         if(res.status === 200){
-          alert(`${registerCourse.name} 과목을 등록하였습니다.`);
+          alert(`${registerCourse.name} 수업을 등록하였습니다.`);
           const result = allCourse.map((data)=>{
               if(data.id == id){
                 data.registered = "DONE";
@@ -76,7 +76,7 @@ const AdminCourse = (props) => {
           props.change(result);
         }
         else{
-          alert(`${registerCourse.name} 과목 추가에 실패하였습니다.`);
+          alert(`${registerCourse.name} 수업 추가에 실패하였습니다.`);
         }
       })
       .catch(error => {
@@ -95,7 +95,7 @@ const AdminCourse = (props) => {
       .then( res => {
         console.log("response:", res);
         if(res.result){
-          alert(`${registerCourse.name} 과목을 등록 취소하였습니다.`)
+          alert(`${registerCourse.name} 수업을 등록 취소하였습니다.`)
           const result = allCourse.map((data)=>{
             if(data.id == id){
               data.registered = "PENDING";
@@ -107,7 +107,7 @@ const AdminCourse = (props) => {
           // document.location.href="/admin/courses";
         }
         else if(res.errorMessage){
-          alert(`${registerCourse.name} 과목은 시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.`);
+          alert(`${registerCourse.name} 수업은 시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.`);
         }
       })
       .catch(error => {
