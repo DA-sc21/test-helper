@@ -86,9 +86,14 @@ const AdminCourse = (props) => {
     }
 
     else{
-      // DELETE, PUT은 local에서 preflight 오류 
-      let response = await fetch(baseUrl+`/admin/classes/delete/`+id,{
-        method: 'POST',
+      // DELETE, PUT은 local에서 preflight 오류 local 용
+      // let response = await fetch(baseUrl+`/admin/classes/delete/`+id,{
+      //   method: 'POST',
+      //   credentials : 'include'
+      // })
+      //server 용 
+      let response = await fetch(baseUrl+`/admin/classes/`+id,{
+        method: 'DELETE',
         credentials : 'include'
       })
       .then(res=>res.json())
