@@ -32,6 +32,12 @@ const AdminCourseList = () => {
     sortCourse(sortValue);
   },[])
 
+  const enterEvent = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(e.target.value);
+    }
+  };
+
   function getDate(){
     let now = new Date();
     let year = now.getFullYear();
@@ -157,7 +163,7 @@ const AdminCourseList = () => {
             <option value="byCourseCode">과목 코드 검색</option>
             <option value="byProfessorName">교수 이름 검색</option>
          </select>
-        <input type="text" className="searchField" placeholder="search" name="search" onChange={(e)=>handleValueChange(e)} value={searchValue} required />
+        <input type="text" className="searchField" placeholder="search" name="search" onChange={(e)=>handleValueChange(e)} value={searchValue} onKeyPress={(e) => enterEvent(e)} required />
         <Button className={"btn btn-secondary search"} onClick={(e)=>{handleSearch(e.target.value)}} style={{borderColor:"#4c5272"}} value = "professor">search</Button>
         <br />
         <div className="showCourse">

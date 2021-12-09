@@ -39,7 +39,17 @@
   box-shadow: 5px 3px 3px;
 
 }
-
+.divRegister{
+  font-size : 13px;
+  color : blueviolet;
+}
+.showModal{
+  cursor: pointer
+}
+.assList{
+  font-size : 18px;
+  margin-bottom:10px;
+}
   .semester{
     font-size: 35px;
     font-weight: bold;
