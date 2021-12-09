@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.student;
 
 import java.sql.SQLException;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,5 +17,8 @@ public interface StudentMapper {
 
 	@Insert("INSERT INTO STUDENT (name, student_num, email, course_id) VALUES ('${name}', '${studentNum}', '${email}', ${courseId})")
 	void createStudent(@Param("name") String name, @Param("studentNum") String studentNum, @Param("email") String email, @Param("courseId") Long courseId);
-	
+
+	@Delete("DELETE FROM STUDENT WHERE course_id = ${courseId}")
+	void deleteStudentByCourseId(@Param("courseId") Long courseId);
+
 }

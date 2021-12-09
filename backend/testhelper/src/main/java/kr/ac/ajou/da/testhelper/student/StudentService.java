@@ -16,4 +16,8 @@ public class StudentService {
 		studentMapper.createStudent(name, studentNum, email, courseId);
 	}
 
+	public void deleteByCourseId(Long courseId) {
+		studentMapper.deleteStudentByCourseId(courseId);
+	}
+
 }
