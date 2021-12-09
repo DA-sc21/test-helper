@@ -134,6 +134,21 @@ function TestCard(props){
       });
   }
 
+  function scoringTest(status){
+    console.log(status)
+    if(status!="ENDED" && status!="MARK", status!="GRADED"){
+      alert("시험이 종료되지 않아 채점할 수 없습니다.");
+    }
+    else{
+      history.push({
+        pathname:`/tests/${props.test.id}/unscored`,
+        state:{
+          testName: props.test.name
+        }
+      })
+    }
+  }
+
   return(
     <div className="col-md-4">
       <Card>
@@ -160,7 +175,7 @@ function TestCard(props){
             <>
             <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}}>문제출제</Button>
             <Button className="col-md-4" style={{backgroundColor:"#3e4450", borderColor:"#3e4450"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
-            <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}}>채점하기</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}} onClick={()=>scoringTest(props.test.test_status)}>채점하기</Button>
             </>}
           </div>
         </Card.Body>
