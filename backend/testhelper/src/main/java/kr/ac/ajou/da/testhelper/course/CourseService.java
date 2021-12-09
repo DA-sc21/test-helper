@@ -73,7 +73,8 @@ public class CourseService {
     
     @Transactional
     public Course getCourseByCode(String code) {
-    	return courseRepository.getByCode(code);
+    	return courseRepository.getByCode(code)
+    			.orElseThrow(CourseNotFoundException::new);
 	}
     
     @Transactional
