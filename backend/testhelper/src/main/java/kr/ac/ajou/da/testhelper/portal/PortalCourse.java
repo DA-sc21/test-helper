@@ -72,4 +72,8 @@ public class PortalCourse {
 		this.registered = registered;
 		this.students = students;
 	}
+
+	public void updateRegistered(PortalStatus status) {
+		this.setRegistered(status);
+	}
 }
