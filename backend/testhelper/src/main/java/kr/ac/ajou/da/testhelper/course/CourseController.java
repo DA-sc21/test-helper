@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -62,5 +63,11 @@ public class CourseController {
         Set<Account> assistants = courseService.getCourseAssistantsById(courseId);
 
         return ResponseEntity.ok().body(assistants.stream().map(AssistantDto::new).collect(Collectors.toList()));
+    }
+    
+    @PostMapping("/admin/classes/{courseId}")
+    public ResponseEntity<BooleanResponse> postCourse(@PathVariable Long courseId) {
+    	courseService.createCourse(courseId);
+    	return ResponseEntity.ok().body(BooleanResponse.TRUE);
     }
 }
