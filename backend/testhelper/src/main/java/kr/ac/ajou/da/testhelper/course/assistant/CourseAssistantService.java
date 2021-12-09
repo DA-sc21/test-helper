@@ -14,5 +14,9 @@ public class CourseAssistantService {
 	public void createCourseAssistant(Long accountId, Long courseId) {
 		courseAssistantMapper.createCourseAssistant(accountId, courseId);
 	}
+
+	public void deleteCourseAssistantByCourseId(Long courseId) {
+		courseAssistantMapper.deleteByCourseId(courseId);
+	}
 	
 }
