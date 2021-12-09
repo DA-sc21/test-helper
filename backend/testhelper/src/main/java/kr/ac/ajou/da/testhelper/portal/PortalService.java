@@ -30,8 +30,8 @@ public class PortalService {
 	}
 
 	@Transactional
-	public void updatePortalRegistered(PortalCourse portal) {
-		portal.updateRegistered(PortalStatus.DONE);
+	public void updatePortalRegistered(PortalCourse portal, PortalStatus status) {
+		portal.updateRegistered(status);
 	}
 
 }

@@ -16,8 +16,10 @@ import kr.ac.ajou.da.testhelper.student.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Set;
@@ -75,8 +77,8 @@ public class CourseService {
 	}
     
     @Transactional
-    public void updatePortalRegistered(PortalCourse portal) {
-    	portalService.updatePortalRegistered(portal);
+    public void updatePortalRegistered(PortalCourse portal, PortalStatus status) {
+    	portalService.updatePortalRegistered(portal, status);
 	}
 
     @Transactional
@@ -96,7 +98,35 @@ public class CourseService {
     		studentService.createStudent(portalStudent.getName(), portalStudent.getStudentNum(), portalStudent.getEmail(), course.getId());
     	}
     	
-    	updatePortalRegistered(portal);
+    	updatePortalRegistered(portal, PortalStatus.DONE);
 	}
-	
+    
+    @Transactional
+    public void deleteStudent(Long courseId) {
+    	studentService.deleteByCourseId(courseId);
+	}
+    
+    @Transactional
+    public void deleteAssistant(Long courseId) {
+    	courseAssistantService.deleteCourseAssistantByCourseId(courseId);
+	}
+    
+    @Transactional
+    public void deleteCourse(Course course) {
+    	courseRepository.delete(course);
+	}
+
+    @Transactional
+	public void deleteCourse(Long courseId) {
+		PortalCourse portal = getPortalCourseById(courseId);
+		Course course = getCourseByCode(portal.getCode());
+		if(course.getTests().size() != 0) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.");
+		}
+		deleteStudent(course.getId());
+		deleteAssistant(course.getId());
+		deleteCourse(course);
+		updatePortalRegistered(portal, PortalStatus.PENDING);
+	}
+
 }

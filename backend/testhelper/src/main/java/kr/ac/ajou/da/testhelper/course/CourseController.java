@@ -11,6 +11,7 @@ import kr.ac.ajou.da.testhelper.course.dto.PutCourseAssistantReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,6 +69,12 @@ public class CourseController {
     @PostMapping("/admin/classes/{courseId}")
     public ResponseEntity<BooleanResponse> postCourse(@PathVariable Long courseId) {
     	courseService.createCourse(courseId);
+    	return ResponseEntity.ok().body(BooleanResponse.TRUE);
+    }
+    
+    @DeleteMapping("/admin/classes/{courseId}")
+    public ResponseEntity<BooleanResponse> deleteCourse(@PathVariable Long courseId) {
+    	courseService.deleteCourse(courseId);
     	return ResponseEntity.ok().body(BooleanResponse.TRUE);
     }
 }
