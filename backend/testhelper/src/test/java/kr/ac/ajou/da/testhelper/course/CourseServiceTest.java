@@ -3,7 +3,11 @@ package kr.ac.ajou.da.testhelper.course;
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.account.AccountService;
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
+import kr.ac.ajou.da.testhelper.course.assistant.CourseAssistantService;
 import kr.ac.ajou.da.testhelper.course.exception.CourseNotFoundException;
+import kr.ac.ajou.da.testhelper.portal.PortalService;
+import kr.ac.ajou.da.testhelper.student.StudentService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,12 +32,28 @@ class CourseServiceTest {
 
     @Mock
     private AccountService accountService;
+    
+    @Mock
+    private PortalService portalService;
+    
+    @Mock
+    private CourseAssistantService courseAssistantService;
+    
+    @Mock
+    private CourseMapper courseMapper;
+    
+    @Mock
+    private StudentService studentService;
 
     @BeforeEach
     void init() {
         courseRepository = mock(CourseRepository.class);
         accountService = mock(AccountService.class);
-        courseService = new CourseService(courseRepository, accountService);
+        portalService = mock(PortalService.class);
+        courseAssistantService = mock(CourseAssistantService.class);
+        courseMapper = mock(CourseMapper.class);
+        studentService = mock(StudentService.class);
+        courseService = new CourseService(courseRepository, accountService, portalService, courseAssistantService, courseMapper, studentService);
     }
 
     @Test
