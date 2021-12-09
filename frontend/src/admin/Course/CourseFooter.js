@@ -18,10 +18,10 @@ const CourseFooter= (props) => {
             alert("관리자 로그인 후 사용 가능합니다.");
             document.location.href="/admin";
         }
-        setItemsCount(props.itemsCount);
-        setPageSize(props.pageSize);
-        setCurrentPage(props.currentPage);
-        setOnPageChange(props.onPageChange);
+        // setItemsCount(props.itemsCount);
+        // setPageSize(props.pageSize);
+        // setCurrentPage(props.currentPage);
+        // setOnPageChange(props.onPageChange);
         setActivePage(1);
       },[])
 
