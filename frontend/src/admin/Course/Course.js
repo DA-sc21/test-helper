@@ -62,7 +62,7 @@ const AdminCourse = (props) => {
         history.push("/admin/courses");
       }
       else{
-        alert("과목 추가 버튼이 비활성되었습니다.");
+        alert("과목 등록에 실패하였습니다.");
       }
     })
     .catch(error => {console.error('Error:', error)});
