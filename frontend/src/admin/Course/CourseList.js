@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button} from 'react-bootstrap';
-import { useHistory, Link } from 'react-router-dom';
-import axios from 'axios';
+import { Button} from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
 import AdminCourse from './Course';
@@ -81,7 +80,7 @@ const AdminCourseList = () => {
     return sortValue===status ? "secondary" : "outline-primary"  
   }
   function imageClick(e){
-  document.location.href="/admin/courses";
+    setCourse(allCourse);
   }
 
   function handleSearchOption(e){
@@ -180,7 +179,7 @@ const AdminCourseList = () => {
         <br />
         </div>
         <p className="courseCount">총 {course.length} 개의 수업이 있습니다.</p>
-        <AdminCourse course={course}/>
+        <AdminCourse course={course} change={setAllCourse}/>
       </div>
   )
 }
