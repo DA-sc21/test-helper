@@ -28,12 +28,16 @@ class TestResultServiceTest {
     @Mock
     private TestGradeSender testGradeSender;
 
+    @Mock
+    private TestResultWorkbookResolver testResultWorkbookResolver;
+
     @BeforeEach
     void init() {
         testService = mock(TestService.class);
         testResultRepository = mock(TestResultRepository.class);
         testGradeSender = mock(TestGradeSender.class);
-        testResultService = new TestResultService(testService, testResultRepository, testGradeSender);
+        testResultWorkbookResolver = mock(TestResultWorkbookResolver.class);
+        testResultService = new TestResultService(testService, testResultRepository, testGradeSender, testResultWorkbookResolver);
     }
 
     @Test
