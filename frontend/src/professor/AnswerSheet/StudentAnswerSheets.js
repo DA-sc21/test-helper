@@ -119,7 +119,7 @@ function StudentAnswerSheets(props){
         <span style={{marginRight:"0%", float:"right"}}>제출/채점 여부</span>
       </div>
       {students.map((data,idx)=>{
-      return <StudentList key={idx} student={data.student} submitted={data.submitted} path={path}/>; })}
+      return <StudentList key={idx} student={data.student} submitted={data.submitted} path={path} getStudentList={getStudentList}/>; })}
     </>:
     <div>
       <h2 style={{marginRight:"15%", marginTop:"10%"}}>정보를 불러오는 중입니다.</h2>
@@ -160,8 +160,9 @@ function StudentList(props){
     .then((res) => res.json())
     .then((res) => {
       if(res.result === true){
+        props.getStudentList();
         alert("채점이 완료되었습니다.");
-        history.push(path+'/unscored');
+        // history.push(path+'/unscored/students');
         handleClose();
       }
       else{
