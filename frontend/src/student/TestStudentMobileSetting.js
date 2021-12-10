@@ -28,6 +28,7 @@ function TestStudentMobileSetting(props){
   let [submitted,setSubmitted]=useState(false)
   let startTime=props.test.startTime;
   let endTime=props.test.endTime;
+  const [isTestEnded, setIsTestEnded] = useState(false);
 
 
   useInterval(() => {
@@ -44,6 +45,7 @@ function TestStudentMobileSetting(props){
     "submitted": "DONE"
   }
   async function putSubmitted(){
+    setIsTestEnded(true);
     let response = await fetch(baseUrl+ "/tests/"+testId+'/students/'+studentId+'/submissions/submitted',{
       method:"PUT",
       credentials : 'include',
@@ -87,7 +89,8 @@ function TestStudentMobileSetting(props){
           secretAccessKey= {credentials.secretAccessKey}  
           channelName = {room.id}
           clientId = {id} 
-          sessionToken = {credentials.sessionToken} />
+          sessionToken = {credentials.sessionToken} 
+          isEnded = {isTestEnded}/>
         <div className="container">
           {!ended?
           <div className="row">
