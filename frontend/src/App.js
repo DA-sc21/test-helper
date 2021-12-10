@@ -9,14 +9,18 @@ import SignUp from './professor/SignUp/SignUp';
 import Login from './professor/Login/Login';
 import Course from './professor/Course/Course';
 import CourseInfo from './professor/Course/CourseInfo';
+import AdminLogin from './admin/adminLogin/AdminLogin';
+import AdminCourseList from './admin/Course/CourseList';
 import UnscoredTest from './professor/AnswerSheet/UnscoredTests';
 
 function App() {
-  let isAuthorized = localStorage.getItem("isAuthorized");
+  let isAuthorized = sessionStorage.getItem("isAuthorized");
   return (
     <div className="App">
       <Switch>
         <Route path="/tests/:testId/students/:studentId" component={TestStudentPre} />
+        <Route exact path="/admin/courses" component={AdminCourseList} />
+        <Route path="/admin" component= {AdminLogin} />
         <>
           {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
           <Route path="/signup" component={SignUp} />

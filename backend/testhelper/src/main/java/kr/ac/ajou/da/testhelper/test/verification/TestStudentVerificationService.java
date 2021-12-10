@@ -75,6 +75,7 @@ public class TestStudentVerificationService {
         return true;
     }
 
+    @Transactional
     public VerificationStatus verification(Long testId, Long studentId) throws SQLException {
 
         Submission submission = submissionService.getByTestIdAndStudentId(testId, studentId);
