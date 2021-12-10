@@ -88,7 +88,7 @@ function Test(props){
     setLoading(true);
   }
   async function submitForm(e){
-    if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
+    if(state.startTime===undefined||state.endTime===undefined||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
     // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
@@ -350,7 +350,7 @@ const CheckTestInfo = (props) => {
 
   async function submitForm(e){;
     console.log(state.startTime,state.endTime,state.type,checkList)
-    if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
+    if(state.startTime===undefined||state.endTime===undefined||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
     // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
@@ -388,24 +388,10 @@ const CheckTestInfo = (props) => {
           history.push(props.path+'/tests');
         }
         console.log("response:", res);
-        console.log(res.result);
-        console.log(res.errorMessage);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-      // .then( res => {
-      //   console.log("response:", res);
-      //   if(res.status === 200){
-      //       alert("시험 정보가 수정되었습니다.");
-      //       setShow2(false);
-      //       history.push(props.path+'/tests');
-      //   }
-      //   else{
-      //     alert("시험 정보 수정에 실패했습니다.");
-      //   }
-      // })
-      // .catch(error => {console.error('Error:', error)});
     }
   }
 
