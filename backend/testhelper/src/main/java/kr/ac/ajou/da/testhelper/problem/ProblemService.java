@@ -47,7 +47,7 @@ public class ProblemService {
 		if(existsByTestIdAndProblemNum(test.getId(), reqDto.getProblemNum())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "문제가 이미 존재합니다.");
 		}
-		Problem problem = new Problem(reqDto.getProblemNum(), testId, reqDto.getQuestion(), reqDto.getPoint(), reqDto.getAttachedFile());
+		Problem problem = new Problem(reqDto.getProblemNum(), test, reqDto.getQuestion(), reqDto.getPoint(), reqDto.getAttachedFile());
 		createProblem(problem);
 		return true;
 	}
