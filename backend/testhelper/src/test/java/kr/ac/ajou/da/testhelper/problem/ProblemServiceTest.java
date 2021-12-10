@@ -24,6 +24,9 @@ class ProblemServiceTest {
 	@Mock
 	private ProblemRepository problemRepository;
 	
+	@Mock
+	private ProblemMapper problemMapper;
+	
 	private final Problem problem = new Problem(1L, 1L, 1L, "1+1", 20L, null);
     private final List<Problem> problems = new LinkedList<>();
     private final long testId = 1L;
@@ -31,7 +34,8 @@ class ProblemServiceTest {
     @BeforeEach
 	void setup() {
 		problemRepository = mock(ProblemRepository.class);
-		problemService = new ProblemService(problemRepository);		
+		problemMapper = mock(ProblemMapper.class);
+		problemService = new ProblemService(problemRepository, problemMapper);		
 		problems.add(problem);
 	}
 	
