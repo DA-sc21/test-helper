@@ -18,8 +18,7 @@ function Tests(){
     getTests();
   },[]);
 
-  let accountId=1;
-  let testStatus='"Mark"';
+  let testStatus='ALL';
 
   async function getTests(){
     await axios
@@ -158,7 +157,9 @@ function TestCard(props){
               }
             })}>채점하기</Button>: 
             <>
-            <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}}>문제출제</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
+              pathname: "/tests/"+props.test.id+"/problems",
+              })}}>문제출제</Button>
             <Button className="col-md-4" style={{backgroundColor:"#3e4450", borderColor:"#3e4450"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
             <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}}>채점하기</Button>
             </>}

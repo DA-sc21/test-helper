@@ -37,7 +37,7 @@ public class ExamineeService implements UserDetailsService {
         //TODO : batch insert 방법 찾아보기
         List<Student> students = test.getCourse().getStudents();
         List<Account> supervisor = new ArrayList<>(test.getAssistants());
-        supervisor.add(test.getCourse().getProfessor());
+        // supervisor.add(test.getCourse().getProfessor());
         List<Examinee> examinees = new LinkedList<>();
 
         for(int i = 0; i<students.size(); i++){

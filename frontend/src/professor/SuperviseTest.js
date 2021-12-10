@@ -124,12 +124,22 @@ function SuperviseTest(props){
 
   async function exitTest(e){
     history.push('/tests');
-    await axios
-    .put(baseUrl+'/tests/'+testId+'/status?status=ENDED',{withCredentials : true})
-    .then((result)=>{
-      console.log(result.data);
+    let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
+      method: 'PUT',
+      credentials : 'include',
     })
-    .catch(()=>{ console.log("실패") })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
+
+    // await axios
+    // .put(baseUrl+'/tests/'+testId+'/status?status=ENDED',{withCredentials : true})
+    // .then((result)=>{
+    //   console.log(result.data);
+    // })
+    // .catch(()=>{ console.log("실패") })
   }
 
   if(!loading)return(<Loading></Loading>)
@@ -174,6 +184,8 @@ function StudentCard(props){
   let {testId} = useParams();
   let [studentCard,setStudentCard] = useState("");
   let [face,setface] = useState("");
+  let [capture_1,setcapture_1] = useState("");
+  let [answer_1,setanswer_1] = useState("");
   let verification_status_options={
     "REJECTED" : "거절",
     "PENDING" : "보류",
@@ -197,6 +209,8 @@ function StudentCard(props){
   function getIdentificationImgae(e){
     getimages("student_card",setStudentCard);
     getimages("face",setface);
+    getimages("capture_1",setcapture_1);
+    getimages("answer_1",setanswer_1);
   }
   async function getimages(target,setfunc){
     testId=String(testId).padStart(5,"0");
@@ -237,6 +251,17 @@ function StudentCard(props){
                 <Accordion.Body>
                   <Image className="col-md-5" style={{height:"270px", width:"290px", marginRight:"1.5%"}} src={studentCard} />
                   <Image className="col-md-5" style={{height:"270px", width:"290px", marginLeft:"1.5%"}} src={face} />
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </div>
+          <div className="row">
+          <Accordion>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header><Button style={{backgroundColor:"#ffffff00", color:"black", borderColor:"#61dafb00", outline:"0", fontWeight:"bold", width:"100%", textAlign:"left"}} onClick={(e)=>getIdentificationImgae(e)}>답안지 제출 사진</Button></Accordion.Header>
+                <Accordion.Body>
+                  <Image className="col-md-5" style={{height:"270px", width:"290px", marginRight:"1.5%"}} src={capture_1} />
+                  <Image className="col-md-5" style={{height:"270px", width:"290px", marginLeft:"1.5%"}} src={answer_1} />
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>

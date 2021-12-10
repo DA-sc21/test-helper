@@ -33,7 +33,8 @@ const Viewer = (props) => {
   moment.locale('ko')
   let options = {mimeType:'video/webm; codecs=vp9'};
   let {testId, studentId} = useParams();
-  let videoRecoder = null;
+  const [videoRecoder, setVideoRecorder] = useState(null);
+  //let videoRecoder = null;
   let cnt = 0;
   let captureId = null;
   const localView = useRef(null);
@@ -58,6 +59,13 @@ const Viewer = (props) => {
     console.log(props);
     startPlayerForViewer(props);
   }, []);
+
+  useEffect(()=>{
+    if(videoRecoder){
+      videoRecoder.start();
+      console.log(videoRecoder);
+    }
+  },[videoRecoder]);
 
   useInterval(() => {
     let currentTime = moment().format("YYYY-MM-DD HH:mm:ss"); //현재 시간
@@ -287,11 +295,14 @@ const Viewer = (props) => {
   
     viewer.signalingClient.on('open', async () => {
       console.log('[VIEWER] Connected to signaling service');
+      let record=null;
       navigator.mediaDevices.getUserMedia(constraints)
       .then(function(stream) {
-      videoRecoder = new MediaRecorder(stream,options);
-      videoRecoder.start(); //start recording video
-      console.log(videoRecoder);
+      record = new MediaRecorder(stream,options);
+      setVideoRecorder(record);
+      //videoRecoder.start();
+      //videoRecoder.start(); //start recording video
+      //console.log(videoRecoder);
       })
 
       // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
