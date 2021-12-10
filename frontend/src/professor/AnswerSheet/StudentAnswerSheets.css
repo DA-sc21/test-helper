@@ -13,10 +13,19 @@
 .studentName{
   font-size: 18px;
 }
-.scoringStatus{
+/* .scoringStatus{
   float: right;
   font-size: 15px;
   font-weight: 100;
+} */
+.scoringStatus{
+  float: right;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 4px;
+  padding-left: 5.5px;
+  padding-right: 5.5px;
+  font-weight: bold;
 }
 .scoringBt{
   width: 100%;
