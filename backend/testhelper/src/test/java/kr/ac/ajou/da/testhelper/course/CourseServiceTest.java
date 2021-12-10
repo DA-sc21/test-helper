@@ -9,6 +9,7 @@ import kr.ac.ajou.da.testhelper.portal.PortalService;
 import kr.ac.ajou.da.testhelper.student.StudentService;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -157,4 +158,22 @@ class CourseServiceTest {
         assertEquals(1, course.getAssistants().size());
         assertTrue(course.getAssistants().contains(assistant));
     }
+    
+    @Test
+    void getCourseByCode_success() {
+    	//given
+    	String code = "F000";
+    	Course expectedCourse = DummyFactory.createCourse();
+    	
+    	when(courseRepository.getByCode(anyString())).thenReturn(Optional.of(expectedCourse));
+
+        //when
+    	Course actualCourse = courseService.getCourseByCode(code);
+
+        //then
+    	verify(courseRepository, times(1)).getByCode(anyString());
+    	assertEquals(expectedCourse, actualCourse);
+    }
+    
+
 }
