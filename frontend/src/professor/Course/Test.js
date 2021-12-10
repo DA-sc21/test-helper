@@ -91,10 +91,6 @@ function Test(props){
     if(state.startTime===undefined||state.endTime===undefined||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
-    //   //현재시간>=시작시간 or 시작시간>=종료시간
-    //   alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
-    // }
     else{
       let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
       let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
@@ -159,7 +155,7 @@ function Test(props){
         {midterm.length !=0 ? midterm.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path}/>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
             </Card.Body>
           </Card>
         )):
@@ -174,7 +170,7 @@ function Test(props){
         {final.length != 0 ? final.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path}/>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
             </Card.Body>
           </Card>
         )):
@@ -189,7 +185,7 @@ function Test(props){
         {quiz.length !=0 ? quiz.map((data,idx)=>(
           <Card key={idx} className="testCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path}/>
+              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path} getTest={getTest} />
             </Card.Body>
           </Card>
         )):
@@ -353,10 +349,6 @@ const CheckTestInfo = (props) => {
     if(state.startTime===undefined||state.endTime===undefined||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
-    //   //현재시간>=시작시간 or 시작시간>=종료시간
-    //   alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
-    // }
     else{
       let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
       let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
@@ -383,9 +375,10 @@ const CheckTestInfo = (props) => {
           alert(res.errorMessage);
         }
         else{ //success
+          props.getTest();
           alert("시험 정보가 수정되었습니다.");
           setShow2(false);
-          history.push(props.path+'/tests');
+          // history.push(props.path+'/tests');
         }
         console.log("response:", res);
       })
