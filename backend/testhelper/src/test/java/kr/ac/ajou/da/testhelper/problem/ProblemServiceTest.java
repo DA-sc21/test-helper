@@ -12,13 +12,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+
+import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
 
 class ProblemServiceTest {
 	
@@ -31,7 +33,8 @@ class ProblemServiceTest {
 	@Mock
 	private ProblemMapper problemMapper;
 	
-	private final Problem problem = new Problem(1L, 1L, 1L, "1+1", 20L, null);
+	private final Problem problem = new Problem(1L, 1L, DummyFactory.createTest(), "1+1", 20L, null);
+
     private final List<Problem> problems = new LinkedList<>();
     private final long testId = 1L;
 	

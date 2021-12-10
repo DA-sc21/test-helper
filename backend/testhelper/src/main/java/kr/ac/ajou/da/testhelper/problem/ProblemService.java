@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.problem;
 
 import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import kr.ac.ajou.da.testhelper.problem.exception.ProblemNotFoundException;
+import kr.ac.ajou.da.testhelper.test.Test;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProblemService {
-	
+
 	private final ProblemRepository problemRepository;
+
 	private final ProblemMapper problemMapper;
-	
+
 	@Transactional
     public List<Problem> getByTestId(Long testId) {
 
@@ -40,8 +42,9 @@ public class ProblemService {
 	}
 
 	@Transactional
-	public boolean postTestProblem(Long testId, TestProblemReqDto reqDto) {
-		if(existsByTestIdAndProblemNum(testId, reqDto.getProblemNum())) {
+	public boolean postTestProblem(Test test, TestProblemReqDto reqDto) {
+
+		if(existsByTestIdAndProblemNum(test.getId(), reqDto.getProblemNum())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "문제가 이미 존재합니다.");
 		}
 		Problem problem = new Problem(reqDto.getProblemNum(), testId, reqDto.getQuestion(), reqDto.getPoint(), reqDto.getAttachedFile());
