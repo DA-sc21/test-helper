@@ -179,7 +179,7 @@ const AdminCourse = (props) => {
       let ass = assistant.filter((data)=>data.id === id)[0];
       // console.log(ass);
         return (
-            <div className="content">
+            <div className="adminContent">
               <Table responsive="md">
                 <thead>
                 <tr>
