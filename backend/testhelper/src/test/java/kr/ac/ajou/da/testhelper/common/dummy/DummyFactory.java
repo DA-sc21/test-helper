@@ -3,6 +3,7 @@ package kr.ac.ajou.da.testhelper.common.dummy;
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.account.definition.AccountRole;
 import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.problem.Problem;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.Test;
@@ -52,4 +53,8 @@ public class DummyFactory {
     public static Submission createSubmission(TestStatus testStatus) {
         return new Submission(1L, createStudent(), createTest(testStatus), 1L);
     }
+
+	public static Problem createProblem() {
+		return new Problem(1L, 1L, 1L, "question", 1L, "file");
+	}
 }
