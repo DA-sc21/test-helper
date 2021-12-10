@@ -15,8 +15,8 @@ function NavBar(){
       console.log("response:", res);
       if(res.status === 200){
         alert("로그아웃 되었습니다.");
-        localStorage.removeItem('isAuthorized');
-        localStorage.clear();
+        sessionStorage.removeItem('isAuthorized');
+        sessionStorage.clear();
         history.push("/login");
       }
       else{
