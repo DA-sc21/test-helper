@@ -20,7 +20,7 @@ function TestStudentIdentification(props){
     testId=String(testId).padStart(5,"0")
     
     await axios
-      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg')
+      .get(baseUrl+'/s3-download-url?objectKey=test/'+testId+'/submission/'+studentNum+'/'+target+'.jpg',{withCredentials : true})
       .then((result)=>{
         setImagepath(result.data)
       })
@@ -30,8 +30,8 @@ function TestStudentIdentification(props){
   return(
     <div className="m-5 p-5"> 
       <div className="row">
-          <img src={studentCard} className="col-md-6" alt="studentCard" />
-          <img src={face} className="col-md-6" alt="face"/>
+          <img src={studentCard} style={{width:"18%", height:"28vh",marginLeft:"30%"}} alt="studentCard" />
+          <img src={face} style={{width:"18%", height:"28vh",marginLeft:"5%"}} alt="face"/>
       </div>
       <div className="row m-5">
         <Button className="" variant="info" onClick={()=>{
@@ -47,11 +47,14 @@ function TestStudentIdentification(props){
   )
 }
 async function Identification(testId,studentId,setIdentificationResult){
-  await axios
-    .post(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification')
+  let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification',{
+    method : 'POST',
+    credentials : 'include',
+  })
+  .then((res)=>res.text())
     .then((result)=>{
-      setIdentificationResult(result.data);
-      console.log(result.data)
+      setIdentificationResult(result);
+      console.log(result)
     })
     .catch(()=>{ console.log("실패") })
 }

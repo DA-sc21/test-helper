@@ -2,12 +2,15 @@ package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.problem.Problem;
+import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.exception.CannotEndTestBeforeEndTimeException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestAssistantException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
-import lombok.AccessLevel;
+import kr.ac.ajou.da.testhelper.test.result.TestResult;
+import kr.ac.ajou.da.testhelper.test.result.exception.CannotResolveTestResultWhenSubmissionsMarkIncompleteException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +25,7 @@ import java.util.*;
 @NoArgsConstructor
 @Table(name = "TEST")
 @Getter
-@Setter(value = AccessLevel.PRIVATE)
+@Setter
 public class Test {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +45,25 @@ public class Test {
     @Enumerated(EnumType.STRING)
     private TestStatus status = TestStatus.CREATE;
 
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY)
+    private List<Submission> submissions = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TEST_ASSISTANT",
             joinColumns = @JoinColumn(name = "test_id"),
             inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<Account> assistants = new HashSet<>();
 
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY)
+    private List<Problem> problems = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "result_id")
+    private TestResult result;
 
     @Column(nullable = false)
     private Long createdBy;
@@ -163,5 +176,37 @@ public class Test {
 
     public boolean isInProgress() {
         return Objects.equals(TestStatus.IN_PROGRESS, status);
+    }
+
+    public void resolveResult() {
+
+        if (!isSubmissionsAllMarked()) {
+            throw new CannotResolveTestResultWhenSubmissionsMarkIncompleteException();
+        }
+
+        if (Objects.isNull(this.result)) {
+            this.setResult(new TestResult());
+        }
+
+        this.result.update(this.getSubmissions());
+
+        setStatus(TestStatus.MARK);
+    }
+
+    private boolean isSubmissionsAllMarked() {
+        return this.getSubmissions().stream().allMatch(Submission::isMarked);
+    }
+
+    public boolean isMarked() {
+        return Objects.equals(TestStatus.MARK, this.status);
+    }
+
+    public boolean isGraded() {
+        return Objects.equals(TestStatus.GRADED, this.status);
+    }
+
+    public boolean doesResultExist() {
+        return Arrays.asList(TestStatus.MARK, TestStatus.GRADED).contains(this.status)
+                && !Objects.isNull(this.result);
     }
 }

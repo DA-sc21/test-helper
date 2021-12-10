@@ -1,0 +1,39 @@
+.studentListCard{
+  /* height:17%; */
+  width: 90%;
+  box-shadow:2px 2px 2px #b9b9b9;
+  margin-bottom: 1%;
+  text-align: left;
+}
+.studentNumber{
+  font-size: 19px;
+  margin-left: 1%;
+  margin-right: 2%;
+}
+.studentName{
+  font-size: 18px;
+}
+/* .scoringStatus{
+  float: right;
+  font-size: 15px;
+  font-weight: 100;
+} */
+.scoringStatus{
+  float: right;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 4px;
+  padding-left: 5.5px;
+  padding-right: 5.5px;
+  font-weight: bold;
+}
+.scoringBt{
+  width: 100%;
+  background-color: #ffffff00;
+  border-color: #ffffff00;
+  text-align: left;
+}
+.studentAnswerSheetImg{
+  width: 35%;
+  height: 78vh;
+}

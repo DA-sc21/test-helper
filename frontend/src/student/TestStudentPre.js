@@ -38,22 +38,62 @@ function TestStudentPre(){
   }
 
   useEffect(()=>{
-    getStudentRoom();
+    var para = document.location.href.split("=");
+    if(document.location.href.indexOf("accessKey") != -1){
+      studentLogin(para[1]);
+    }
+    else{
+      getStudentRoom();
+    }
   },[]);
+
+  async function studentLogin(pw){
+    let response = await fetch(baseUrl+`/examinee/sessions?password=${pw}&studentId=${studentId}&testId=${testId}`,{
+      method: 'POST',
+      credentials : 'include'
+    })
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        getStudentRoom();
+      }
+      else{
+        console.log("student login failed.")
+      }
+    })
+    .catch(error => {console.error('Error:', error)});
+  }
   
   async function getStudentRoom(){
-    await axios
-    .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
-    .then((result)=>{ 
-      setConsented(result.data.consented)
-      setCredentials(result.data.credentials)
-      setRoom(result.data.room)
-      setStudent(result.data.room.student)
-      setTest(result.data.room.test)
-      setLoading(true);
-      console.log(result.data);
-    })
-    .catch(()=>{ console.log("실패") })
+    let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room',{
+      method: "GET",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+        // setConsented(res.room.consented);
+        setCredentials(res.credentials)
+        setRoom(res.room)
+        setStudent(res.room.student)
+        setTest(res.room.test)
+        setLoading(true);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    // await axios
+    // .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
+    // .then((result)=>{ 
+    //   setConsented(result.data.consented)
+    //   setCredentials(result.data.credentials)
+    //   setRoom(result.data.room)
+    //   setStudent(result.data.room.student)
+    //   setTest(result.data.room.test)
+    //   setLoading(true);
+    //   console.log(result.data)
+    // })
+    // .catch(()=>{ console.log("실패") })
   }
   
   if(!loading)return(<Loading></Loading>)
@@ -66,7 +106,7 @@ function TestStudentPre(){
             tabTitles.map((tabtitle,index)=>{
               return(
                 <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle +" : "+ tabCompleted[index]}</Nav.Link>
+                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle}</Nav.Link>
                 </Nav.Item>
               )
             })
