@@ -15,6 +15,7 @@ import java.util.List;
 public class ProblemService {
 	
 	private final ProblemRepository problemRepository;
+	private final ProblemMapper problemMapper;
 	
 	@Transactional
     public List<Problem> getByTestId(Long testId) {
@@ -61,6 +62,8 @@ public class ProblemService {
     	Problem problem = getByTestIdAndProblemNum(testId, problemNum);
     	
     	problemRepository.delete(problem);
+    	
+    	problemMapper.updateProblemNum(testId, problemNum);
     	
 		return true;
 	}
