@@ -6,10 +6,12 @@ import { Button, Col, Form, Modal, Row ,Card, Tab, ListGroup } from 'react-boots
 import { useHistory, useParams } from 'react-router-dom';
 import { baseUrl } from '../component/baseUrl';
 
-function CreateProblems(){
+function CreateProblems(props){
   const { testId } = useParams();
   let [problems,setProblems] = useState([]);
+  let [tab,setTab] = useState(0);
   let history = useHistory()
+  let [testName,settestName] = useState(props.location.state.testName);
   
   useEffect(()=>{
     getProblems();
@@ -117,24 +119,58 @@ function CreateProblems(){
 
   }
 
+  // async function getTestAnswerSheet(){
+  //   let temp = [];
+  //   let response = await fetch(baseUrl+path+'/answers',{
+  //     method: 'GET',
+  //     credentials : 'include',
+  //     })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       console.log("response:", res);
+  //       temp=res;
+  //     })
+  //     .catch(error => {console.error('Error:', error)});
+
+  //   let url = [];
+  //   for(let i =0; i<temp.length; i++){
+  //     url.push(temp[i].file);
+  //     if(i==0){
+  //       setTestAnswerSheetImgUrl(temp[i].file);
+  //     }
+  //   }
+  //   console.log(url);
+  //   setTestAnswerSheetUrl(url);
+  // }
+  function buttonCss(status) {
+    return tab===status ? "dark" : "outline-dark"  
+}
   return(
     <div className="m-3">
       <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
         <Row>
           <Col sm={3}>
-            <ListGroup>
-              <ListGroup.Item action href="#link1">
+            <h4 className="mb-4">{testName}</h4>
+            <ListGroup variant="flush">
+              <ListGroup.Item className="" variant={buttonCss(0)} action onClick={()=>{
+                console.log(tab)
+                setTab(0)
+              }}>
                 문제 출제
               </ListGroup.Item>
-              <ListGroup.Item action href="#link2">
+              <ListGroup.Item className="mt-3" variant={buttonCss(1)} action onClick={()=>{
+                setTab(1)
+              }}>
                 답안 등록
               </ListGroup.Item>
             </ListGroup>
           </Col>
           <Col sm={9}>
             <Tab.Content>
-              <Tab.Pane eventKey="#link1">
-              <div className="mb-3">
+              {
+                tab===0?
+                <div>
+              <div className="mb-3 d-flex justify-content-start">
                 <ProblemModal createProblems={createProblems} lastProblemNum={problems.length}></ProblemModal>
               </div>
               <div className="row">
@@ -162,9 +198,12 @@ function CreateProblems(){
                   )
                 })}
                 </div>
-              </Tab.Pane>
-              <Tab.Pane eventKey="#link2">
-              </Tab.Pane>
+                </div>
+                :
+                <div></div>
+              }
+              
+              
             </Tab.Content>
           </Col>
         </Row>
@@ -231,7 +270,7 @@ function ProblemModal(props) {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      <Button variant="dark" onClick={handleShow}>
         문제생성
       </Button>
 
