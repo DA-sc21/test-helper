@@ -33,7 +33,7 @@ $ cd test-helper/
 
 1. local  
 Application : [http://localhost:3000](http://localhost:3000)  
-API Swagger : [http://localhost:8081/swagger-ui.html] (http://localhost:8081/swagger-ui.html)
+API Swagger : [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
 
   a. docker 활용 (recommend!!)
   ```bash
