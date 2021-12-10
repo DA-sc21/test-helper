@@ -25,7 +25,7 @@ function Login(){
       console.log("response:", res);
       if(res.status === 200){
         alert("로그인에 성공했습니다.");
-        localStorage.setItem("isAuthorized", "true");
+        sessionStorage.setItem("isAuthorized", "true");
         history.push("/");
       }
       else{
