@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.account.login;
 
+import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.account.login.dto.LoginReqDto;
 import kr.ac.ajou.da.testhelper.account.login.exception.FailedToLoginException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class LoginService {
 
     private final AuthenticationProvider authenticationProvider;
 
-    public void login(LoginReqDto reqDto) {
+    public Account login(LoginReqDto reqDto) {
 
         log.info("Logging in : {}", reqDto.getUsername());
 
@@ -30,6 +31,8 @@ public class LoginService {
             Authentication newAuthentication = authenticationProvider.authenticate(authReq);
 
             SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+
+            return (Account) newAuthentication.getPrincipal();
 
         } catch (AuthenticationException ex) {
             log.info("Login Failed : {}", reqDto.getUsername());
