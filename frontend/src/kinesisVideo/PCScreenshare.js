@@ -4,6 +4,10 @@ import { store } from '@risingstack/react-easy-state';
 import { Button } from "react-bootstrap";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import {baseUrl} from "../component/baseUrl";
+import moment from 'moment';
+import { useInterval } from 'react-use';
+import 'moment/locale/ko';
 
 const OPTIONS = {
   TRAVERSAL: {
@@ -26,7 +30,11 @@ function onStatsReport(report) {
 }
 
 const PCScreenShare = (props) => {
+  moment.locale('ko');
   let {testId, studentId} = useParams();
+  let videoRecoder = null;
+  let isRecordEnded = false;
+  // const [isRecordEnded, setIsRecordEnded] = useState(false);
   const localView = useRef(null);
   const screenStream = useRef(null);
   const viewer = {
@@ -44,18 +52,40 @@ const PCScreenShare = (props) => {
     receivedMessages: '',
   };
 
+  useInterval(() => {
+    let currentTime = moment().format("YYYY-MM-DD HH:mm:ss"); //현재 시간
+    let testEndTime = moment(props.endTime).format("YYYY-MM-DD HH:mm:ss");
+    // let testEndTime = moment("2021 12 04 01:15").format("YYYY-MM-DD HH:mm:ss");//테스트
+    // console.log(currentTime,testEndTime);
+    if(currentTime === testEndTime){
+      console.log("시험 종료");
+      // setIsRecordEnded(true);
+      isRecordEnded = true;
+      videoRecoder.stop(); //stop recording video
+      videoRecoder.addEventListener("dataavailable",handleVideoData);
+    }
+  }, 1000);
+
   function screenshare(props, e){
+    var options = {mimeType:'video/webm; codecs=vp9'};
     navigator.mediaDevices.getDisplayMedia({
       audio: false, //audio 없음
       video: true
     }).then(function(stream){
         //success
-        const videoRecoder = new MediaRecorder(stream);
+        videoRecoder = new MediaRecorder(stream,options);
         videoRecoder.start(); //start recording video
+        isRecordEnded = false;
+        console.log(videoRecoder);
         stream.getVideoTracks()[0].addEventListener('ended', () => {
           console.log('pc screen sharing has ended');
-          videoRecoder.stop(); //stop recording video
-          videoRecoder.addEventListener("dataavailable",handleVideoData);
+          console.log(isRecordEnded);
+          if(isRecordEnded === false){
+            videoRecoder.stop(); //stop recording video
+            videoRecoder.addEventListener("dataavailable",handleVideoData);
+            // setIsRecordEnded(true);
+            isRecordEnded = true;
+          }
           stopPlayerForViewer(); 
         });
         screenStream.current.srcObject = stream;
@@ -316,23 +346,37 @@ const PCScreenShare = (props) => {
 async function UploadVideoToS3(testId,studentId,video){
 
   let preSignedUrl="";
-  let baseUrl="http://api.testhelper.com";
 
-  await axios
-    .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/upload-url')
-    .then((result)=>{
-      preSignedUrl=result.data.uploadUrl;
+  let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/upload-url',{
+    method: "GET",
+    credentials: "include",
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      preSignedUrl=res.uploadUrl;
       console.log(preSignedUrl);
     })
-    .catch(()=>{ console.log("실패") })
+    .catch((error) => { console.error("실패") });
    
   await axios
     .put(preSignedUrl,video)
     .then((result)=>{
-      console.log("PC 공유화면 녹화영상 저장 성공")
+      console.log("PC 공유화면 녹화영상 저장 성공");
+      convertWebmToMp4(); // convert webm to mp4
     })
     .catch(()=>{ console.log("저장 실패") })
   
+  async function convertWebmToMp4(){
+    let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO',{
+      method: "POST",
+      credentials: "include",
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("response:", res);
+      })
+      .catch((error) => { console.error("실패") });
+  }
 }
 
 export default PCScreenShare;

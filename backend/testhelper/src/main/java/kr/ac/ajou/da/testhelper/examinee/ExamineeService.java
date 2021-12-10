@@ -36,11 +36,12 @@ public class ExamineeService implements UserDetailsService {
         
         //TODO : batch insert 방법 찾아보기
         List<Student> students = test.getCourse().getStudents();
-        List<Account> assistants = new ArrayList<>(test.getAssistants());
+        List<Account> supervisor = new ArrayList<>(test.getAssistants());
+        // supervisor.add(test.getCourse().getProfessor());
         List<Examinee> examinees = new LinkedList<>();
 
         for(int i = 0; i<students.size(); i++){
-            examinees.add(Examinee.create(students.get(i), test, assistants.get(i% assistants.size())));
+            examinees.add(Examinee.create(students.get(i), test, supervisor.get(i% supervisor.size())));
         }
 
         examineeRepository.saveAll(examinees);

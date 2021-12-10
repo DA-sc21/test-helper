@@ -63,9 +63,10 @@ public class DefaultSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/dev/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/chatting/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/email/validate").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/email/confirm").permitAll()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/email/validate").permitAll() //이메일인증
+                .antMatchers(HttpMethod.POST, "/users/email/confirm").permitAll() //인증코드인증
+                .antMatchers(HttpMethod.POST, "/users/email/password").permitAll() //임시비밀번호발급
+                .antMatchers(HttpMethod.POST, "/users").permitAll() //회원가입
                 .anyRequest().authenticated();
     }
 }
