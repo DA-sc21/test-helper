@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Button, Col, Form, Modal, Row ,Card, Tab, ListGroup } from 'react-bootstrap'
 import { useHistory, useParams } from 'react-router-dom';
 import { baseUrl } from '../component/baseUrl';
+import CreateAnswerExample from './CreateAnswerExample';
 
 function CreateProblems(props){
   const { testId } = useParams();
@@ -119,29 +120,6 @@ function CreateProblems(props){
 
   }
 
-  // async function getTestAnswerSheet(){
-  //   let temp = [];
-  //   let response = await fetch(baseUrl+path+'/answers',{
-  //     method: 'GET',
-  //     credentials : 'include',
-  //     })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       console.log("response:", res);
-  //       temp=res;
-  //     })
-  //     .catch(error => {console.error('Error:', error)});
-
-  //   let url = [];
-  //   for(let i =0; i<temp.length; i++){
-  //     url.push(temp[i].file);
-  //     if(i==0){
-  //       setTestAnswerSheetImgUrl(temp[i].file);
-  //     }
-  //   }
-  //   console.log(url);
-  //   setTestAnswerSheetUrl(url);
-  // }
   function buttonCss(status) {
     return tab===status ? "dark" : "outline-dark"  
 }
@@ -200,66 +178,15 @@ function CreateProblems(props){
                 </div>
                 </div>
                 :
-                <div></div>
+                <div>
+                  <CreateAnswerExample></CreateAnswerExample>
+                </div>
               }
-              
-              
             </Tab.Content>
           </Col>
         </Row>
       </Tab.Container>
     </div>
-
-      // <div className="m-1"> 
-      //   <div className="row">
-      //     <div className="col-md-2 mt-3">
-      //       <h4>컴퓨터네트워크</h4>
-      //       <div className="container">
-      //         <div className="row mt-4 pl-1">
-      //           <Button className="mb-3" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
-      //               pathname: "/tests/"+testId+"/problems",
-      //               })}}>문제출제</Button>
-      //           </div>
-      //         <div className="row">
-      //           <Button className="" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
-      //           pathname: "/tests/"+testId+"/problems",
-      //           })}}>답안등록</Button>
-      //         </div>
-      //       </div>
-      //     </div>
-      //     <div className="col-md-9">
-      //     <div className="m-3">
-      //       <ProblemModal createProblems={createProblems} lastProblemNum={problems.length}></ProblemModal>
-      //     </div>
-      //     <div className="row">
-      //     {problems.map((problem,index)=>{
-      //       return (
-      //         <div key={index} className="col-md-6">
-      //           <Card className="mb-3" >
-      //             <Card.Img variant="top" src="" />
-      //             <Card.Header>
-      //               <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
-      //             </Card.Header>
-      //             <Card.Body>
-      //               <Card.Text>
-      //               {problem.question}
-      //               </Card.Text>
-      //             </Card.Body>
-      //             <Card.Footer>
-      //               <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
-      //               <Button variant="danger" onClick={()=>{
-      //               deleteProblems(problem.problemNum)
-      //               }}>문제 삭제</Button>
-      //             </Card.Footer>
-      //           </Card>
-      //         </div>
-      //       )
-      //     })}
-      //   </div>
-      //     </div>
-      //   </div>
-        
-      // </div>
   )
 }
 
