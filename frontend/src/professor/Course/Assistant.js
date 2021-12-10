@@ -51,28 +51,30 @@ function Assistant(props){
     setCheckList(arr);
   }
 
-  async function searchAssistantByName(){
-    await axios
-    .get(baseUrl+`/assistants?name=${state.name}`,{
-        withCredentials : true
+  async function searchAssistant(){
+    console.log(state.type, state.name);
+    if(state.type==="email"){
+      await axios
+      .get(baseUrl+`/assistants?email=${state.name}`,{
+          withCredentials : true
+        })
+      .then((result)=>{
+        console.log(result.data);
+        setAssistantInfo(result.data);
       })
-    .then((result)=>{
-      console.log(result.data);
-      setAssistantInfo(result.data);
-    })
-    .catch((e)=>{ console.log(e) })
-  }
-
-  async function searchAssistantByEmail(){
-    await axios
-    .get(baseUrl+`/assistants?email=${state.email}`,{
-        withCredentials : true
+      .catch((e)=>{ console.log(e) })
+    }
+    else{
+      await axios
+      .get(baseUrl+`/assistants?name=${state.name}`,{
+          withCredentials : true
+        })
+      .then((result)=>{
+        console.log(result.data);
+        setAssistantInfo(result.data);
       })
-    .then((result)=>{
-      console.log(result.data);
-      setAssistantInfo(result.data);
-    })
-    .catch((e)=>{ console.log(e) })
+      .catch((e)=>{ console.log(e) })
+    }
   }
 
   async function submitForm(e){
@@ -93,11 +95,12 @@ function Assistant(props){
     .then( res => {
       console.log("response:", res);
       if(res.status === 200){
+        updateAssistantList();
         alert("조교 등록이 완료되었습니다");
         setShow(false);
-        setLoading(false);
+        // setLoading(false);
         // history.push(path+'/assistants');
-        updateAssistantList();
+        // updateAssistantList();
       }
       else{
         alert("조교 등록에 실패했습니다.");
@@ -114,7 +117,7 @@ function Assistant(props){
     .then((result)=>{
       console.log(result.data);
       setAssistant(result.data.assistants);
-      setLoading(true);
+      // setLoading(true);
     })
     .catch((e)=>{ console.log(e.response.data) })
   }
@@ -150,18 +153,22 @@ function Assistant(props){
         </Modal.Header>
         <Modal.Body>
           <div style={{height:"380px"}}>
-          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByName(e)}>검색</Button>
-          <InputGroup className="mb-3" style={{width:"86.5%"}}>
-            <InputGroup.Text id="basic-addon1">조교 이름</InputGroup.Text>
+          <Form.Select name="type" onChange={(e)=>onChangehandler(e)} style={{width:"30%", float:"left"}}>
+            <option value="name">조교 이름</option>
+            <option value="email">조교 이메일</option>
+          </Form.Select>
+          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistant(e)}>검색</Button>
+          <InputGroup className="mb-3" style={{width:"57%"}}>
               <FormControl
-                placeholder="name"
+                placeholder=""
                 aria-label="name"
                 aria-describedby="basic-addon1"
                 name="name" 
                 onChange={(e)=>onChangehandler(e)}
             />
           </InputGroup>
-          <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByEmail(e)}>검색</Button>
+
+          {/* <Button variant="outline-secondary" style={{float:"right"}} onClick={(e)=>searchAssistantByEmail(e)}>검색</Button>
           <InputGroup className="mb-3" style={{width:"86.5%"}}>
             <InputGroup.Text id="basic-addon1">조교 이메일</InputGroup.Text>
               <FormControl
@@ -171,7 +178,7 @@ function Assistant(props){
                 name="email" 
                 onChange={(e)=>onChangehandler(e)}
             />
-          </InputGroup>
+          </InputGroup> */}
           <div style={{overflow: "auto"}}>
           <Table striped bordered hover>
             <thead>

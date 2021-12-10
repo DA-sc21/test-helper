@@ -145,115 +145,124 @@ function Test(props){
     });
   }
 
-  if(!loading)return(<Loading></Loading>)
+  // if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"2%", width:"70%"}}>
-      <Button variant="secondary" style={{float:"right", marginRight:"15%"}} onClick={handleShow}>시험 생성</Button>
-      <h4 style={{marginBottom:"3%", textAlign:"left"}}>시험 정보</h4>
-      <div style={{width:"85%", height:"75vh", borderRadius:"10px", overflow: "auto", textAlign:"center"}}>
-        <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>중간고사</div>
-        {midterm.length !=0 ? midterm.map((data,idx)=>(
-          <Card key={idx} className="testCard">
+      {loading? 
+      <div>
+        <Button variant="secondary" style={{float:"right", marginRight:"15%"}} onClick={handleShow}>시험 생성</Button>
+        <h4 style={{marginBottom:"3%", textAlign:"left"}}>시험 정보</h4>
+        <div style={{width:"85%", height:"75vh", borderRadius:"10px", overflow: "auto", textAlign:"center"}}>
+          <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>중간고사</div>
+          {midterm.length !=0 ? midterm.map((data,idx)=>(
+            <Card key={idx} className="testCard">
+              <Card.Body>
+                <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
+              </Card.Body>
+            </Card>
+          )):
+          <Card className="noTestCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
+              <div className="noTest">
+                시험이 존재하지 않습니다
+              </div>
             </Card.Body>
-          </Card>
-        )):
-        <Card className="noTestCard">
-          <Card.Body>
-            <div className="noTest">
-              시험이 존재하지 않습니다
-            </div>
-          </Card.Body>
-        </Card>}
-        <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>기말고사</div>
-        {final.length != 0 ? final.map((data,idx)=>(
-          <Card key={idx} className="testCard">
+          </Card>}
+          <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>기말고사</div>
+          {final.length != 0 ? final.map((data,idx)=>(
+            <Card key={idx} className="testCard">
+              <Card.Body>
+                <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
+              </Card.Body>
+            </Card>
+          )):
+          <Card className="noTestCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
+              <div className="noTest">
+                시험이 존재하지 않습니다
+              </div>
             </Card.Body>
-          </Card>
-        )):
-        <Card className="noTestCard">
-          <Card.Body>
-            <div className="noTest">
-              시험이 존재하지 않습니다
-            </div>
-          </Card.Body>
-        </Card>}
-        <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>퀴즈</div>
-        {quiz.length !=0 ? quiz.map((data,idx)=>(
-          <Card key={idx} className="testCard">
+          </Card>}
+          <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>퀴즈</div>
+          {quiz.length !=0 ? quiz.map((data,idx)=>(
+            <Card key={idx} className="testCard">
+              <Card.Body>
+                <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path} getTest={getTest} />
+              </Card.Body>
+            </Card>
+          )):
+          <Card className="noTestCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path} getTest={getTest} />
+              <div className="noTest">
+                시험이 존재하지 않습니다
+              </div>
             </Card.Body>
-          </Card>
-        )):
-        <Card className="noTestCard">
-          <Card.Body>
-            <div className="noTest">
-              시험이 존재하지 않습니다
-            </div>
-          </Card.Body>
-        </Card>}
-      </div>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>시험 생성</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div style={{height:"55vh"}}>
-            <div className="FormName">시험 유형</div>
-            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
-              <option>시험 유형</option>
-              <option value="MID">중간고사</option>
-              <option value="FINAL">기말고사</option>
-              <option value="QUIZ">퀴즈</option>
-            </Form.Select>
-            <div className="FormName">시작 일시</div>
-            <input className="date" type="datetime-local" name="startTime" onChange={(e)=>onChangehandler(e)}/>
-            <div className="FormName">종료 일시</div>
-            <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
-            <div className="FormName">담당 조교 등록</div>
-            <div style={{height:"34%", overflow: "auto"}}>
-            <Table striped bordered hover>
-              <thead style={{backgroundColor:"#aeb8ce"}}>
-              <tr>
-              <th>#</th>
-              <th>이름</th>
-              <th>이메일</th>
-              <th>Check</th>
-              </tr>
-              </thead>
-              <tbody>
-              {assistant.map((data,idx)=>(
-                <tr key={idx}>
-                <td>{idx+1}</td>
-                <td>{data.name}</td>
-                <td>{data.email}</td>
-                <td><Form style={{marginLeft:"12%"}}>
-                  <Form.Check
-                    inline
-                    name="assistantId"
-                    value={data.id}
-                    // onChange={(e)=>onChangehandler(e)}
-                    onChange={(e)=>checkBoxHandler(e.currentTarget.checked, data.id)}
-                  />
-                  </Form>
-                </td>
+          </Card>}
+        </div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>시험 생성</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{height:"55vh"}}>
+              <div className="FormName">시험 유형</div>
+              <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
+                <option>시험 유형</option>
+                <option value="MID">중간고사</option>
+                <option value="FINAL">기말고사</option>
+                <option value="QUIZ">퀴즈</option>
+              </Form.Select>
+              <div className="FormName">시작 일시</div>
+              <input className="date" type="datetime-local" name="startTime" onChange={(e)=>onChangehandler(e)}/>
+              <div className="FormName">종료 일시</div>
+              <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
+              <div className="FormName">담당 조교 등록</div>
+              <div style={{height:"34%", overflow: "auto"}}>
+              <Table striped bordered hover>
+                <thead style={{backgroundColor:"#aeb8ce"}}>
+                <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>Check</th>
                 </tr>
-              ))}
-            </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                {assistant.map((data,idx)=>(
+                  <tr key={idx}>
+                  <td>{idx+1}</td>
+                  <td>{data.name}</td>
+                  <td>{data.email}</td>
+                  <td><Form style={{marginLeft:"12%"}}>
+                    <Form.Check
+                      inline
+                      name="assistantId"
+                      value={data.id}
+                      // onChange={(e)=>onChangehandler(e)}
+                      onChange={(e)=>checkBoxHandler(e.currentTarget.checked, data.id)}
+                    />
+                    </Form>
+                  </td>
+                  </tr>
+                ))}
+              </tbody>
+              </Table>
+              </div>
             </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={(e)=>submitForm(e)}>
-            등록
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={(e)=>submitForm(e)}>
+              등록
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>:
+      <div>
+        <h2 style={{marginRight:"15%", marginTop:"10%"}}>정보를 불러오는 중입니다.</h2>
+        <Spinner animation="border" role="status" style={{marginRight:"15%", marginTop:"2%", width:"50px", height:"50px"}}>
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>}
     </div>
   )
 }
