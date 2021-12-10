@@ -1,6 +1,10 @@
 # test-helper
 2021-2 SW Capstone Design Project  
-[Test-Helper 기획 및 시연 발표영상](https://softcon.ajou.ac.kr/works/works.asp?uid=470)
+[Test-Helper 기획 및 시연 발표영상](https://softcon.ajou.ac.kr/works/works.asp?uid=470)  
+[Test-Helper github](https://github.com/DA-sc21/test-helper)  
+[Test-Helper-ai github](https://github.com/DA-sc21/test-helper-ai)  
+[hand-detection github](https://github.com/DA-sc21/hand_detection)  
+
 
 <br />
 
@@ -106,7 +110,7 @@ API Swagger : [https://api.test-helper.com/swagger-ui.html](https://api.test-hel
 
 <br />
 
-(test-helper-ai)
+([test-helper-ai](https://github.com/DA-sc21/test-helper-ai))
 - flask
   - AI server 구축 
 
