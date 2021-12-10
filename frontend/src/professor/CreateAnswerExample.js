@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Col, Form, Modal, Row  } from 'react-bootstrap'
+import { Button, Col, Form, Card, Row  } from 'react-bootstrap'
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseUrl } from '../component/baseUrl';
@@ -8,6 +8,7 @@ import axios from 'axios';
 function CreateAnswerExample(props) {
   const [show, setShow] = useState(false);
   let [img, setImg] = useState("");
+  let [answers, setanswers] = useState([]);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   let { testId } = useParams();
@@ -25,27 +26,18 @@ function CreateAnswerExample(props) {
       .then((res) => res.json())
       .then((res) => {
         console.log("response:", res);
-        temp=res;
+        setanswers(res)
       })
       .catch(error => {console.error('Error:', error)});
-
-    // let url = [];
-    // for(let i =0; i<temp.length; i++){
-    //   url.push(temp[i].file);
-    //   if(i==0){
-    //     setTestAnswerSheetImgUrl(temp[i].file);
-    //   }
-    // }
-    // console.log(url);
-    // setTestAnswerSheetUrl(url);
+      console.log(temp)
   }
 
   async function UploadImageToS3(img){
 
     let preSignedUrl="";
-    testId=String(testId).padStart(5,"0")
+    let testIdPad=String(testId).padStart(5,"0")
   
-    let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testId+'/answer_sheet/001.jpg',{
+    let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/answer_sheet/001.jpg',{
       method: "GET",
       credentials: "include"
     })
@@ -53,22 +45,36 @@ function CreateAnswerExample(props) {
     .then((res)=>{
       preSignedUrl=res;
       console.log(res)
-      // console.log(preSignedUrl);
     })
     .catch((error)=> {console.log(error)})
 
      console.log(preSignedUrl);
+     const data = {
+      "file": "test/"+testIdPad+"/answer_sheet/001.jpg"
+    };
+     let response2 = await fetch(baseUrl+'/tests/'+testId+'/answers',{
+      method: 'POST',
+      credentials : 'include',
+      body: JSON.stringify(data),
+      headers: {
+        "content-type": "application/json",
+      },
+      })
+      .then((res) => {
+        console.log("response:", res);
+      })
+      .catch(error => {console.error('Error:', error)});
 
      await axios
       .put(preSignedUrl,img)
       .then((result)=>{
+        getTestAnswerSheet();
         alert("답안 등록이 완료되었습니다.")
         console.log("put성공")
       })
       .catch((e)=>{ console.log(e) })
     
   }
-  
   
   return (
     <>
@@ -83,9 +89,8 @@ function CreateAnswerExample(props) {
         </Col>
         <Col sm={2}>
         <Button variant="dark" onClick={()=>{
-            let point=document.querySelector("#formFile").value
-            point=null
-            console.log(point)
+            let selectedFileName=document.querySelector("#formFile").value
+            selectedFileName=null
             if (img===""){
               alert("파일을 선택해주세요")
             }
@@ -96,6 +101,25 @@ function CreateAnswerExample(props) {
           }}>답안 등록</Button>
         </Col>
         </Row>
+        <Row>
+
+          {answers.map((t,index)=>{
+          return (
+            <div key={index} className="col-md-6">
+              <Card className="mb-3" >
+                <Card.Img variant="top" src={t.file} />
+                <Card.Footer>
+                  <Button className="mx-3" variant="success">답안 수정</Button>
+                  <Button  variant="danger">답안 삭제</Button>
+                  {/* <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal> */}
+                  {/* <Button variant="danger" onClick={()=>{
+                    deleteProblems(problem.problemNum)
+                  }}>문제 삭제</Button> */}
+                </Card.Footer>
+              </Card>
+            </div>
+            )})}
+          </Row>
       </Form>
     </>
   );
