@@ -33,6 +33,11 @@ public class ProblemService {
 	private boolean existsByTestIdAndProblemNum(Long testId, Long problemNum) {
 		return problemRepository.existsByTestIdAndProblemNum(testId, problemNum);
 	}
+	
+	@Transactional
+	public void createProblem(Problem problem) {
+		problemRepository.save(problem);
+	}
 
 	@Transactional
 	public boolean postTestProblem(Long testId, TestProblemReqDto reqDto) {
@@ -40,7 +45,7 @@ public class ProblemService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "문제가 이미 존재합니다.");
 		}
 		Problem problem = new Problem(reqDto.getProblemNum(), testId, reqDto.getQuestion(), reqDto.getPoint(), reqDto.getAttachedFile());
-		problemRepository.save(problem);
+		createProblem(problem);
 		return true;
 	}
 
@@ -56,15 +61,23 @@ public class ProblemService {
     public int getCountByTestId(Long testId) {
 		return problemRepository.countByTestId(testId);
     }
+    
+    @Transactional
+    public void deleteProblem(Problem problem) {
+    	problemRepository.delete(problem);
+	}
+    
+    @Transactional
+    public void updateProblemNum(Long testId, Long problemNum) {
+    	problemMapper.updateProblemNum(testId, problemNum);
+	}
 
     @Transactional
 	public boolean deleteTestProblem(Long testId, Long problemNum) {
     	Problem problem = getByTestIdAndProblemNum(testId, problemNum);
-    	
-    	problemRepository.delete(problem);
-    	
-    	problemMapper.updateProblemNum(testId, problemNum);
-    	
+    	deleteProblem(problem);
+    	updateProblemNum(testId, problemNum);
 		return true;
 	}
+
 }
