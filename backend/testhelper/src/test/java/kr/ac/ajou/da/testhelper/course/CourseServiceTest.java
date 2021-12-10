@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -173,6 +174,21 @@ class CourseServiceTest {
         //then
     	verify(courseRepository, times(1)).getByCode(anyString());
     	assertEquals(expectedCourse, actualCourse);
+    }
+    
+    @Test
+    void deleteCourse_success() {
+    	//given
+    	Course course = DummyFactory.createCourse();
+
+    	when(courseRepository.findById(anyLong())).thenReturn(null);
+
+        //when
+    	courseService.deleteCourse(course);
+    	
+        //then
+        verify(courseRepository, times(1)).delete(course);
+        assertThat(courseRepository.findById(course.getId())).isNull();
     }
     
 
