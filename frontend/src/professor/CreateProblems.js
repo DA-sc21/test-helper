@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { Button, Col, Form, Modal, Row, Table } from 'react-bootstrap'
+import { Button, Col, Form, Modal, Row ,Card } from 'react-bootstrap'
 import { useParams } from 'react-router-dom';
 import { baseUrl } from '../component/baseUrl';
 
@@ -50,10 +50,13 @@ function CreateProblems(){
       getProblems();
       if(res.status === 200){
           alert("문제가 생성되었습니다.");
-        }
-        else{
-          alert("문제 생성에 실패했습니다.");
-        }
+      }
+      else if(res.status === 400){
+        alert("문제 번호가 이미 존재합니다.");
+      }
+      else{
+        alert("문제 생성에 실패했습니다.");
+      }
       }
     )
     .catch(error => {console.error('Error:', error)});
@@ -82,53 +85,44 @@ function CreateProblems(){
       console.log("response:", res);
       getProblems();
       if(res.status === 200){
-          alert("문제가 수정되었습니다.");
-        }
-        else{
-          alert("문제 수정에 실패했습니다.");
-        }
+        alert("문제가 수정되었습니다.");
+      }
+      else{
+        alert("문제 수정에 실패했습니다.");
+      }
       }
     )
     .catch(error => {console.error('Error:', error)});
 
   }
 
-
   return(
-    <div className="row"> 
-      <div className="col-md-1"></div>
-      <div className="col-md-9  mt-5">
-        <Table responsive="md">
-          <thead >
-            <tr className="row">
-              <th className="col-md-2">문제번호</th>
-              <th className="col-md-2">문제배점</th>
-              <th className="col-md-6"> 문제내용</th>
-              <th className="col-md-2"> 수정</th>
-            </tr>
-          </thead>
-          <tbody >
-            {problems.map((problem,index)=>{
-              return (
-                <tr className="row" key={index}>
-                  <td className="col-md-2">{problem.problemNum}</td>
-                  <td className="col-md-2">{problem.point}</td>
-                  <td className="col-md-6">{problem.question}</td>
-                  <td className="col-md-2">
-                    <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
-
-                    {/* <Button variant="primary" onClick={updateProblems}>
-                      문제수정
-                    </Button> */}
-                    </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </Table>
-      </div>
-      <div className="col-md-1 mt-3">
+    <div className="container"> 
+      <div className="m-3">
         <ProblemModal createProblems={createProblems}></ProblemModal>
+      </div>
+      <div className="row">
+        {problems.map((problem,index)=>{
+          return (
+            <div key={index} className="col-md-6">
+              <Card className="mb-3" >
+                <Card.Img variant="top" src="" />
+                <Card.Header>
+                  <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
+                </Card.Header>
+                <Card.Body>
+                  <Card.Text>
+                  {problem.question}
+                  </Card.Text>
+                </Card.Body>
+                <Card.Footer>
+                  <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
+                  <Button variant="danger">문제 삭제</Button>
+                </Card.Footer>
+              </Card>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -136,7 +130,6 @@ function CreateProblems(){
 
 function ProblemModal(props) {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -148,7 +141,7 @@ function ProblemModal(props) {
 
       <Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title>문제생성</Modal.Title>
+          <Modal.Title>문제 생성</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -167,8 +160,8 @@ function ProblemModal(props) {
               </Col>
             </Row>
             <Form.Group className="mb-3" controlId="question">
-              <Form.Label>문제내용</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Label>문제 내용</Form.Label>
+              <Form.Control as="textarea" rows={3} placeholder="문제 내용을 입력하세요." />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -180,7 +173,18 @@ function ProblemModal(props) {
             let point=document.querySelector("#point").value
             let problemNum=document.querySelector("#problemNum").value
             let question=document.querySelector("#question").value
-            props.createProblems(point,problemNum,question)
+            if (problemNum===""){
+              alert("문제 번호를 입력해주세요.")
+            }
+            else  if (point==="" ){
+              alert("문제 배점을 입력해주세요.")
+            }
+            else if ( question===""){
+              alert("문제 내용을 입력해주세요.")
+            }
+            else{
+              props.createProblems(point,problemNum,question)
+            }
           }}>저장</Button>
         </Modal.Footer>
       </Modal>
@@ -190,14 +194,13 @@ function ProblemModal(props) {
 
 function ProblemUpdateModal(props) {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        문제수정
+      <Button variant="secondary" className="m-2" onClick={handleShow}>
+        문제 수정
       </Button>
 
       <Modal show={show} onHide={handleClose} animation={false}>
@@ -210,7 +213,7 @@ function ProblemUpdateModal(props) {
               <Col>
               <Form.Group className="mb-3" controlId="problemNum">
                 <Form.Label>문제 번호</Form.Label>
-                <Form.Control type="number" defaultValue={props.problemNum} />
+                <Form.Control disabled type="number" defaultValue={props.problemNum} />
               </Form.Group>
               </Col>
               <Col>
@@ -234,14 +237,23 @@ function ProblemUpdateModal(props) {
             let point=document.querySelector("#point").value
             let problemNum=document.querySelector("#problemNum").value
             let question=document.querySelector("#question").value
-            props.updateProblems(point,problemNum,question)
+            if (problemNum===""){
+              alert("문제 번호를 입력해주세요.")
+            }
+            else  if (point==="" ){
+              alert("문제 배점을 입력해주세요.")
+            }
+            else if ( question===""){
+              alert("문제 내용을 입력해주세요.")
+            }
+            else{
+              props.updateProblems(point,problemNum,question)
+            }
           }}>저장</Button>
         </Modal.Footer>
       </Modal>
     </>
   );
 }
-
-
 
 export default CreateProblems
