@@ -18,8 +18,7 @@ function Tests(){
     getTests();
   },[]);
 
-  let accountId=1;
-  let testStatus='"Mark"';
+  let testStatus='ALL';
 
   async function getTests(){
     await axios
@@ -73,7 +72,7 @@ function Tests(){
         <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button>
         <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
         <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
-        <Button variant={buttonCss(4)} onClick ={()=>{setToggled(4);}}>미채점 시험 조회</Button>
+        <Button variant={buttonCss(4)} onClick ={()=>{setToggled(4);}}>종료된 시험 조회</Button>
       </ButtonGroup>
       <div className="row mt-5">
         {toggled===4? unscoredTests.map((testdata,index)=>{
@@ -97,9 +96,9 @@ function TestCard(props){
     "CREATE" : "시험 생성중",
     "INVITED" : "시험 생성 완료",
     "IN_PROGRESS" : "시험 진행중",
-    "ENDED" : "시험 종료",
+    "ENDED" : "시험 미채점",
     "MARK" : "시험 채점중",
-    "GRADED" : "점수 전송 완료",
+    "GRADED" : "시험 채점 완료",
   }
   let history = useHistory()
 
@@ -207,9 +206,11 @@ function TestCard(props){
               state:{
                 testName: props.test.name
               }
-            })}>채점하기</Button>: 
+            })}>답안지 관리</Button>: 
             <>
-            <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}}>문제출제</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
+              pathname: "/tests/"+props.test.id+"/problems",
+              })}}>문제출제</Button>
             <Button className="col-md-4" style={{backgroundColor:"#3e4450", borderColor:"#3e4450"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
             <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}} onClick={()=>scoringTest(props.test.test_status)}>채점하기</Button>
             </>}

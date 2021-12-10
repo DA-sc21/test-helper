@@ -20,7 +20,7 @@ public class ExamineeLoginService {
 
     private final AuthenticationProvider examineeAuthenticationProvider;
 
-    public void login(ExamineeLoginReqDto reqDto) {
+    public Examinee login(ExamineeLoginReqDto reqDto) {
 
         log.info("Logging in : Test = {} Student = {}", reqDto.getTestId(), reqDto.getStudentId());
 
@@ -31,6 +31,8 @@ public class ExamineeLoginService {
             Authentication newAuthentication = examineeAuthenticationProvider.authenticate(authReq);
 
             SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+
+            return (Examinee) newAuthentication.getPrincipal();
 
         } catch (AuthenticationException ex) {
             log.info("Login Failed : Test = {} Student = {}", reqDto.getTestId(), reqDto.getStudentId());

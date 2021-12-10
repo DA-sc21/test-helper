@@ -41,5 +41,23 @@ public class ProblemController {
     public ResponseEntity<BooleanResponse> putTestProblem(@PathVariable Long testId, @RequestBody TestProblemReqDto reqDto) {
         return ResponseEntity.ok().body(BooleanResponse.of(problemService.putTestProblem(testId, reqDto)));
     }
+	
+	@PostMapping("/tests/{testId}/problems")
+	@AccessTestByProctor
+	public ResponseEntity<BooleanResponse> postTestProblem(@PathVariable Long testId, @RequestBody TestProblemReqDto reqDto) {
+		return ResponseEntity.ok().body(BooleanResponse.of(problemService.postTestProblem(testId, reqDto)));
+	}
+	
+	@PutMapping("/tests/{testId}/problems")
+	@AccessTestByProctor
+	public ResponseEntity<BooleanResponse> putTestProblem(@PathVariable Long testId, @RequestBody TestProblemReqDto reqDto) {
+		return ResponseEntity.ok().body(BooleanResponse.of(problemService.putTestProblem(testId, reqDto)));
+	}
+	
+	@DeleteMapping("/tests/{testId}/problems/{problemNum}")
+	@AccessTestByProctor
+	public ResponseEntity<BooleanResponse> deleteProblem(@PathVariable Long testId, @PathVariable Long problemNum) {
+		return ResponseEntity.ok().body(BooleanResponse.of(problemService.deleteTestProblem(testId, problemNum)));
+	}
 
 }
