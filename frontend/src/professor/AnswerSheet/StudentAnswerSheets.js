@@ -64,6 +64,24 @@ function StudentAnswerSheets(props){
   }
 
   async function sendScoringTest(){
+    let response = await fetch(baseUrl+path+'/result',{
+      method: 'PUT',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.result === true){
+        sendScoringResult();
+      }
+      else{
+        alert(res.errorMessage);
+      }
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
+  }
+
+  async function sendScoringResult(){
     let response = await fetch(baseUrl+path+'/grade',{
       method: 'POST',
       credentials : 'include',
