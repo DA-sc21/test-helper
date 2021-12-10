@@ -17,7 +17,8 @@ function NavBar(){
         alert("로그아웃 되었습니다.");
         sessionStorage.removeItem('isAuthorized');
         sessionStorage.clear();
-        history.push("/login");
+        document.location.href="/login";
+        // history.push("/login");
       }
       else{
         alert("로그아웃에 실패했습니다.");

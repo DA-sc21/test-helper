@@ -124,9 +124,8 @@ function SignUp(){
         })
     .then((result)=>{
       console.log(result.data);
+      // response 이미 있는 경우, 성공한 경우, 실패한 경우에 따라 다르게 처리 필요
       alert("이메일을 전송하였습니다.");
-    })
-    .then((res)=>{
       setMinutes(3);
       setSeconds(0);
       setTimerId(true);

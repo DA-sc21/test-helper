@@ -32,7 +32,8 @@ function Login(){
       if(res.status === 200){
         alert("로그인에 성공했습니다.");
         sessionStorage.setItem("isAuthorized", "true");
-        history.push("/");
+        document.location.href="/";
+        // history.push("/");
       }
       else{
         alert("로그인에 실패했습니다.");
