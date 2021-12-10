@@ -55,4 +55,13 @@ public class ProblemService {
     public int getCountByTestId(Long testId) {
 		return problemRepository.countByTestId(testId);
     }
+
+    @Transactional
+	public boolean deleteTestProblem(Long testId, Long problemNum) {
+    	Problem problem = getByTestIdAndProblemNum(testId, problemNum);
+    	
+    	problemRepository.delete(problem);
+    	
+		return true;
+	}
 }
