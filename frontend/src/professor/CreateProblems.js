@@ -72,8 +72,7 @@ function CreateProblems(){
       "question": question
     };
 
-    console.log(point,problemNum,question)
-      let response = await fetch(baseUrl+`/tests/`+testId+`/problems`,{
+    let response = await fetch(baseUrl+`/tests/`+testId+`/problems`,{
       method: 'PUT',
       credentials : 'include',
       body: JSON.stringify(data),
@@ -96,10 +95,31 @@ function CreateProblems(){
 
   }
 
+  async function deleteProblems(problemNum){
+
+    let response = await fetch(baseUrl+`/tests/`+testId+`/problems/`+problemNum,{
+      method: 'DELETE',
+      credentials : 'include',
+    })
+    .then( res => {
+      console.log("response:", res);
+      getProblems();
+      if(res.status === 200){
+        alert("문제가 삭제되었습니다.");
+      }
+      else{
+        alert("문제 삭제에 실패했습니다.");
+      }
+      }
+    )
+    .catch(error => {console.error('Error:', error)});
+
+  }
+
   return(
     <div className="container"> 
       <div className="m-3">
-        <ProblemModal createProblems={createProblems}></ProblemModal>
+        <ProblemModal createProblems={createProblems} lastProblemNum={problems.length}></ProblemModal>
       </div>
       <div className="row">
         {problems.map((problem,index)=>{
@@ -117,7 +137,9 @@ function CreateProblems(){
                 </Card.Body>
                 <Card.Footer>
                   <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
-                  <Button variant="danger">문제 삭제</Button>
+                  <Button variant="danger" onClick={()=>{
+                  deleteProblems(problem.problemNum)
+                  }}>문제 삭제</Button>
                 </Card.Footer>
               </Card>
             </div>
@@ -148,8 +170,8 @@ function ProblemModal(props) {
             <Row>
               <Col>
               <Form.Group className="mb-3" controlId="problemNum">
-                <Form.Label>문제 번호</Form.Label>
-                <Form.Control type="number" placeholder="1" />
+              <Form.Label>문제 번호</Form.Label>
+                <Form.Control type="number" disabled defaultValue={props.lastProblemNum+1} />
               </Form.Group>
               </Col>
               <Col>
