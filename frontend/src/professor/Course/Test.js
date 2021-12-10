@@ -459,7 +459,7 @@ const CheckTestInfo = (props) => {
         <Modal.Body>
           <div style={{height:"55vh"}}>
           <div className="FormName">시험 유형</div>
-            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)} value={testInfo.type}>
+            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)} defaultValue={testInfo.type}>
               <option>시험 유형</option>
               <option value="MID">중간고사</option>
               <option value="FINAL">기말고사</option>
