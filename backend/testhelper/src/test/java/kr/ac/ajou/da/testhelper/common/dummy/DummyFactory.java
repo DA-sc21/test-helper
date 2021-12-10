@@ -55,6 +55,6 @@ public class DummyFactory {
     }
 
 	public static Problem createProblem() {
-		return new Problem(1L, 1L, 1L, "question", 1L, "file");
+		return new Problem(1L, 1L, createTest(), "question", 1L, "file");
 	}
 }
