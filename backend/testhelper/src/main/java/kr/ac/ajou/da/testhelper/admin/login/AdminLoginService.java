@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.admin.login;
 
+import kr.ac.ajou.da.testhelper.admin.AdminAccount;
 import kr.ac.ajou.da.testhelper.admin.login.dto.AdminLoginReqDto;
 import kr.ac.ajou.da.testhelper.admin.login.exception.FailedToLoginAdminException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class AdminLoginService {
 
     private final AuthenticationProvider adminAuthenticationProvider;
 
-    public void login(AdminLoginReqDto reqDto) {
+    public AdminAccount login(AdminLoginReqDto reqDto) {
 
         log.info("Logging in : {}", reqDto.getUsername());
 
@@ -30,6 +31,8 @@ public class AdminLoginService {
             Authentication newAuthentication = adminAuthenticationProvider.authenticate(authReq);
 
             SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+
+            return (AdminAccount) newAuthentication.getPrincipal();
 
         } catch (AuthenticationException ex) {
             log.info("Login Failed : {}", reqDto.getUsername());

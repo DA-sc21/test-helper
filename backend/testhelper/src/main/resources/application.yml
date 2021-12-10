@@ -58,6 +58,7 @@ spring:
     port: 6379
 
 server:
+  cookie-domain : localhost
   fe: http://localhost:3000
   ai: http://localhost:5000
 
@@ -74,6 +75,7 @@ spring:
     port: 6379
 
 server:
+  cookie-domain : localhost
   fe: http://localhost:3000
   ai: http://host.docker.internal:5000
 
@@ -90,6 +92,7 @@ spring:
     port: 6379
 
 server:
+  cookie-domain : test-helper.com
   fe: https://site.test-helper.com
   ai: https://ai.test-helper.com
   servlet:

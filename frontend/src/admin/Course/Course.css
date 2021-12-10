@@ -15,6 +15,7 @@
     margin-left: auto;
     margin-right: auto;
     object-fit: cover;
+    cursor: pointer;
 }
 .btn-register{
   font-size : 0.8rem;
@@ -44,7 +45,7 @@
   color : blueviolet;
 }
 .showModal{
-  cursor: pointer
+  cursor: pointer;
 }
 .assList{
   font-size : 18px;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {coursePaginate} from "./CoursePaginate";
-import { Card, Button,Badge,Table,Modal } from 'react-bootstrap';
+import { Button,Badge,Table,Modal } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import CourseFooter from './CourseFooter';
 import {baseUrl} from "../../component/baseUrl";
@@ -27,7 +27,7 @@ const AdminCourse = (props) => {
     "DONE" : "success",
   }
   useEffect(()=>{
-    // setCourse(props.course);
+    setCourse(props.course);
 
   },[])
 
@@ -51,23 +51,76 @@ const AdminCourse = (props) => {
     }
 
 
-  async function registerSubject(e){
-    let response = await fetch(baseUrl+`/admin/`,{
-      method: 'POST',
-      credentials : 'include'
-    })
-    .then( res => {
-      console.log("response:", res);
-      if(res.status === 200){
-        history.push("/admin/courses");
-      }
-      else{
-        alert("과목 등록에 실패하였습니다.");
-      }
-    })
-    .catch(error => {console.error('Error:', error)});
-      } 
+  async function registerSubject(e,id){
+    setId(id);
+    let allCourse = props.course
+    let registerCourse = allCourse.filter((data)=>data.id === id)[0];
+    console.log(registerCourse);
 
+    if(registerCourse.registered == "PENDING"){
+      let response = await fetch(baseUrl+`/admin/classes/`+id,{
+        method: 'POST',
+        credentials : 'include'
+      })
+      .then( res => {
+        console.log("response:", res);
+        if(res.status === 200){
+          alert(`${registerCourse.name} 수업을 등록하였습니다.`);
+          const result = allCourse.map((data)=>{
+              if(data.id == id){
+                data.registered = "DONE";
+              }         
+              return data;
+          })
+          console.log(result);
+          props.change(result);
+        }
+        else{
+          alert(`${registerCourse.name} 수업 추가에 실패하였습니다.`);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("test helper 관리자에게 문의하세요.");
+    });
+    }
+
+    else{
+      // DELETE, PUT은 local에서 preflight 오류 local 용
+      // let response = await fetch(baseUrl+`/admin/classes/delete/`+id,{
+      //   method: 'POST',
+      //   credentials : 'include'
+      // })
+      //server 용 
+      let response = await fetch(baseUrl+`/admin/classes/`+id,{
+        method: 'DELETE',
+        credentials : 'include'
+      })
+      .then(res=>res.json())
+      .then( res => {
+        console.log("response:", res);
+        if(res.result){
+          alert(`${registerCourse.name} 수업을 등록 취소하였습니다.`)
+          const result = allCourse.map((data)=>{
+            if(data.id == id){
+              data.registered = "PENDING";
+            }         
+            return data;
+        })
+        console.log(result);
+        props.change(result);
+          // document.location.href="/admin/courses";
+        }
+        else if(res.errorMessage){
+          alert(`${registerCourse.name} 수업은 시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.`);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("test helper 관리자에게 문의하세요.");
+      });
+    }
+  } 
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -107,7 +160,7 @@ const AdminCourse = (props) => {
                 <Badge className="registerStatus showModal" bg={register_status_css[assStatus]} onClick={(e)=>handleShow(e,data.id)}>{register_status[assStatus]}</Badge>
               </td>
               <td><Badge className="registerStatus" bg={register_status_css[data.registered]}>{register_status[data.registered]}</Badge></td>
-              <td><Button className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e)} disabled={joinStatus==="PENDING"}>수업 등록/미등록</Button></td>
+              <td><Button className="btn btn-warning btn-register"  onClick={(e)=>registerSubject(e,data.id)} disabled={joinStatus==="PENDING"}>수업 등록/미등록</Button></td>
               </tr>
               
         )
