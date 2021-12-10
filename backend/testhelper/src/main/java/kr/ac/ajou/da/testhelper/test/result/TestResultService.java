@@ -62,7 +62,7 @@ public class TestResultService {
 
         Test test = testService.getTest(testId);
 
-        if(!test.isMarked()){
+        if(!(test.isMarked() || test.isGraded())){
             throw new CannotGetTestResultWhenNotMarkedException();
         }
 
