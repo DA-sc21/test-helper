@@ -16,6 +16,7 @@ function Assistant(props){
   const [assistant, setAssistant] = useState([]);
   const [assistantInfo, setAssistantInfo] = useState([]);
   const [checkList, setCheckList] = useState([]);
+  const [deleteList, setDeleteList] = useState([]);
 
   useEffect(()=>{
     console.log(props);
@@ -49,6 +50,7 @@ function Assistant(props){
     }
     console.log(arr);
     setCheckList(arr);
+    setDeleteList(arr);
   }
 
   async function searchAssistant(){
@@ -122,18 +124,39 @@ function Assistant(props){
     .catch((e)=>{ console.log(e.response.data) })
   }
 
+  async function deleteAssistant(id){
+    let assistantList = deleteList.filter((element) => element !== id);
+    console.log(assistantList);
+    let response = await fetch(baseUrl+path+`/assistants?assistants=${assistantList}`,{
+      method: 'PUT',
+      credentials : 'include',
+    })
+    .then( res => {
+      console.log("response:", res);
+      if(res.status === 200){
+        updateAssistantList();
+        alert("조교가 삭제되었습니다.");
+      }
+      else{
+        alert("조교 삭제에 실패했습니다.");
+      }
+    })
+    .catch(error => {console.error('Error:', error)}); 
+  }
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"2%", width:"70%"}}>
-      <Button variant="secondary" style={{float:"right", marginRight:"15%"}} onClick={handleShow}>조교 등록</Button>
+      <Button style={{float:"right", marginRight:"15%", backgroundColor:"#475164", borderColor:"#475164"}} onClick={handleShow}>조교 등록</Button>
       <h4 style={{marginBottom:"3%", textAlign:"left"}}>조교 정보</h4>
       <div style={{width:"85%", height:"70%", borderRadius:"10px"}}>
         <Table striped bordered hover>
-          <thead style={{backgroundColor:"#9b9b9b"}}>
+          <thead style={{backgroundColor:"#abb8d1"}}>
           <tr>
           <th>#</th>
           <th>이름</th>
           <th>이메일</th>
+          <th>삭제</th>
           </tr>
           </thead>
           <tbody>
@@ -142,6 +165,7 @@ function Assistant(props){
             <td>{idx+1}</td>
             <td>{data.name}</td>
             <td>{data.email}</td>
+            <td><button style={{backgroundColor:"#93a0b8", borderColor:"#93a0b8", fontWeight:"bold", borderRadius:"3px"}} onClick={()=>deleteAssistant(data.id)}>삭제</button></td>
             </tr>
           ))}
           </tbody>
