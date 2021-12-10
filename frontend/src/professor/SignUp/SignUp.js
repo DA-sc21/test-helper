@@ -12,7 +12,6 @@ function SignUp(){
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
-  const [role, setRole] = useState();
   const [confirmCode, setConfirmCode] = useState();
   const [code, setCode] = useState();
   const [state, setState] = useState([]);
@@ -70,16 +69,6 @@ function SignUp(){
       return true;
     }
   }
-  async function checkRole(){
-    if(state.role === undefined){
-      setRole(false);
-      return false;
-    }
-    else{
-      setRole(true);
-      return true;
-    }
-  }
   async function checkConfirmCode(){
     if(confirmCode === false || confirmCode === undefined){
       setCode(false);
@@ -96,18 +85,16 @@ function SignUp(){
     let isEmail = await checkEmail();
     let isPassword = await checkPassword();
     let isConfirmPassword = await checkConfirmPassword();
-    let isRole = await checkRole();
     let isConfirmCode = await checkConfirmCode();
 
     let data = {
       "email": state.email,
       "name": state.name,
       "password": state.password,
-      "role": state.role
     }
     console.log(JSON.stringify(data));
-    console.log(isName,isEmail,isPassword,isConfirmPassword,isRole,isConfirmCode,confirmCode);
-    if(isName && isEmail && isPassword && isConfirmPassword && isRole && isConfirmCode && confirmCode){
+    console.log(isName,isEmail,isPassword,isConfirmPassword,isConfirmCode,confirmCode);
+    if(isName && isEmail && isPassword && isConfirmPassword && isConfirmCode && confirmCode){
       await axios
       .post(baseUrl+'/users', JSON.stringify(data),{
         headers: { "Content-Type": `application/json`}
@@ -137,6 +124,9 @@ function SignUp(){
         })
     .then((result)=>{
       console.log(result.data);
+      alert("이메일을 전송하였습니다.");
+    })
+    .then((res)=>{
       setMinutes(3);
       setSeconds(0);
       setTimerId(true);
@@ -229,30 +219,10 @@ function SignUp(){
             </Form.Group>
             {confirmPassword === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>비밀번호가 일치하지 않습니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
 
-            <Form.Group className="mb-0">
-              <Form.Label style={{fontWeight:"bold"}}>역할</Form.Label>
-              <Form.Check
-                type="radio"
-                label="조교"
-                name="role"
-                value="ASSISTANT"
-                style={{float:"right", marginTop:"6%", marginRight:"40%"}}
-                onChange={(e)=>onChangehandler(e)}  
-              />
-              <Form.Check
-                type="radio"
-                label="교수"
-                name="role"
-                value="PROFESSOR"
-                style={{marginLeft:"15%"}}
-                onChange={(e)=>onChangehandler(e)}  
-              />
-            </Form.Group>
-            {role === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>역할을 선택해주세요</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
           </Form>
         </div>
         <Button style={{marginTop:"0%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
-        <div style={{textDecoration:"underline", textAlign:"right", marginTop:"0%", marginRight:"11%", fontSize:"17px"}}><Link to="/login" style={{color:"#525252"}}>로그인</Link></div>
+        <div style={{textDecoration:"underline", textAlign:"right", marginTop:"6%", marginRight:"11%", fontSize:"17px"}}><Link to="/login" style={{color:"#525252"}}>로그인</Link></div>
       </div>
     </div>
   )
