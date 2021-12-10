@@ -1,6 +1,7 @@
 import React from "react";
 import {  Route } from 'react-router-dom';
 import StudentAnswerSheets from './StudentAnswerSheets';
+import TestResult from './TestResult';
 
 function TestsRouter (props){
     console.log(props);
@@ -13,7 +14,14 @@ function TestsRouter (props){
           render ={()=>
             <StudentAnswerSheets
               path={path}
-              students={students} />
+              // students={students} 
+              />
+          }
+        />
+        <Route exact path={path+'/unscored/result'} 
+          render ={()=>
+            <TestResult
+              path={path} />
           }
         />
       </>

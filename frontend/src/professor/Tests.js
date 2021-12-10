@@ -56,7 +56,7 @@ function Tests(){
     let temp = [];
     console.log(temp);
     for(let i=0; i<data.length; i++){
-      if(data[i].test_status === "ENDED" || data[i].test_status === "MARK"){
+      if(data[i].test_status === "ENDED" || data[i].test_status === "MARK" || data[i].test_status === "GRADED"){
         temp.push(data[i]);
       }
     }
@@ -72,7 +72,7 @@ function Tests(){
         <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button>
         <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
         <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
-        <Button variant={buttonCss(4)} onClick ={()=>{setToggled(4);}}>미채점 시험 조회</Button>
+        <Button variant={buttonCss(4)} onClick ={()=>{setToggled(4);}}>종료된 시험 조회</Button>
       </ButtonGroup>
       <div className="row mt-5">
         {toggled===4? unscoredTests.map((testdata,index)=>{
@@ -90,23 +90,59 @@ function Tests(){
 function TestCard(props){
   console.log(props);
   const [testState, setTestState] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   let test_status_options={
     "CREATE" : "시험 생성중",
     "INVITED" : "시험 생성 완료",
     "IN_PROGRESS" : "시험 진행중",
-    "ENDED" : "시험 종료",
+    "ENDED" : "시험 미채점",
     "MARK" : "시험 채점중",
-    "GRADED" : "점수 전송 완료",
+    "GRADED" : "시험 채점 완료",
   }
   let history = useHistory()
 
   useEffect(()=>{
+    console.log(props);
+    getTestDate();
     if(props.testState==="unscored"){
       setTestState("unscored");
     }else{
       setTestState("");
     }
   })
+
+  function getTestDate(){
+    let startTime = "";
+    let endTime = "";
+    let start = moment(props.test.start_time).format("YYYY-MM-DD dd HH:mm:ss");
+    let end = moment(props.test.end_time).format("YYYY-MM-DD dd HH:mm:ss");
+    let startHour = start.substring(13,15);
+    let endHour = end.substring(13,15);
+    if(Number(startHour)>=13){
+      startTime="PM";
+      startHour=Number(startHour)-12;
+    }
+    else{
+      startTime="AM";
+    }
+    
+    if(Number(endHour)>=13){
+      endTime="PM";
+      endHour=Number(endHour)-12;
+    }
+    else{
+      endTime="AM";
+    }
+
+    // let testStart = start.substring(0,4)+"년"+start.substring(5,7)+"월"+start.substring(8,10)+"일"+" "+start.substring(11,12)+"요일"+" "+startTime+" "+startHour+"시"+start.substring(16,18)+"분";
+    // let testEnd = end.substring(0,4)+"년"+end.substring(5,7)+"월"+end.substring(8,10)+"일"+" "+end.substring(11,12)+"요일"+" "+endTime+" "+endHour+"시"+end.substring(16,18)+"분";
+    let testStart = start.substring(0,10)+" "+start.substring(11,12)+"요일"+" "+startTime+" "+startHour+"시"+start.substring(16,18)+"분";
+    let testEnd = end.substring(0,10)+" "+end.substring(11,12)+"요일"+" "+endTime+" "+endHour+"시"+end.substring(16,18)+"분";
+    console.log(testStart, testEnd);
+    setStartDate(testStart);
+    setEndDate(testEnd);
+  }
 
   async function checkSuperviseTest(){
     let response = await fetch(baseUrl+"/tests/"+props.test.id+"/students/room",{
@@ -133,6 +169,21 @@ function TestCard(props){
       });
   }
 
+  function scoringTest(status){
+    console.log(status)
+    if(status!="ENDED" && status!="MARK", status!="GRADED"){
+      alert("시험이 종료되지 않아 채점할 수 없습니다.");
+    }
+    else{
+      history.push({
+        pathname:`/tests/${props.test.id}/unscored`,
+        state:{
+          testName: props.test.name
+        }
+      })
+    }
+  }
+
   return(
     <div className="col-md-4">
       <Card>
@@ -143,10 +194,10 @@ function TestCard(props){
             {test_status_options[props.test.test_status]}
           </Card.Text>
           <Card.Text>
-            시작시각 : {moment(props.test.start_time).format("YYYY-MM-DD dd HH:mm:ss")}
+            시작: {startDate}
           </Card.Text>
           <Card.Text>
-            종료시각 : {moment(props.test.end_time).format("YYYY-MM-DD dd HH:mm:ss")}
+            종료: {endDate}
           </Card.Text>
           <div className="row">
             {testState === "unscored"? 
@@ -155,13 +206,13 @@ function TestCard(props){
               state:{
                 testName: props.test.name
               }
-            })}>채점하기</Button>: 
+            })}>답안지 관리</Button>: 
             <>
             <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
               pathname: "/tests/"+props.test.id+"/problems",
               })}}>문제출제</Button>
             <Button className="col-md-4" style={{backgroundColor:"#3e4450", borderColor:"#3e4450"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
-            <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}}>채점하기</Button>
+            <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}} onClick={()=>scoringTest(props.test.test_status)}>채점하기</Button>
             </>}
           </div>
         </Card.Body>

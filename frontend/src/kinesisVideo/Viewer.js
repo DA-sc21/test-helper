@@ -61,6 +61,17 @@ const Viewer = (props) => {
   }, []);
 
   useEffect(()=>{
+    console.log(props.isEnded)
+    if(props.isEnded && videoRecoder){ //녹화 시작&제출 완료 시
+      console.log("시험 종료");
+      // setIsRecordEnded(true);
+      stopCapture();
+      videoRecoder.stop(); //stop recording video
+      videoRecoder.addEventListener("dataavailable",handleVideoData);
+    }
+  }, [props.isEnded]);
+
+  useEffect(()=>{
     if(videoRecoder){
       videoRecoder.start();
       console.log(videoRecoder);
@@ -81,13 +92,13 @@ const Viewer = (props) => {
     if(currentTime === testStartTime){
       startCapture();
     }
-    if(currentTime === testEndTime){
-      console.log("시험 종료");
-      // setIsRecordEnded(true);
-      stopCapture();
-      videoRecoder.stop(); //stop recording video
-      videoRecoder.addEventListener("dataavailable",handleVideoData);
-    }
+    // if(currentTime === testEndTime){
+    //   console.log("시험 종료");
+    //   // setIsRecordEnded(true);
+    //   stopCapture();
+    //   videoRecoder.stop(); //stop recording video
+    //   videoRecoder.addEventListener("dataavailable",handleVideoData);
+    // }
   }, 1000);
 
   const handleVideoData = (e) => {
