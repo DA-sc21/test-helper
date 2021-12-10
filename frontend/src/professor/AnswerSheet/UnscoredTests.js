@@ -17,7 +17,7 @@ function UnscoredTests(){
   ];
   useEffect(()=>{
     getTests();
-    getStudentList();
+    // getStudentList();
   },[])
 
   async function getTests(){
@@ -28,6 +28,7 @@ function UnscoredTests(){
     .then((result)=>{ 
       getTestInfo(result.data);
       console.log(result.data);
+      setLoading(true);
     })
     .catch(()=>{ console.log("실패") })
   }
@@ -42,18 +43,18 @@ function UnscoredTests(){
     setTestInfo(temp);
   }
 
-  async function getStudentList(){
-    await axios
-    .get(baseUrl+path+'/submissions?studentNumber=2',{ //학생 전체 조회
-        withCredentials : true
-      })
-    .then((result)=>{
-      console.log(result.data);
-      setStudents(result.data);
-      setLoading(true);
-    })
-    .catch(()=>{ console.log("실패") })
-  }
+  // async function getStudentList(){
+  //   await axios
+  //   .get(baseUrl+path+'/submissions?studentNumber=2',{ //학생 전체 조회
+  //       withCredentials : true
+  //     })
+  //   .then((result)=>{
+  //     console.log(result.data);
+  //     setStudents(result.data);
+  //     setLoading(true);
+  //   })
+  //   .catch(()=>{ console.log("실패") })
+  // }
   
   if(!loading)return(<Loading></Loading>)
   return(
@@ -75,7 +76,7 @@ function UnscoredTests(){
     </div>
     <TestsRouter
       path={path}
-      students={students}
+      // students={students}
     />
     </div>
   )

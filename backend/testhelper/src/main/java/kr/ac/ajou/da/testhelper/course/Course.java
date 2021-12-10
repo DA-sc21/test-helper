@@ -24,10 +24,13 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(nullable = false)
+    private String code;
 
     @Column(nullable = false)
     private String name;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_id", nullable = false)
     private Account professor;
@@ -51,7 +54,7 @@ public class Course {
         this.professor = professor;
         this.assistants = assistants;
     }
-
+    
     public void updateAssistants(List<Account> assistants) {
         //TODO : batch delete하는 방법 찾아보기
 
