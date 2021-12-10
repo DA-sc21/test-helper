@@ -4,8 +4,6 @@
 [Test-Helper github](https://github.com/DA-sc21/test-helper)  
 [Test-Helper-ai github](https://github.com/DA-sc21/test-helper-ai)  
 [hand-detection github](https://github.com/DA-sc21/hand_detection)  
-
-
 <br />
 
 ## 1. Test-Helper 개요
