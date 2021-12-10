@@ -2,13 +2,14 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { Button, Col, Form, Modal, Row ,Card } from 'react-bootstrap'
-import { useParams } from 'react-router-dom';
+import { Button, Col, Form, Modal, Row ,Card, Tab, ListGroup } from 'react-bootstrap'
+import { useHistory, useParams } from 'react-router-dom';
 import { baseUrl } from '../component/baseUrl';
 
 function CreateProblems(){
   const { testId } = useParams();
   let [problems,setProblems] = useState([]);
+  let history = useHistory()
   
   useEffect(()=>{
     getProblems();
@@ -117,36 +118,109 @@ function CreateProblems(){
   }
 
   return(
-    <div className="container"> 
-      <div className="m-3">
-        <ProblemModal createProblems={createProblems} lastProblemNum={problems.length}></ProblemModal>
-      </div>
-      <div className="row">
-        {problems.map((problem,index)=>{
-          return (
-            <div key={index} className="col-md-6">
-              <Card className="mb-3" >
-                <Card.Img variant="top" src="" />
-                <Card.Header>
-                  <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Text>
-                  {problem.question}
-                  </Card.Text>
-                </Card.Body>
-                <Card.Footer>
-                  <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
-                  <Button variant="danger" onClick={()=>{
-                  deleteProblems(problem.problemNum)
-                  }}>문제 삭제</Button>
-                </Card.Footer>
-              </Card>
-            </div>
-          )
-        })}
-      </div>
+    <div className="m-3">
+      <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
+        <Row>
+          <Col sm={3}>
+            <ListGroup>
+              <ListGroup.Item action href="#link1">
+                문제 출제
+              </ListGroup.Item>
+              <ListGroup.Item action href="#link2">
+                답안 등록
+              </ListGroup.Item>
+            </ListGroup>
+          </Col>
+          <Col sm={9}>
+            <Tab.Content>
+              <Tab.Pane eventKey="#link1">
+              <div className="mb-3">
+                <ProblemModal createProblems={createProblems} lastProblemNum={problems.length}></ProblemModal>
+              </div>
+              <div className="row">
+                {problems.map((problem,index)=>{
+                  return (
+                    <div key={index} className="col-md-6">
+                      <Card className="mb-3" >
+                        <Card.Img variant="top" src="" />
+                        <Card.Header>
+                          <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                          <Card.Text>
+                          {problem.question}
+                          </Card.Text>
+                        </Card.Body>
+                        <Card.Footer>
+                          <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
+                          <Button variant="danger" onClick={()=>{
+                            deleteProblems(problem.problemNum)
+                          }}>문제 삭제</Button>
+                        </Card.Footer>
+                      </Card>
+                    </div>
+                  )
+                })}
+                </div>
+              </Tab.Pane>
+              <Tab.Pane eventKey="#link2">
+              </Tab.Pane>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
     </div>
+
+      // <div className="m-1"> 
+      //   <div className="row">
+      //     <div className="col-md-2 mt-3">
+      //       <h4>컴퓨터네트워크</h4>
+      //       <div className="container">
+      //         <div className="row mt-4 pl-1">
+      //           <Button className="mb-3" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
+      //               pathname: "/tests/"+testId+"/problems",
+      //               })}}>문제출제</Button>
+      //           </div>
+      //         <div className="row">
+      //           <Button className="" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
+      //           pathname: "/tests/"+testId+"/problems",
+      //           })}}>답안등록</Button>
+      //         </div>
+      //       </div>
+      //     </div>
+      //     <div className="col-md-9">
+      //     <div className="m-3">
+      //       <ProblemModal createProblems={createProblems} lastProblemNum={problems.length}></ProblemModal>
+      //     </div>
+      //     <div className="row">
+      //     {problems.map((problem,index)=>{
+      //       return (
+      //         <div key={index} className="col-md-6">
+      //           <Card className="mb-3" >
+      //             <Card.Img variant="top" src="" />
+      //             <Card.Header>
+      //               <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
+      //             </Card.Header>
+      //             <Card.Body>
+      //               <Card.Text>
+      //               {problem.question}
+      //               </Card.Text>
+      //             </Card.Body>
+      //             <Card.Footer>
+      //               <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
+      //               <Button variant="danger" onClick={()=>{
+      //               deleteProblems(problem.problemNum)
+      //               }}>문제 삭제</Button>
+      //             </Card.Footer>
+      //           </Card>
+      //         </div>
+      //       )
+      //     })}
+      //   </div>
+      //     </div>
+      //   </div>
+        
+      // </div>
   )
 }
 
