@@ -11,6 +11,7 @@ function CreateProblems(props){
   const { testId } = useParams();
   let [problems,setProblems] = useState([]);
   let [tab,setTab] = useState(0);
+  let [imgpath,setImagepath]=useState("")
   let [testName,settestName] = useState(props.location.state.testName);
   
   useEffect(()=>{
@@ -24,7 +25,6 @@ function CreateProblems(props){
     })
     .then((result)=>{ 
       setProblems(result.data)
-      console.log(result.data)
     })
     .catch((e)=>{ console.log("실패",e) })
   }
@@ -91,9 +91,33 @@ function CreateProblems(props){
   }
 
   async function updateProblems(img,point,problemNum,question){
+    let preSignedUrl="";
+    let testIdPad=String(testId).padStart(5,"0")
+  
+    let response2 = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
+      method: "GET",
+      credentials: "include"
+    })
+    .then(res => res.text())
+    .then((res)=>{
+      preSignedUrl=res;
+      console.log(res)
+    })
+    .catch((error)=> {console.log(error)})
+
+     console.log(preSignedUrl);
+
+    await axios
+    .put(preSignedUrl,img)
+    .then((result)=>{
+      // getProblems();
+      alert("첨부파일 등록이 완료되었습니다.")
+      console.log("put성공")
+    })
+    .catch((e)=>{ console.log(e) })
 
     const data = {
-      "attachedFile": "",
+      "attachedFile": "test/"+testIdPad+'/problems/'+problemNum+".jpg",
       "point": point,
       "problemNum": problemNum,
       "question": question
@@ -121,7 +145,7 @@ function CreateProblems(props){
     .catch(error => {console.error('Error:', error)});
 
   }
-
+  
   async function deleteProblems(problemNum){
     
     let response = await fetch(baseUrl+`/tests/`+testId+`/problems/`+problemNum,{
