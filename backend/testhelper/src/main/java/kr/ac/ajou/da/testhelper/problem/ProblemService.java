@@ -1,5 +1,7 @@
 package kr.ac.ajou.da.testhelper.problem;
 
+import kr.ac.ajou.da.testhelper.aws.s3.PreSignedURLService;
+import kr.ac.ajou.da.testhelper.problem.dto.GetProblemResDto;
 import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import kr.ac.ajou.da.testhelper.problem.exception.ProblemNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,11 +18,20 @@ import java.util.List;
 public class ProblemService {
 	
 	private final ProblemRepository problemRepository;
+	private final PreSignedURLService preSignedURLService;
 	
 	@Transactional
-    public List<Problem> getByTestId(Long testId) {
-
-        return problemRepository.findByTestId(testId);
+    public List<GetProblemResDto> getByTestId(Long testId) {
+		List<Problem> problems = problemRepository.findByTestId(testId);
+		List<GetProblemResDto> list = new ArrayList<GetProblemResDto>();
+		for(Problem problem : problems) {
+			String preSignedURL = null;
+			if(problem.getAttachedFile() != null && problem.getAttachedFile().length() != 0) {
+				preSignedURL = preSignedURLService.getDownloadUrl(problem.getAttachedFile());
+			}
+			list.add(new GetProblemResDto(problem.getId(), problem.getProblemNum(), problem.getTestId(), problem.getQuestion(), problem.getPoint(), preSignedURL));
+		}
+        return list;
 
     }
 	

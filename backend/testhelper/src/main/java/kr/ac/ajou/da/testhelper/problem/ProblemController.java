@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
+import kr.ac.ajou.da.testhelper.problem.dto.GetProblemResDto;
 import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,7 @@ public class ProblemController {
 	private final ProblemService problemService;
 	
 	@GetMapping("/tests/{testId}/problems")
-    public ResponseEntity<List<Problem>> getTestProblem(@PathVariable Long testId) {
+    public ResponseEntity<List<GetProblemResDto>> getTestProblem(@PathVariable Long testId) {
 
         return ResponseEntity.ok().body(problemService.getByTestId(testId));
 
