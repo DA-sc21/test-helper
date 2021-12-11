@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Badge, InputGroup, FormControl, Modal, Spinner } from 'react-bootstrap';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
@@ -159,7 +159,7 @@ function StudentList(props){
               </button>
             </div>
             <div className="col-md-2">
-              <RecordView student={props.student} ></RecordView>
+              <RecordView path={path} student={props.student} ></RecordView>
             </div>
           </div>
         </Card.Body>
@@ -185,8 +185,41 @@ function StudentList(props){
 function RecordView(props){
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    getUrlScreenShare();
+    getRoomUrl();
+    setShow(true);
+  };
+  let path = props.path;
+  let studentId = props.student.id;
+  let [screenVideo,setScreenVideo]= useState("")
+  let [roomVideo,setroomVideo]= useState("")
+  console.log(props.student)
+  async function getUrlScreenShare(){
 
+    await axios
+    .get(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{ 
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log("sdf",result.data.downloadUrl);
+      setScreenVideo(result.data.downloadUrl)
+    })
+    .catch((e)=>{ console.log("실패",e) })
+}
+
+  async function getRoomUrl(){
+
+      await axios
+      .get(baseUrl+path+'/students/'+studentId+'/submissions/ROOM_VIDEO/download-url',{ 
+          withCredentials : true
+        })
+      .then((result)=>{
+        console.log("sdf",result.data.downloadUrl);
+        setroomVideo(result.data.downloadUrl)
+      })
+      .catch((e)=>{ console.log("실패",e) })
+  }
   return(
     <>
       <Button style={{backgroundColor:"#aee4ff",borderColor:"#aee4ff"}} onClick={handleShow}>녹화영상확인</Button>
@@ -199,14 +232,14 @@ function RecordView(props){
             <div className="col-md-6">
               <div style={{backgroundColor:"#ffc0cb", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>PC화면녹화본</div>
               <video controls className="w-100">
-                <source src="/media/cc0-videos/flower.mp4" type="video/mp4" />
+                <source src={screenVideo} type="video/mp4" />
                 Sorry, your browser doesn't support embedded videos.
               </video>
             </div>
             <div className="col-md-6">
               <div style={{backgroundColor:"#59a5fc", textAlign:"center", padding:"4px", margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>시험환경녹화본</div>
               <video controls className="w-100">
-                <source src="/media/cc0-videos/flower.mp4" type="video/mp4" />
+                <source src={roomVideo} type="video/mp4" />
                 Sorry, your browser doesn't support embedded videos.
               </video>
             </div>
