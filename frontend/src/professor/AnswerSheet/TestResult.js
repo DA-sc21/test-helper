@@ -89,17 +89,14 @@ function TestResult(props){
       method: 'GET',
       credentials : 'include',
     })
-    .then(res => res.json())
-    .then(res =>{
-      if(res.errorMessage != undefined){ //error
-        alert(res.errorMessage);
-      }
-      else{
-        fetch(baseUrl+path+"/result/excel",{
-          method: 'GET',
-          credentials : 'include',
-        })
-        .then(res => res.blob())
+    .then(res => {
+      if(res.status != 200){
+        return res.json()
+        .then(res => {
+          alert(res.errorMessage);
+        });
+      }else{
+        return res.blob()
         .then(blob => download(blob, 'test_result.xlsx'))
         .catch(error => {console.error('Error:', error)});
       }
