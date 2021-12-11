@@ -33,7 +33,9 @@ function CreateProblems(props){
   async function createProblems(img,point,problemNum,question,closeModal){
     let preSignedUrl="";
     let testIdPad=String(testId).padStart(5,"0")
-  
+    let attachedFile=""
+
+    if (img!==""){
     let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
       method: "GET",
       credentials: "include"
@@ -52,12 +54,14 @@ function CreateProblems(props){
      .then((result)=>{
        // getProblems();
        alert("첨부파일 등록이 완료되었습니다.")
+       attachedFile="test/"+testIdPad+'/problems/'+problemNum+".jpg"
        console.log("put성공")
      })
      .catch((e)=>{ console.log(e) })
-   
+    }
+    
     const data = {
-      "attachedFile": "test/"+testIdPad+'/problems/'+problemNum+".jpg",
+      "attachedFile": attachedFile,
       "point": point,
       "problemNum": problemNum,
       "question": question
@@ -94,31 +98,36 @@ function CreateProblems(props){
   async function updateProblems(img,point,problemNum,question,closeModal){
     let preSignedUrl="";
     let testIdPad=String(testId).padStart(5,"0")
+    let attachedFile=""
   
-    let response2 = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
-      method: "GET",
-      credentials: "include"
-    })
-    .then(res => res.text())
-    .then((res)=>{
-      preSignedUrl=res;
-      console.log(res)
-    })
-    .catch((error)=> {console.log(error)})
-
-     console.log(preSignedUrl);
-
-    await axios
-    .put(preSignedUrl,img)
-    .then((result)=>{
-      // getProblems();
-      alert("첨부파일 등록이 완료되었습니다.")
-      console.log("put성공")
-    })
-    .catch((e)=>{ console.log(e) })
+    if (img!==""){
+      let response2 = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
+        method: "GET",
+        credentials: "include"
+      })
+      .then(res => res.text())
+      .then((res)=>{
+        preSignedUrl=res;
+        console.log(res)
+      })
+      .catch((error)=> {console.log(error)})
+  
+       console.log(preSignedUrl);
+  
+      await axios
+      .put(preSignedUrl,img)
+      .then((result)=>{
+        // getProblems();
+        alert("첨부파일 등록이 완료되었습니다.")
+        attachedFile="test/"+testIdPad+'/problems/'+problemNum+".jpg"
+        console.log("put성공")
+      })
+      .catch((e)=>{ console.log(e) })
+    }
+    
 
     const data = {
-      "attachedFile": "test/"+testIdPad+'/problems/'+problemNum+".jpg",
+      "attachedFile": attachedFile,
       "point": point,
       "problemNum": problemNum,
       "question": question
@@ -205,7 +214,7 @@ function CreateProblems(props){
                   return (
                     <div key={index} className="col-md-6">
                       <Card className="mb-3" >
-                        <Card.Img variant="top" src={problem.attachedFile} />
+                      <Card.Img variant="top" src={problem.attachedFile} />
                         <Card.Header>
                           <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
                         </Card.Header>
