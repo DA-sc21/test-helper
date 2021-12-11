@@ -3,7 +3,8 @@
 [Test-Helper 기획 및 시연 발표영상](https://softcon.ajou.ac.kr/works/works.asp?uid=470)  
 [Test-Helper github](https://github.com/DA-sc21/test-helper)  
 [Test-Helper-ai github](https://github.com/DA-sc21/test-helper-ai)  
-[hand-detection github](https://github.com/DA-sc21/hand_detection)  
+[hand-detection github](https://github.com/DA-sc21/hand_detection) 
+
 
 <br />
 
