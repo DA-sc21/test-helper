@@ -64,6 +64,24 @@ function StudentAnswerSheets(props){
   }
 
   async function sendScoringTest(){
+    let response = await fetch(baseUrl+path+'/result',{
+      method: 'PUT',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.result === true){
+        sendScoringResult();
+      }
+      else{
+        alert(res.errorMessage);
+      }
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
+  }
+
+  async function sendScoringResult(){
     let response = await fetch(baseUrl+path+'/grade',{
       method: 'POST',
       credentials : 'include',
@@ -81,9 +99,10 @@ function StudentAnswerSheets(props){
     .catch(error => {console.error('Error:', error)});
   }
 
-  if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"1%", width:"70%"}}>
+      {loading? 
+      <>
       <Button variant="light" style={{marginRight:"10%", float:"right", color:"black", borderColor:"gray"}} onClick={(e)=>searchStudentNumber(e)}>검색</Button>
       <InputGroup style={{width:"30%", float:"right"}}>
         <InputGroup.Text>학번</InputGroup.Text>
@@ -100,7 +119,15 @@ function StudentAnswerSheets(props){
         <span style={{marginRight:"0%", float:"right"}}>제출/채점 여부</span>
       </div>
       {students.map((data,idx)=>{
-      return <StudentList key={idx} student={data.student} submitted={data.submitted} path={path}/>; })}
+      return <StudentList key={idx} student={data.student} submitted={data.submitted} path={path} getStudentList={getStudentList}/>; })}
+    </>:
+    <div>
+      <h2 style={{marginRight:"15%", marginTop:"10%"}}>정보를 불러오는 중입니다.</h2>
+      <Spinner animation="border" role="status" style={{marginRight:"15%", marginTop:"2%", width:"50px", height:"50px"}}>
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    </div>
+    }
     </div>
   )
 }
@@ -113,7 +140,7 @@ function StudentList(props){
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => {setShow(true);}
+  const handleShow = () => setShow(true);
   let scoring_status={
     "PENDING" : "미제출",
     "DONE" : "제출 완료",
@@ -133,8 +160,9 @@ function StudentList(props){
     .then((res) => res.json())
     .then((res) => {
       if(res.result === true){
+        props.getStudentList();
         alert("채점이 완료되었습니다.");
-        history.push(path+'/unscored');
+        // history.push(path+'/unscored/students');
         handleClose();
       }
       else{
@@ -145,14 +173,22 @@ function StudentList(props){
     .catch(error => {console.error('Error:', error)});
   }
 
+  function scoringAnswerSheet(name, status){
+    if(status==="PENDING"){
+      alert(`${name} 학생 답안지가 제출되지 않았습니다.`);
+    }
+    else{
+      handleShow();
+    }
+  }
+
   return(
     <div>
       <Card className="studentListCard">
           <Card.Body>
-            <button className="scoringBt" onClick={handleShow}>
+            <button className="scoringBt" onClick={()=>scoringAnswerSheet(props.student.name, props.submitted)}>
             <span className="studentNumber">{props.student.studentNumber}</span> 
             <span className="studentName">{props.student.name}</span>
-            {/* <Badge className="scoringStatus" bg={scoring_status_css[props.submitted]}>{scoring_status[props.submitted]}</Badge> */}
             <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
             </button>
           </Card.Body>
