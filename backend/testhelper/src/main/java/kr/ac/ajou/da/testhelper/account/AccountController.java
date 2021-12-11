@@ -1,18 +1,13 @@
 package kr.ac.ajou.da.testhelper.account;
 
 import kr.ac.ajou.da.testhelper.account.dto.*;
-import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -43,7 +38,8 @@ public class AccountController {
     @IsAccount
     public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto,
                                                               @AuthenticationPrincipal @ApiIgnore Account account) {
-    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(account, reqDto.getPassword(), reqDto.getNewPassword())));
+
+    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(account.getId(), reqDto.getPassword(), reqDto.getNewPassword())));
     }
 
     @GetMapping("/account")

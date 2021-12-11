@@ -29,7 +29,7 @@ public class AccountService implements UserDetailsService {
     private final PortalAccountService portalAccountService;
 
     @Autowired
-	private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public Account get(Long id){
@@ -77,8 +77,11 @@ public class AccountService implements UserDetailsService {
 	}
         
     @Transactional
-    public boolean updatePassword(Account account, String password, String newPassword) {
-    	log.info(account.getPassword());
+    public boolean updatePassword(Long accountId, String password, String newPassword) {
+
+        Account account = this.get(accountId);
+
+        log.info(account.getPassword());
     	if(!passwordEncoder.matches(password, account.getPassword())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 틀렸습니다.");
     	}
