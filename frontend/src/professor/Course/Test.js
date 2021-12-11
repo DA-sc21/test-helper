@@ -31,7 +31,7 @@ function Test(props){
 
   useEffect(()=>{
     console.log(props);
-    setAssistant(props.assistant);
+    setAssistant(props.assistant); //수정 필요
     getTest();
   },[])
 
