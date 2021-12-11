@@ -267,7 +267,12 @@ function ProblemModal(props) {
               <Col>
               <Form.Group className="mb-3" controlId="point">
                 <Form.Label>문제 배점</Form.Label>
-                <Form.Control type="number" placeholder="10" />
+                <Form.Control type="number" placeholder="10" onChange={(e)=>{
+                  if(e.target.value<0){
+                    alert("0이상의 배점을 입력해주세요.")
+                    e.target.value=0
+                  }
+                }}/>
               </Form.Group>
               </Col>
             </Row>
@@ -338,7 +343,12 @@ function ProblemUpdateModal(props) {
               <Col>
               <Form.Group className="mb-3" controlId="point">
                 <Form.Label>문제 배점</Form.Label>
-                <Form.Control type="number" defaultValue={props.point} />
+                <Form.Control type="number" defaultValue={props.point} onChange={(e)=>{
+                  if(e.target.value<0){
+                    alert("0이상의 배점을 입력해주세요.")
+                    e.target.value=0
+                  }
+                }}/>
               </Form.Group>
               </Col>
             </Row>
