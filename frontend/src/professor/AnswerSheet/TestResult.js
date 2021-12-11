@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, Spinner } from 'react-bootstrap'
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
@@ -106,18 +106,26 @@ function TestResult(props){
     })
   }
 
-  if(!loading)return(<Loading></Loading>)
   return(
-    <div style={{width:"80%"}}>
+    <div style={{marginLeft:"7%", marginTop:"1%", width:"70%"}}>
+    {loading? 
+    <>
       {isTestResult?
         <div>
           <Button style={{float:"right", marginRight:"15%", backgroundColor:"#3d4657", borderColor:"#3d4657"}} onClick={()=>downloadTestResultExcel()}>시험 결과 Excel 다운로드</Button>
           <p style={{marginTop:"3%", fontSize:"29px", marginLeft:"25%"}}>시험 결과</p>
-          <div style={{marginTop:"5%", marginLeft:"10%"}}>
+          <div style={{marginTop:"5%", marginLeft:"2%"}}>
             <ApexCharts options={options} series={series} width={900} type="bar" height={350} />
           </div>
         </div>:
         <h2 style={{textAlign:"center", marginTop:"15%"}}>시험 결과를 찾을 수 없습니다.</h2>}
+    </>:
+    <div>
+      <h2 style={{marginRight:"15%", marginTop:"10%"}}>정보를 불러오는 중입니다.</h2>
+      <Spinner animation="border" role="status" style={{marginRight:"15%", marginTop:"2%", width:"50px", height:"50px"}}>
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    </div>}
     </div>
   )
 }

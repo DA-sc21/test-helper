@@ -15,6 +15,12 @@ function Login(){
     });
     console.log(state);
   }
+  const enterEvent = (e) => {
+    if (e.key === "Enter") {
+      submitForm();
+    }
+  };
+
   async function submitForm(e){
     let email = state.username.split('@');
     let response = await fetch(baseUrl+`/sessions?password=${state.password}&username=${email[0]}%40${email[1]}`,{
@@ -25,8 +31,11 @@ function Login(){
       console.log("response:", res);
       if(res.status === 200){
         alert("로그인에 성공했습니다.");
+        getCookie("da_name");
+        getCookie("da_role");
         sessionStorage.setItem("isAuthorized", "true");
-        history.push("/");
+        document.location.href="/";
+        // history.push("/");
       }
       else{
         alert("로그인에 실패했습니다.");
@@ -34,6 +43,31 @@ function Login(){
     })
     .catch(error => {console.error('Error:', error)});
   }
+
+  function getCookie(name) {
+    // Split cookie string and get all individual name=value pairs in an array
+    var cookieArr = document.cookie.split(";");
+    // Loop through the array elements
+    for(var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if(name == cookiePair[0].trim()) {
+            // Decode the cookie value and return
+            // console.log(decodeURIComponent(cookiePair[1]));
+            if(name === "da_name"){
+              sessionStorage.setItem("name", decodeURIComponent(cookiePair[1]));
+            }
+            else if(name === "da_role"){
+              sessionStorage.setItem("role", decodeURIComponent(cookiePair[1]));
+            }
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    // Return null if not found
+    return null;
+}
 
   return(
     <div style={{backgroundColor:"#2a2f38", height:"100vh", textAlign:"center"}}>
@@ -45,12 +79,12 @@ function Login(){
           <Form>
             <Form.Group className="w-75 mb-3">
               <Form.Label style={{fontWeight:"bold"}}>이메일</Form.Label>
-              <Form.Control type="email" placeholder="" name="username" onChange={(e)=>onChangehandler(e)}/>
+              <Form.Control type="email" placeholder="" name="username" onKeyPress={(e) => enterEvent(e)} onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
 
             <Form.Group className="w-75 mb-3">
               <Form.Label style={{fontWeight:"bold"}}>비밀번호</Form.Label>
-              <Form.Control type="password" placeholder="" name="password" onChange={(e)=>onChangehandler(e)}/>
+              <Form.Control type="password" placeholder="" name="password" onKeyPress={(e) => enterEvent(e)} onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
           </Form>
         </div>

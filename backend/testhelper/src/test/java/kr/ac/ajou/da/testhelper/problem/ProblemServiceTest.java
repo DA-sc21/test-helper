@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import kr.ac.ajou.da.testhelper.aws.s3.PreSignedURLService;
+import kr.ac.ajou.da.testhelper.problem.dto.GetProblemResDto;
 
 class ProblemServiceTest {
 	
@@ -29,12 +31,12 @@ class ProblemServiceTest {
 	
 	@Mock
 	private ProblemRepository problemRepository;
-	
-	@Mock
-	private ProblemMapper problemMapper;
+
 	
 	private final Problem problem = new Problem(1L, 1L, DummyFactory.createTest(), "1+1", 20L, null);
 
+  private ProblemMapper problemMapper;
+	
     private final List<Problem> problems = new LinkedList<>();
     private final long testId = 1L;
 	
@@ -42,7 +44,7 @@ class ProblemServiceTest {
 	void setup() {
 		problemRepository = mock(ProblemRepository.class);
 		problemMapper = mock(ProblemMapper.class);
-		problemService = new ProblemService(problemRepository, problemMapper);		
+    problemService = new ProblemService(problemRepository, problemMapper);		
 		problems.add(problem);
 	}
 	
