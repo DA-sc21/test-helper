@@ -21,33 +21,11 @@ export function Problems(props){
 		  .then((res) => {
 			console.log("response:", res);
 			setProblems(res)
-		// 	console.log(result.data)
 		  })
 		  .catch(error => {console.error('Error:', error)});
 	
-		  
-		// await axios
-		// .get(baseUrl+'/tests/'+testId+'/problems')
-		// .then((result)=>{ 
-		// 	setProblems(result.data)
-		// 	console.log(result.data)
-		// })
-		// .catch(()=>{ console.log("실패") })
 	}
 
-	async function getimages(Fileurl){
-    testId=String(testId).padStart(5,"0")
-    
-    await axios
-      .get(baseUrl+'/s3-download-url?objectKey='+{Fileurl})
-      .then((result)=>{
-        console.log(result.data)
-      })
-		.catch(()=>{ console.log("실패") })
-			
-  
-	}
-	
 	return(
 		<Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
 			<Row>
@@ -68,14 +46,13 @@ export function Problems(props){
 					<Tab.Content>
 						{
 							problems.map((problem,index)=>{
-								// getimages(problem.attachedFile)
 								return (
 									<Tab.Pane eventKey={"#link"+index}>
 									{problem.question.split("\n").map((line)=>{
 										return <div>{line}</div>
 									})}
 									<br/>
-									{/* <Image className="col-md-5" src={problem.attachedFile} /> */}
+									<Image className="col-md-5" src={problem.attachedFile} />
 									</Tab.Pane>
 								)
 							})
