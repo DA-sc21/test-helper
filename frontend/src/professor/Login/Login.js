@@ -31,6 +31,8 @@ function Login(){
       console.log("response:", res);
       if(res.status === 200){
         alert("로그인에 성공했습니다.");
+        getCookie("da_name");
+        getCookie("da_role");
         sessionStorage.setItem("isAuthorized", "true");
         document.location.href="/";
         // history.push("/");
@@ -41,6 +43,31 @@ function Login(){
     })
     .catch(error => {console.error('Error:', error)});
   }
+
+  function getCookie(name) {
+    // Split cookie string and get all individual name=value pairs in an array
+    var cookieArr = document.cookie.split(";");
+    // Loop through the array elements
+    for(var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if(name == cookiePair[0].trim()) {
+            // Decode the cookie value and return
+            // console.log(decodeURIComponent(cookiePair[1]));
+            if(name === "da_name"){
+              sessionStorage.setItem("name", decodeURIComponent(cookiePair[1]));
+            }
+            else if(name === "da_role"){
+              sessionStorage.setItem("role", decodeURIComponent(cookiePair[1]));
+            }
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    // Return null if not found
+    return null;
+}
 
   return(
     <div style={{backgroundColor:"#2a2f38", height:"100vh", textAlign:"center"}}>

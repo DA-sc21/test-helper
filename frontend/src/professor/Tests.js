@@ -69,9 +69,9 @@ function Tests(){
     <div className="container mt-3 p-2">
       <ButtonGroup aria-label="Basic example">
         <Button variant={buttonCss(0)} onClick={()=>{setToggled(0);sortTests(1,"id")}}>생성빠른순정렬</Button>
-        <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button>
+        {/* <Button variant={buttonCss(1)} onClick={()=>{setToggled(1);sortTests(-1,"id")}}>생성느린순정렬</Button> */}
         <Button variant={buttonCss(2)} onClick ={()=>{setToggled(2);sortTests(1,"start_time")}}>날짜빠른순정렬</Button>
-        <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button>
+        {/* <Button variant={buttonCss(3)} onClick ={()=>{setToggled(3);sortTests(-1,"start_time")}}>날짜느린순정렬</Button> */}
         <Button variant={buttonCss(4)} onClick ={()=>{setToggled(4);}}>종료된 시험 조회</Button>
       </ButtonGroup>
       <div className="row mt-5">
@@ -89,16 +89,17 @@ function Tests(){
 
 function TestCard(props){
   console.log(props);
+  let status = props.test.test_status;
   const [testState, setTestState] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   let test_status_options={
-    "CREATE" : "시험 생성중",
-    "INVITED" : "시험 생성 완료",
+    "CREATE" : "시험 생성",
+    "INVITED" : "시험 생성",
     "IN_PROGRESS" : "시험 진행중",
-    "ENDED" : "시험 미채점",
-    "MARK" : "시험 채점중",
-    "GRADED" : "시험 채점 완료",
+    "ENDED" : "미채점",
+    "MARK" : "채점",
+    "GRADED" : "채점 결과 전송 완료",
   }
   let history = useHistory()
 
@@ -201,19 +202,33 @@ function TestCard(props){
           </Card.Text>
           <div className="row">
             {testState === "unscored"? 
-            <Button style={{backgroundColor:"#2c4b88", borderColor:"#2c4b88"}} onClick={()=>history.push({
+            <Button style={{backgroundColor:"#f19f91", borderColor:"#f19f91", color:"black", fontWeight:"bold"}} onClick={()=>history.push({
               pathname:`/tests/${props.test.id}/unscored`,
               state:{
                 testName: props.test.name
               }
             })}>답안지 관리</Button>: 
-            <>
-            <Button className="col-md-4" style={{backgroundColor:"#7f95c0", borderColor:"#7f95c0", color:"black"}} onClick={()=>{history.push({
-              pathname: "/tests/"+props.test.id+"/problems",
-              state:{testName: props.test.name }
-              })}}>문제출제</Button>
-            <Button className="col-md-4" style={{backgroundColor:"#3e4450", borderColor:"#3e4450"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
-            <Button className="col-md-4" style={{backgroundColor:"#f7f7f7", borderColor:"gray", color:"black"}} onClick={()=>scoringTest(props.test.test_status)}>채점하기</Button>
+            <>{(status === "CREATE" || status === "INVITED")? 
+              <>
+                <Button className="col-md-6" style={{backgroundColor:"#c8d6a6", borderColor:"#c8d6a6", color:"black", fontWeight:"bold"}} onClick={()=>{history.push({
+                  pathname: "/tests/"+props.test.id+"/problems",
+                  state:{testName: props.test.name }
+                  })}}>문제출제</Button>
+                <Button className="col-md-6" style={{backgroundColor:"#545b69", borderColor:"#545b69"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
+              </>: 
+              <>{status === "IN_PROGRESS"? 
+                <>
+                  <Button className="col-md-12" style={{backgroundColor:"#545b69", borderColor:"#545b69"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
+                </>:
+                <>
+                  <Button style={{backgroundColor:"#f19f91", borderColor:"#f19f91", color:"black", fontWeight:"bold"}} onClick={()=>history.push({
+                    pathname:`/tests/${props.test.id}/unscored`,
+                    state:{
+                      testName: props.test.name
+                    }
+                  })}>답안지 관리</Button>
+                </>}
+              </>}
             </>}
           </div>
         </Card.Body>

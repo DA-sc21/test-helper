@@ -26,6 +26,8 @@ function TestStudentPre(){
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
   let history = useHistory()
   let path="/tests/:testId/students/:studentId"
+  const [deniedTestAccess, setDeniedTestAccess] = useState(true);
+  const [message, setMessage] = useState("");
 
   let changeVideo = (e) => {
     setVideo(e.target.checked)
@@ -73,32 +75,30 @@ function TestStudentPre(){
       .then((res) => {
         console.log("response:", res);
         // setConsented(res.room.consented);
-        setCredentials(res.credentials)
-        setRoom(res.room)
-        setStudent(res.room.student)
-        setTest(res.room.test)
+        if(res.errorMessage != undefined){
+          setDeniedTestAccess(false);
+          setMessage(res.errorMessage);
+        }
+        else{
+          setDeniedTestAccess(true);
+          setCredentials(res.credentials);
+          setRoom(res.room);
+          setStudent(res.room.student);
+          setTest(res.room.test);
+        }
         setLoading(true);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-    // await axios
-    // .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
-    // .then((result)=>{ 
-    //   setConsented(result.data.consented)
-    //   setCredentials(result.data.credentials)
-    //   setRoom(result.data.room)
-    //   setStudent(result.data.room.student)
-    //   setTest(result.data.room.test)
-    //   setLoading(true);
-    //   console.log(result.data)
-    // })
-    // .catch(()=>{ console.log("실패") })
   }
   
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="position-relative">
+      {!deniedTestAccess? 
+      <h3 style={{marginTop:"20%"}}>{message}</h3>:
+      <>
       <NavBarStudent></NavBarStudent>
       <BrowserView> 
         <Nav variant="tabs" >
@@ -144,6 +144,7 @@ function TestStudentPre(){
           video={true}
           audio={true}
         />
+        </>}
     </div>
   )
 }
