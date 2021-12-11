@@ -155,6 +155,7 @@ function StudentList(props){
             {/* <Badge className="scoringStatus" bg={scoring_status_css[props.submitted]}>{scoring_status[props.submitted]}</Badge> */}
             <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
             </button>
+            <RecordView student={props.student} ></RecordView>
           </Card.Body>
         </Card>
 
@@ -172,6 +173,47 @@ function StudentList(props){
           </Modal.Footer>
         </Modal>
     </div>
+  )
+}
+
+function RecordView(props){
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return(
+    <>
+      <Button onClick={handleShow}>녹화영상확인</Button>
+      <Modal show={show} fullscreen={true} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>녹화영상확인 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row">
+            <div className="col-md-6">
+              <div style={{backgroundColor:"#ffc0cb", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>PC화면녹화본</div>
+              <video controls className="w-100">
+                <source src="/media/cc0-videos/flower.mp4"
+                        type="video/mp4" />
+                Sorry, your browser doesn't support embedded videos.
+              </video>
+            </div>
+            <div className="col-md-6">
+              <div style={{backgroundColor:"#59a5fc", textAlign:"center", padding:"4px", margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>시험환경녹화본</div>
+              <video controls className="w-100">
+                <source src="/media/cc0-videos/flower.mp4"
+                        type="video/mp4" />
+                Sorry, your browser doesn't support embedded videos.
+              </video>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button style={{backgroundColor:"#333c50", borderColor:"333c50"}} onClick={handleClose}> 닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   )
 }
 
