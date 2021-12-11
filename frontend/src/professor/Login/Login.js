@@ -15,6 +15,12 @@ function Login(){
     });
     console.log(state);
   }
+  const enterEvent = (e) => {
+    if (e.key === "Enter") {
+      submitForm();
+    }
+  };
+
   async function submitForm(e){
     let email = state.username.split('@');
     let response = await fetch(baseUrl+`/sessions?password=${state.password}&username=${email[0]}%40${email[1]}`,{
@@ -26,7 +32,8 @@ function Login(){
       if(res.status === 200){
         alert("로그인에 성공했습니다.");
         sessionStorage.setItem("isAuthorized", "true");
-        history.push("/");
+        document.location.href="/";
+        // history.push("/");
       }
       else{
         alert("로그인에 실패했습니다.");
@@ -45,12 +52,12 @@ function Login(){
           <Form>
             <Form.Group className="w-75 mb-3">
               <Form.Label style={{fontWeight:"bold"}}>이메일</Form.Label>
-              <Form.Control type="email" placeholder="" name="username" onChange={(e)=>onChangehandler(e)}/>
+              <Form.Control type="email" placeholder="" name="username" onKeyPress={(e) => enterEvent(e)} onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
 
             <Form.Group className="w-75 mb-3">
               <Form.Label style={{fontWeight:"bold"}}>비밀번호</Form.Label>
-              <Form.Control type="password" placeholder="" name="password" onChange={(e)=>onChangehandler(e)}/>
+              <Form.Control type="password" placeholder="" name="password" onKeyPress={(e) => enterEvent(e)} onChange={(e)=>onChangehandler(e)}/>
             </Form.Group>
           </Form>
         </div>

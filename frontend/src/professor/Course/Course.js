@@ -68,7 +68,7 @@ function Course(){
       <div className="content">
         {isSorted === false?
         <Button className="sortCourseBt" onClick={(e)=>sortCourse(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>이름순 정렬</Button> : 
-        <Button className="restoreCourseBt" onClick={(e)=>restoreCourse(e)} style={{backgroundColor:"#b2b6ce", borderColor:"#b2b6ce", color:"black"}}>기본순 정렬</Button>
+        <Button className="restoreCourseBt" onClick={(e)=>restoreCourse(e)} style={{backgroundColor:"#b2b6ce", borderColor:"#b2b6ce", color:"black"}}>강의 생성순 정렬</Button>
         }
         <p className="semester">{year}학년 {semester}학기</p>
         {course.map((data,i)=>{
