@@ -108,21 +108,18 @@ function SignUp(){
     .post(baseUrl+'/users/email/validate', JSON.stringify(data),{
       headers: { "Content-Type": `application/json`}
         })
-    .then((res)=>res.json())
-    .then((result)=>{
-      console.log(result.data);
+    .then((res)=>{
       // response 이미 있는 경우, 성공한 경우, 실패한 경우에 따라 다르게 처리 필요
-      if(result.errorMessage!=undefined){
-        alert(result.errorMessage);
-      }
-      else {
-        alert("이메일을 전송하였습니다.");
-        setMinutes(3);
-        setSeconds(0);
-        setTimerId(true);
-      }
+      console.log(res);
+      alert("이메일을 전송하였습니다.");
+      setMinutes(3);
+      setSeconds(0);
+      setTimerId(true);
     })
-    .catch((e)=>{ console.log(e) })
+    .catch((e)=>{ 
+      alert(e.response.data.errorMessage);
+    })
+    
   }
 
   async function confirmEmail(e){
