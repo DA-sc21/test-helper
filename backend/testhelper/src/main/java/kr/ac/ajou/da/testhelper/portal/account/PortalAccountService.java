@@ -20,7 +20,7 @@ public class PortalAccountService {
 	}
 
 	public void createPortalAccount(PostPortalAccountReqDto reqDto) {
-		PortalAccount account = new PortalAccount(reqDto.getName(), reqDto.getEmail());
+		PortalAccount account = new PortalAccount(reqDto.getName(), reqDto.getEmail(), reqDto.getRole());
 		portalAccountRepository.save(account);
 	}
 }
