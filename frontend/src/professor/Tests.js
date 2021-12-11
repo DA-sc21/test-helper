@@ -212,6 +212,7 @@ function TestCard(props){
               <>
                 <Button className="col-md-6" style={{backgroundColor:"#c8d6a6", borderColor:"#c8d6a6", color:"black", fontWeight:"bold"}} onClick={()=>{history.push({
                   pathname: "/tests/"+props.test.id+"/problems",
+                  state:{testName: props.test.name }
                   })}}>문제출제</Button>
                 <Button className="col-md-6" style={{backgroundColor:"#545b69", borderColor:"#545b69"}} onClick={(e)=>{checkSuperviseTest(e)}}>시험감독</Button>
               </>: 
