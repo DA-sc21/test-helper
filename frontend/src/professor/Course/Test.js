@@ -400,7 +400,8 @@ const CheckTestInfo = (props) => {
   return(
     <div>
       <button className="testName" onClick={(e)=>getTestInfo(e)}>
-        {props.name}{quizNum}
+        {/* {props.name}{quizNum} */}
+        {props.name}
       </button>
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Header closeButton>
