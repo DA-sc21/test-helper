@@ -7,7 +7,6 @@ import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.exception.CannotEndTestBeforeEndTimeException;
-import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestAssistantException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
 import kr.ac.ajou.da.testhelper.test.result.TestResult;
 import kr.ac.ajou.da.testhelper.test.result.exception.CannotResolveTestResultWhenSubmissionsMarkIncompleteException;
@@ -16,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -93,17 +93,23 @@ public class Test {
         this.course = course;
     }
 
-    public Test(TestType testType,
-                LocalDateTime startTime,
-                LocalDateTime endTime,
-                Course course,
-                Long createdBy) {
+    private Test(TestType testType,
+                 LocalDateTime startTime,
+                 LocalDateTime endTime,
+                 Set<Account> assistants,
+                 Course course,
+                 Long createdBy) {
         this.testType = testType;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.assistants = assistants;
         this.course = course;
         this.createdBy = createdBy;
         this.updatedBy = createdBy;
+    }
+
+    public static Test create(TestType type, LocalDateTime startTime, LocalDateTime endTime, List<Account> assistants, Course course, Long createdBy) {
+        return new Test(type, startTime, endTime, new HashSet<>(assistants), course, createdBy);
     }
 
     public String resolveName() {
@@ -131,21 +137,8 @@ public class Test {
         return this.getAssistants().contains(account);
     }
 
-    public void updateAssistants(List<Account> assistants) {
-
-        if (!isValidStatusForUpdatingAssistant()) {
-            throw new CannotUpdateTestAssistantException();
-        }
-
-        this.assistants.clear();
-        this.assistants.addAll(assistants);
-    }
-
-    private boolean isValidStatusForUpdatingAssistant() {
-        return Objects.equals(TestStatus.CREATE, status);
-    }
-
-    public void update(TestType type, LocalDateTime startTime, LocalDateTime endTime, Long updatedBy) {
+    @Transactional
+    public void update(TestType type, LocalDateTime startTime, LocalDateTime endTime, List<Account> assistants, Long updatedBy) {
 
         if (!isValidStatusForUpdating()) {
             throw new CannotUpdateTestException();
@@ -154,15 +147,20 @@ public class Test {
         setTestType(type);
         setStartTime(startTime);
         setEndTime(endTime);
+
+        updateAssistants(assistants);
+
         setUpdatedBy(updatedBy);
+    }
+
+    @Transactional
+    private void updateAssistants(List<Account> assistants) {
+        this.assistants.clear();
+        this.assistants.addAll(assistants);
     }
 
     private boolean isValidStatusForUpdating() {
         return Arrays.asList(TestStatus.CREATE, TestStatus.INVITED).contains(status);
-    }
-
-    public boolean canUpdateAssistant() {
-        return isValidStatusForUpdatingAssistant();
     }
 
     public boolean canSendInvitation() {
@@ -217,12 +215,12 @@ public class Test {
                 TestStatus.GRADED).contains(this.status);
     }
 
-    public boolean hasSentInvitation(){
+    public boolean hasSentInvitation() {
         return Arrays.asList(TestStatus.INVITED,
-                TestStatus.IN_PROGRESS,
-                TestStatus.ENDED,
-                TestStatus.MARK,
-                TestStatus.GRADED)
+                        TestStatus.IN_PROGRESS,
+                        TestStatus.ENDED,
+                        TestStatus.MARK,
+                        TestStatus.GRADED)
                 .contains(this.status);
     }
 }

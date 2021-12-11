@@ -6,8 +6,9 @@ import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.course.CourseService;
 import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.examinee.ExamineeService;
+import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
-import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
+import kr.ac.ajou.da.testhelper.test.dto.CreateTestReqDto;
 import kr.ac.ajou.da.testhelper.test.exception.CannotDeleteStartedTestException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotResendTestInvitationException;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -63,13 +65,11 @@ public class TestService {
     }
 
     @Transactional
-    public Test createTest(Long courseId, PostAndPatchTestReqDto reqDto, Long createdBy) {
+    public Test createTest(Long courseId, CreateTestReqDto reqDto, Long createdBy) {
         Course course = courseService.get(courseId);
-
         List<Account> assistants = accountService.getByIds(reqDto.getAssistants());
 
-        Test test = reqDto.createTest(course, createdBy);
-        test.updateAssistants(assistants);
+        Test test = reqDto.createTest(course, assistants, createdBy);
 
         testRepository.save(test);
 
@@ -77,22 +77,29 @@ public class TestService {
     }
 
     @Transactional
-    public Test updateTest(Long testId, PostAndPatchTestReqDto reqDto, Long updatedBy) {
+    public Test updateTest(Long testId, CreateTestReqDto reqDto, Long updatedBy) {
         Test test = testRepository.getById(testId);
+        List<Account> assistants = accountService.getByIds(reqDto.getAssistants());
 
-        reqDto.updateTest(test, updatedBy);
+        reqDto.updateTest(test, assistants, updatedBy);
 
         if(test.hasSentInvitation()){
             testInvitationSender.sendUpdates(test);
-        }
 
-        if (test.canUpdateAssistant()) {
-            List<Account> assistants = accountService.getByIds(reqDto.getAssistants());
+            updateTestSupervisor(test, assistants);
 
-            test.updateAssistants(assistants);
         }
 
         return test;
+    }
+
+    private void updateTestSupervisor(Test test, List<Account> assistants) {
+        List<Account> supervisor = new LinkedList<>(assistants);
+        supervisor.add(test.getCourse().getProfessor());
+
+        for(int i = 0; i< test.getSubmissions().size(); i++){
+            test.getSubmissions().get(i).updateSupervisedBy(supervisor.get(i% supervisor.size()).getId());
+        }
     }
 
     @Transactional

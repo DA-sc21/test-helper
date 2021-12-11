@@ -94,4 +94,8 @@ public class Submission {
     public boolean isMarked() {
         return Objects.equals(SubmissionStatus.MARKED, status);
     }
+
+    public void updateSupervisedBy(Long supervisedBy) {
+        setSupervisedBy(supervisedBy);
+    }
 }

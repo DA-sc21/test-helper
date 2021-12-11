@@ -7,6 +7,7 @@ import kr.ac.ajou.da.testhelper.common.security.authority.AccessCourseByProfesso
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProfessor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
+import kr.ac.ajou.da.testhelper.test.definition.TestType;
 import kr.ac.ajou.da.testhelper.test.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +60,7 @@ public class TestController {
 
         validate(reqDto);
 
-        Test test = testService.createTest(courseId, reqDto, account.getId());
+        Test test = testService.createTest(courseId, reqDto.toCreateDto(), account.getId());
 
         return ResponseEntity.ok().body(new PostTestResDto(test.getId()));
     }
@@ -72,7 +73,7 @@ public class TestController {
 
         validate(reqDto);
 
-        testService.updateTest(testId, reqDto, account.getId());
+        testService.updateTest(testId, reqDto.toCreateDto(), account.getId());
 
         return ResponseEntity.ok().body(BooleanResponse.TRUE);
 
@@ -99,6 +100,13 @@ public class TestController {
     }
 
     private void validate(PostAndPatchTestReqDto reqDto) {
+
+        try{
+            TestType.valueOf(reqDto.getType());
+        }catch (Exception ex){
+            throw new InvalidInputException("적합하지 않은 시험 종류입니다.");
+        }
+
         if (!LocalDateTime.now().isBefore(reqDto.getStartTime())) {
             throw new InvalidInputException("시작 시간을 현재 이후로 설정해주세요");
         }

@@ -11,7 +11,7 @@ import kr.ac.ajou.da.testhelper.examinee.ExamineeService;
 import kr.ac.ajou.da.testhelper.student.Student;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
-import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
+import kr.ac.ajou.da.testhelper.test.dto.CreateTestReqDto;
 import kr.ac.ajou.da.testhelper.test.exception.CannotUpdateTestException;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
 import kr.ac.ajou.da.testhelper.test.invitation.TestInvitationSender;
@@ -129,7 +129,7 @@ class TestServiceTest {
         Account professor = course.getProfessor();
         Set<Account> assistants = course.getAssistants();
 
-        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+        CreateTestReqDto reqDto = new CreateTestReqDto(TestType.MID,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
@@ -149,7 +149,7 @@ class TestServiceTest {
         verify(testRepository, times(1)).save(any(kr.ac.ajou.da.testhelper.test.Test.class));
     }
 
-    private void assertTestEquals(Course course, PostAndPatchTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
+    private void assertTestEquals(Course course, CreateTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
         assertEquals(course, actualTest.getCourse());
         assertTestEquals(reqDto, actualTest);
     }
@@ -171,7 +171,7 @@ class TestServiceTest {
         Account professor = test.getCourse().getProfessor();
         List<Account> assistants = Collections.singletonList(DummyFactory.createAssistant());
 
-        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+        CreateTestReqDto reqDto = new CreateTestReqDto(TestType.MID,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
@@ -188,7 +188,7 @@ class TestServiceTest {
         verify(testRepository, times(1)).getById(anyLong());
     }
 
-    private void assertTestEquals(PostAndPatchTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
+    private void assertTestEquals(CreateTestReqDto reqDto, kr.ac.ajou.da.testhelper.test.Test actualTest) {
         assertAll(
                 ()-> assertEquals(reqDto.getType(), actualTest.getTestType()),
                 ()-> assertEquals(reqDto.getStartTime(), actualTest.getStartTime()),
@@ -200,11 +200,11 @@ class TestServiceTest {
     @Test
     void updateTest_testStatusINVITED_success_sendUpdateEmail() {
         //given
-        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest(TestStatus.INVITED);
         Account professor = test.getCourse().getProfessor();
         List<Account> assistants = Collections.singletonList(DummyFactory.createAssistant());
 
-        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+        CreateTestReqDto reqDto = new CreateTestReqDto(TestType.MID,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
@@ -227,7 +227,7 @@ class TestServiceTest {
         Account professor = test.getCourse().getProfessor();
         List<Long> assistantIds = Arrays.asList(1L,2L);
 
-        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+        CreateTestReqDto reqDto = new CreateTestReqDto(TestType.MID,
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 assistantIds);
