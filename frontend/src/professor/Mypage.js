@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, FormControl, InputGroup } from 'react-bootstrap';
+import { Button, Modal, FormControl, InputGroup, Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../component/baseUrl";
 import Loading from '../component/Loading';
 
 function Mypage(){
+  const pwValidation = /^.*(?=^.{8,16}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[~,!,@,#,$,*,(,),=,+,_,.,|]).*$/;
+  const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
   const [state, setState] = useState([]);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {setShow(true);setPassword(true);setConfirmPassword(true);}
 
   useEffect(()=>{
   },[])
@@ -23,38 +26,65 @@ function Mypage(){
     console.log(state);
   }
 
+  async function checkPassword(){
+    if(pwValidation.test(state.newPassword) === false){
+      setPassword(false);
+      return false;
+    }
+    else{
+      setPassword(true);
+      return true;
+    }
+  }
+
+  async function checkConfirmPassword(){
+    if(state.newPassword != state.newPasswordConfirm){
+      setConfirmPassword(false);
+      return false;
+    }
+    else{
+      setConfirmPassword(true);
+      return true;
+    }
+  }
+
   async function changePassword(){
+    let isPassword = await checkPassword();
+    let isConfirmPassword = await checkConfirmPassword();
+
     let data = {
-      "email": "yejoon08@ajou.ac.kr",
+      "email": "",
       "newPassword": state.newPassword,
       "password": state.originPassword
     }
-    console.log(data);
-    let response = await fetch(baseUrl+'/users/password',{
-      method: 'PUT',
-      credentials : 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then((res) => res.json())
-    .then((res) => {
-      if(res.errorMessage != undefined){ //error
-        alert(res.errorMessage);
-      }
-      else{ //success
-        alert("비밀번호가 변경되었습니다.");
-      }
-      console.log("response:", res);
-      console.log(res.result);
-      console.log(res.errorMessage);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-     handleClose();
+    console.log(data, isPassword, isConfirmPassword);
+    if(isPassword && isConfirmPassword){
+      let response = await fetch(baseUrl+'/users/password',{
+        method: 'PUT',
+        credentials : 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        if(res.errorMessage != undefined){ //error
+          alert(res.errorMessage);
+        }
+        else{ //success
+          alert("비밀번호가 변경되었습니다.");
+        }
+        console.log("response:", res);
+        console.log(res.result);
+        console.log(res.errorMessage);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+      handleClose();
+    }
   }
 
   return(
@@ -74,40 +104,23 @@ function Mypage(){
           <Modal.Title>비밀번호 변경</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{height:"35vh"}}>
-          <p style={{fontSize:"18px", marginBottom:"1%"}}>기존 비밀번호</p>
-          <InputGroup className="mb-3" style={{width:"100%", marginTop:"0%"}}>
-            <InputGroup.Text id="basic-addon1">비밀번호</InputGroup.Text>
-              <FormControl
-                placeholder=""
-                aria-label="name"
-                aria-describedby="basic-addon1"
-                name="originPassword" 
-                onChange={(e)=>onChangehandler(e)}
-            />
-          </InputGroup>
-          <p style={{fontSize:"18px", marginBottom:"1%", marginTop:"5%"}}>새로운 비밀번호</p>
-          <InputGroup className="mb-3" style={{width:"100%", marginTop:"0%"}}>
-            <InputGroup.Text id="basic-addon1">비밀번호</InputGroup.Text>
-              <FormControl
-                placeholder=""
-                aria-label="name"
-                aria-describedby="basic-addon1"
-                name="newPassword" 
-                onChange={(e)=>onChangehandler(e)}
-            />
-          </InputGroup>
-          <p style={{fontSize:"18px", marginBottom:"1%", marginTop:"2%"}}>새로운 비밀번호 확인</p>
-          <InputGroup className="mb-3" style={{width:"100%", marginTop:"0%"}}>
-            <InputGroup.Text id="basic-addon1">비밀번호</InputGroup.Text>
-              <FormControl
-                placeholder=""
-                aria-label="name"
-                aria-describedby="basic-addon1"
-                name="newPasswordConfirm" 
-                onChange={(e)=>onChangehandler(e)}
-            />
-          </InputGroup>
+          <div style={{height:"39vh"}}>
+          <Form.Group className="w-100 mb-0">
+              <Form.Label style={{fontSize:"18px", fontWeight:"bold"}}>기존 비밀번호</Form.Label>
+              <Form.Control type="password" placeholder="password" name="originPassword" onChange={(e)=>onChangehandler(e)}/>
+          </Form.Group>
+
+          <Form.Group className="w-100 mb-0">
+              <Form.Label style={{fontSize:"18px", fontWeight:"bold", marginTop:"5%"}}>새로운 비밀번호</Form.Label>
+              <Form.Control type="password" placeholder="password" name="newPassword" onChange={(e)=>onChangehandler(e)}/>
+          </Form.Group>
+          {password === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>비밀번호는 8~16자의 영문, 숫자, 특수문자를 모두 사용해야합니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
+
+          <Form.Group className="w-100 mb-0">
+              <Form.Label style={{fontSize:"18px", fontWeight:"bold", marginTop:"2%"}}>새로운 비밀번호 확인</Form.Label>
+              <Form.Control type="password" placeholder="password" name="newPasswordConfirm" onChange={(e)=>onChangehandler(e)}/>
+          </Form.Group>
+          {confirmPassword === false ? <p style={{marginTop:"0", marginBottom:"0", color:"red", fontSize:"14px"}}>비밀번호가 일치하지 않습니다</p>: <p style={{marginTop:"0", marginBottom:"0", fontSize:"14px"}}>&nbsp;</p>}
           </div>
         </Modal.Body>
         <Modal.Footer>
