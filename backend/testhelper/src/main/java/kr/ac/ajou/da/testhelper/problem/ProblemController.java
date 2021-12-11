@@ -1,5 +1,6 @@
 package kr.ac.ajou.da.testhelper.problem;
 
+import kr.ac.ajou.da.testhelper.aws.s3.PreSignedURLService;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
 import kr.ac.ajou.da.testhelper.common.security.authority.AccessTestByProctor;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
@@ -21,11 +22,18 @@ public class ProblemController {
 
     private final ProblemService problemService;
     private final TestService testService;
+	private final PreSignedURLService preSignedURLService;
 
     @GetMapping("/tests/{testId}/problems")
     public ResponseEntity<List<GetTestProblemResDto>> getTestProblem(@PathVariable Long testId) {
 
-        return ResponseEntity.ok().body(problemService.getByTestId(testId).stream().map(GetTestProblemResDto::new).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(problemService.getByTestId(testId).stream().map(problem -> {
+        	String preSignedURL = null;
+			if(problem.getAttachedFile() != null && problem.getAttachedFile().length() != 0) {
+				preSignedURL = preSignedURLService.getDownloadUrl(problem.getAttachedFile());
+			}
+        	return new GetTestProblemResDto(problem, preSignedURL);
+        }).collect(Collectors.toList()));
 
     }
 

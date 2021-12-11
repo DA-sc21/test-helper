@@ -19,22 +19,11 @@ import java.util.List;
 public class ProblemService {
 
 	private final ProblemRepository problemRepository;
-	private final PreSignedURLService preSignedURLService;
 	private final ProblemMapper problemMapper;
 
 	@Transactional
-    public List<GetProblemResDto> getByTestId(Long testId) {
-		List<Problem> problems = problemRepository.findByTestId(testId);
-		List<GetProblemResDto> list = new ArrayList<GetProblemResDto>();
-		for(Problem problem : problems) {
-			String preSignedURL = null;
-			if(problem.getAttachedFile() != null && problem.getAttachedFile().length() != 0) {
-				preSignedURL = preSignedURLService.getDownloadUrl(problem.getAttachedFile());
-			}
-			list.add(new GetProblemResDto(problem.getId(), problem.getProblemNum(), problem.getTestId(), problem.getQuestion(), problem.getPoint(), preSignedURL));
-		}
-        return list;
-
+    public List<Problem> getByTestId(Long testId) {
+		return problemRepository.findByTestId(testId);
     }
 	
 	@Transactional

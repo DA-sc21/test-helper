@@ -31,11 +31,9 @@ class ProblemServiceTest {
 	
 	@Mock
 	private ProblemRepository problemRepository;
+
 	
-	@Mock
-	private PreSignedURLService preSignedURLService;
-	
-	private final Problem problem = new Problem(1L, 1L, 1L, "1+1", 20L, null);
+	private final Problem problem = new Problem(1L, 1L, DummyFactory.createTest(), "1+1", 20L, null);
 
   private ProblemMapper problemMapper;
 	
@@ -45,9 +43,8 @@ class ProblemServiceTest {
     @BeforeEach
 	void setup() {
 		problemRepository = mock(ProblemRepository.class);
-		preSignedURLService = mock(PreSignedURLService.class);
 		problemMapper = mock(ProblemMapper.class);
-    problemService = new ProblemService(problemRepository, preSignedURLService, problemMapper);		
+    problemService = new ProblemService(problemRepository, problemMapper);		
 		problems.add(problem);
 	}
 	
@@ -59,7 +56,7 @@ class ProblemServiceTest {
         when(problemRepository.findByTestId(anyLong())).thenReturn(problems);
 
         //when
-        List<GetProblemResDto> res = problemService.getByTestId(testId);
+        List<Problem> res = problemService.getByTestId(testId);
 
         //then
         verify(problemRepository, times(1)).findByTestId(anyLong());
