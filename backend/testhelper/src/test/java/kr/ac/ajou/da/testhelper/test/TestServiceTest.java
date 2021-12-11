@@ -69,7 +69,6 @@ class TestServiceTest {
 
         testService = new TestService(testRepository,
                 testRoomService,
-                accountMapper,
                 courseService,
                 accountService,
                 examineeService,

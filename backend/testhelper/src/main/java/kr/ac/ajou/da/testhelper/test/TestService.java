@@ -1,7 +1,6 @@
 package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.account.Account;
-import kr.ac.ajou.da.testhelper.account.AccountMapper;
 import kr.ac.ajou.da.testhelper.account.AccountService;
 import kr.ac.ajou.da.testhelper.course.Course;
 import kr.ac.ajou.da.testhelper.course.CourseService;
@@ -27,7 +26,6 @@ public class TestService {
 
     private final TestRepository testRepository;
     private final TestRoomService testRoomService;
-    private final AccountMapper accountMapper;
     private final CourseService courseService;
     private final AccountService accountService;
     private final ExamineeService examineeService;

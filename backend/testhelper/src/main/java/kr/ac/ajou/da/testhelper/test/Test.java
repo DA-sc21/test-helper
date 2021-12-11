@@ -2,6 +2,7 @@ package kr.ac.ajou.da.testhelper.test;
 
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.course.Course;
+import kr.ac.ajou.da.testhelper.problem.Problem;
 import kr.ac.ajou.da.testhelper.submission.Submission;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.definition.TestType;
@@ -52,6 +53,9 @@ public class Test {
             joinColumns = @JoinColumn(name = "test_id"),
             inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<Account> assistants = new HashSet<>();
+
+    @OneToMany(mappedBy = "test", fetch = FetchType.LAZY)
+    private List<Problem> problems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
