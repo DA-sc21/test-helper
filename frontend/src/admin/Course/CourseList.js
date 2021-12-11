@@ -150,12 +150,12 @@ const AdminCourseList = () => {
 
   if(!loading)return(<Loading></Loading>)
    return(
-      <div className="content">
+      <div className="adminContent">
         <div className = "logodiv">
         <img src={'/img/admin_logo.png'} className = {"logo"} alt={"admin page"} onClick={(e)=>imageClick(e)}/>
         <Button className="logout" onClick={(e)=>logout(e)} style={{backgroundColor:"#4c5272", borderColor:"#4c5272"}}>로그아웃</Button>
         </div>
-        <div className="content">
+        <div className="adminContent">
         <Button variant={buttonCss("all")}  onClick={(e)=>{setResisterStatus(e.target.value); sortRegister(e.target.value);}} style={{borderColor:"#4c5272"}} value = "all"> {year}학년 {semester}학기 모든 수업 조회</Button>
         <select className="searchOption" onChange={handleSearchOption}>
             <option value = "byCourseName">과목 이름 검색</option>

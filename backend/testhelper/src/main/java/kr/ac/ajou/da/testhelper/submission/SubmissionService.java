@@ -10,9 +10,13 @@ import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInPr
 import kr.ac.ajou.da.testhelper.submission.exception.CannotViewNotSubmittedSubmissionException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
+import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -120,5 +124,19 @@ public class SubmissionService {
         }
 
         submission.updateStatus(status);
+    }
+
+	@Transactional
+    public String getDownloadUrlByTestIdAndStudentIdAndSubmissionType(Long testId, Long studentId, SubmissionType submissionType) {
+
+        Submission submission = this.getByTestIdAndStudentId(testId, studentId);
+        
+        if (submission.getTest().getStatus() == TestStatus.CREATE || 
+        		submission.getTest().getStatus() == TestStatus.INVITED ||
+        		submission.getTest().getStatus() == TestStatus.IN_PROGRESS) {
+        	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시험 종료 후 확인 가능 합니다.");
+        }
+
+        return fileService.getDownloadUrl(submissionType.resolveSubmissionPath(submission));
     }
 }

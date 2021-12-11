@@ -122,7 +122,7 @@ public class CourseService {
 		PortalCourse portal = getPortalCourseById(courseId);
 		Course course = getCourseByCode(portal.getCode());
 		if(course.getTests().size() != 0) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, course.getName() + " 수업은 시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.");
 		}
 		deleteStudent(course.getId());
 		deleteAssistant(course.getId());

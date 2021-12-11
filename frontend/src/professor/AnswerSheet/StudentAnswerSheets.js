@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Badge, InputGroup, FormControl, Modal, Spinner } from 'react-bootstrap';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
@@ -148,30 +148,109 @@ function StudentList(props){
   return(
     <div>
       <Card className="studentListCard">
-          <Card.Body>
-            <button className="scoringBt" onClick={handleShow}>
-            <span className="studentNumber">{props.student.studentNumber}</span> 
-            <span className="studentName">{props.student.name}</span>
-            {/* <Badge className="scoringStatus" bg={scoring_status_css[props.submitted]}>{scoring_status[props.submitted]}</Badge> */}
-            <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
-            </button>
-          </Card.Body>
-        </Card>
+        <Card.Body>
+          <div className="row">
+            <div className="col-md-10">
+              <button className="scoringBt" onClick={handleShow}>
+                <span className="studentNumber">{props.student.studentNumber}</span> 
+                <span className="studentName">{props.student.name}</span>
+                {/* <Badge className="scoringStatus" bg={scoring_status_css[props.submitted]}>{scoring_status[props.submitted]}</Badge> */}
+                <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
+              </button>
+            </div>
+            <div className="col-md-2">
+              <RecordView path={path} student={props.student} ></RecordView>
+            </div>
+          </div>
+        </Card.Body>
+      </Card>
 
-        <Modal show={show} fullscreen={true} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button style={{backgroundColor:"#333c50", borderColor:"333c50"}} onClick={(e)=>completeScoring(e)}>
-              채점 완료
-            </Button>
-          </Modal.Footer>
-        </Modal>
+      <Modal show={show} fullscreen={true} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button style={{backgroundColor:"#333c50", borderColor:"333c50"}} onClick={(e)=>completeScoring(e)}>
+            채점 완료
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
+  )
+}
+
+function RecordView(props){
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    getUrlScreenShare();
+    getRoomUrl();
+    setShow(true);
+  };
+  let path = props.path;
+  let studentId = props.student.id;
+  let [screenVideo,setScreenVideo]= useState("")
+  let [roomVideo,setroomVideo]= useState("")
+  console.log(props.student)
+  async function getUrlScreenShare(){
+
+    await axios
+    .get(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{ 
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log("sdf",result.data.downloadUrl);
+      setScreenVideo(result.data.downloadUrl)
+    })
+    .catch((e)=>{ console.log("실패",e) })
+}
+
+  async function getRoomUrl(){
+
+      await axios
+      .get(baseUrl+path+'/students/'+studentId+'/submissions/ROOM_VIDEO/download-url',{ 
+          withCredentials : true
+        })
+      .then((result)=>{
+        console.log("sdf",result.data.downloadUrl);
+        setroomVideo(result.data.downloadUrl)
+      })
+      .catch((e)=>{ console.log("실패",e) })
+  }
+  return(
+    <>
+      <Button style={{backgroundColor:"#aee4ff",borderColor:"#aee4ff"}} onClick={handleShow}>녹화영상확인</Button>
+      <Modal show={show} fullscreen={true} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>녹화영상확인 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row">
+            <div className="col-md-6">
+              <div style={{backgroundColor:"#ffc0cb", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>PC화면녹화본</div>
+              <video controls className="w-100">
+                <source src={screenVideo} type="video/mp4" />
+                Sorry, your browser doesn't support embedded videos.
+              </video>
+            </div>
+            <div className="col-md-6">
+              <div style={{backgroundColor:"#59a5fc", textAlign:"center", padding:"4px", margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>시험환경녹화본</div>
+              <video controls className="w-100">
+                <source src={roomVideo} type="video/mp4" />
+                Sorry, your browser doesn't support embedded videos.
+              </video>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="dark" onClick={handleClose}> 닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   )
 }
 

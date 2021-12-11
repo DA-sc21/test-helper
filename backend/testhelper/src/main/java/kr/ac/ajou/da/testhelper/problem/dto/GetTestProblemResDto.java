@@ -11,11 +11,11 @@ public class GetTestProblemResDto {
     private final Long point;
     private final String attachedFile;
 
-    public GetTestProblemResDto(Problem problem) {
+    public GetTestProblemResDto(Problem problem, String attachedFileDownloadUrl) {
         this.id = problem.getId();
         this.problemNum = problem.getProblemNum();
         this.question = problem.getQuestion();
         this.point = problem.getPoint();
-        this.attachedFile = problem.getAttachedFile();
+        this.attachedFile = attachedFileDownloadUrl;
     }
 }
