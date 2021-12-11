@@ -139,9 +139,9 @@ function SignUp(){
         alert("이메일 인증에 성공했습니다.");
       }
     })
-    .catch(()=>{ 
+    .catch((e)=>{ 
       console.log("실패");
-      alert("인증번호가 일치하지 않습니다.");
+      alert(e.response.data.errorMessage);
      })
   }
 
