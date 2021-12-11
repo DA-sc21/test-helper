@@ -12,13 +12,15 @@ function StudentAnswerSheets(props){
   let history = useHistory();
   let path = props.path;
   const [state, setState] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [allStudents, setAllstudents] = useState([]);
   const [students, setStudents] = useState([]);
 
   useEffect(()=>{
     console.log(props);
-    setAllstudents(props.students);
-    setStudents(props.students);
+    getStudentList();
+    // setAllstudents(props.students);
+    // setStudents(props.students);
   },[]);
 
   function onChangehandler(e){
@@ -28,6 +30,20 @@ function StudentAnswerSheets(props){
       [name]: value,
     });
     console.log(state);
+  }
+
+  async function getStudentList(){
+    await axios
+    .get(baseUrl+path+'/submissions?studentNumber=2',{ //학생 전체 조회
+        withCredentials : true
+      })
+    .then((result)=>{
+      console.log(result.data);
+      setAllstudents(result.data);
+      setStudents(result.data);
+      setLoading(true);
+    })
+    .catch(()=>{ console.log("실패") })
   }
 
   let searchStudentNumber = (e) => {
@@ -47,6 +63,25 @@ function StudentAnswerSheets(props){
     setStudents(allStudents);
   }
 
+  async function sendScoringTest(){
+    let response = await fetch(baseUrl+path+'/grade',{
+      method: 'POST',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.result === true){
+        alert("채점 결과가 전송되었습니다.");
+      }
+      else{
+        alert(res.errorMessage);
+      }
+      console.log("response:", res);
+    })
+    .catch(error => {console.error('Error:', error)});
+  }
+
+  if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"1%", width:"70%"}}>
       <Button variant="light" style={{marginRight:"10%", float:"right", color:"black", borderColor:"gray"}} onClick={(e)=>searchStudentNumber(e)}>검색</Button>
@@ -58,10 +93,11 @@ function StudentAnswerSheets(props){
         />
       </InputGroup>
       <Button style={{marginRight:"2.5%", float:"right", backgroundColor:"#3d4657", borderColor:"#3d4657"}} onClick={(e)=>checkAllStudentList(e)}>전체 목록</Button>
-      <div style={{marginTop:"5%", marginBottom:"0.2%", width:"90%", fontSize:"19px", textAlign:"left"}}>
+      <Button style={{float:"left", backgroundColor:"#467fca", borderColor:"#467fca"}} onClick={(e)=>sendScoringTest(e)}>채점 결과 전송</Button>
+      <div style={{marginTop:"6%", marginBottom:"0.2%", width:"90%", fontSize:"19px", textAlign:"left"}}>
         <span style={{marginLeft:"5.7%"}}>학번</span>
         <span style={{marginLeft:"6%"}}>이름</span>
-        <span style={{marginRight:"2.5%", float:"right"}}>채점 여부</span>
+        <span style={{marginRight:"0%", float:"right"}}>제출/채점 여부</span>
       </div>
       {students.map((data,idx)=>{
       return <StudentList key={idx} student={data.student} submitted={data.submitted} path={path}/>; })}
@@ -84,9 +120,9 @@ function StudentList(props){
     "MARKED" : "채점 완료",
   }
   let scoring_status_css={
-    "PENDING" : "secondary",
-    "DONE" : "success",
-    "MARKED" : "primary",
+    "PENDING" : "#b4b4b4",
+    "DONE" : "#a7ce9d",
+    "MARKED" : "#b096d3",
   }
 
   async function completeScoring(){
@@ -98,8 +134,8 @@ function StudentList(props){
     .then((res) => {
       if(res.result === true){
         alert("채점이 완료되었습니다.");
+        history.push(path+'/unscored');
         handleClose();
-        history.push(path+'/students');
       }
       else{
         alert(res.errorMessage);
@@ -116,7 +152,8 @@ function StudentList(props){
             <button className="scoringBt" onClick={handleShow}>
             <span className="studentNumber">{props.student.studentNumber}</span> 
             <span className="studentName">{props.student.name}</span>
-            <Badge className="scoringStatus" bg={scoring_status_css[props.submitted]}>{scoring_status[props.submitted]}</Badge>
+            {/* <Badge className="scoringStatus" bg={scoring_status_css[props.submitted]}>{scoring_status[props.submitted]}</Badge> */}
+            <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
             </button>
           </Card.Body>
         </Card>
