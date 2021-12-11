@@ -55,10 +55,18 @@ public class CourseService {
         course.updateAssistants(assistants);
     }
 
+    @Transactional
     public Set<Account> getCourseAssistantsById(Long courseId) {
         Course course = this.get(courseId);
 
         return course.getAssistants();
+    }
+
+    @Transactional
+    public List<Student> getStudentsById(Long courseId) {
+        Course course = this.get(courseId);
+
+        return course.getStudents();
     }
     
     @Transactional
@@ -129,5 +137,4 @@ public class CourseService {
 		deleteCourse(course);
 		updatePortalRegistered(portal, PortalStatus.PENDING);
 	}
-
 }
