@@ -11,7 +11,6 @@ function CreateProblems(props){
   const { testId } = useParams();
   let [problems,setProblems] = useState([]);
   let [tab,setTab] = useState(0);
-  let history = useHistory()
   let [testName,settestName] = useState(props.location.state.testName);
   
   useEffect(()=>{
@@ -27,21 +26,45 @@ function CreateProblems(props){
       setProblems(result.data)
       console.log(result.data)
     })
-    .catch(()=>{ console.log("실패") })
+    .catch((e)=>{ console.log("실패",e) })
   }
   
 
-  async function createProblems(point,problemNum,question){
+  async function createProblems(img,point,problemNum,question){
+    let preSignedUrl="";
+    let testIdPad=String(testId).padStart(5,"0")
+  
+    let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
+      method: "GET",
+      credentials: "include"
+    })
+    .then(res => res.text())
+    .then((res)=>{
+      preSignedUrl=res;
+      console.log(res)
+    })
+    .catch((error)=> {console.log(error)})
 
+     console.log(preSignedUrl);
+
+     await axios
+     .put(preSignedUrl,img)
+     .then((result)=>{
+       // getProblems();
+       alert("첨부파일 등록이 완료되었습니다.")
+       console.log("put성공")
+     })
+     .catch((e)=>{ console.log(e) })
+   
     const data = {
-      "attachedFile": "",
+      "attachedFile": "test/"+testIdPad+'/problems/'+problemNum+".jpg",
       "point": point,
       "problemNum": problemNum,
       "question": question
     };
 
     console.log(point,problemNum,question)
-      let response = await fetch(baseUrl+`/tests/`+testId+`/problems`,{
+      let response2 = await fetch(baseUrl+`/tests/`+testId+`/problems`,{
       method: 'POST',
       credentials : 'include',
       body: JSON.stringify(data),
@@ -64,10 +87,10 @@ function CreateProblems(props){
       }
     )
     .catch(error => {console.error('Error:', error)});
-
+    
   }
 
-  async function updateProblems(point,problemNum,question){
+  async function updateProblems(img,point,problemNum,question){
 
     const data = {
       "attachedFile": "",
@@ -100,7 +123,7 @@ function CreateProblems(props){
   }
 
   async function deleteProblems(problemNum){
-
+    
     let response = await fetch(baseUrl+`/tests/`+testId+`/problems/`+problemNum,{
       method: 'DELETE',
       credentials : 'include',
@@ -122,7 +145,7 @@ function CreateProblems(props){
 
   function buttonCss(status) {
     return tab===status ? "dark" : "outline-dark"  
-}
+  }
   return(
     <div className="m-3">
       <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
@@ -156,7 +179,7 @@ function CreateProblems(props){
                   return (
                     <div key={index} className="col-md-6">
                       <Card className="mb-3" >
-                        <Card.Img variant="top" src="" />
+                        <Card.Img variant="top" src={problem.attachedFile} />
                         <Card.Header>
                           <Card.Title>문제 {problem.problemNum} ({problem.point}점)</Card.Title>
                         </Card.Header>
@@ -194,6 +217,7 @@ function ProblemModal(props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  let [img, setImg] = useState("");
 
   return (
     <>
@@ -225,6 +249,11 @@ function ProblemModal(props) {
               <Form.Label>문제 내용</Form.Label>
               <Form.Control as="textarea" rows={3} placeholder="문제 내용을 입력하세요." />
             </Form.Group>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>문제 첨부파일</Form.Label>
+              <Form.Control type="file" onChange={(e) => {setImg(e.target.files[0])
+              }}/>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -245,8 +274,10 @@ function ProblemModal(props) {
               alert("문제 내용을 입력해주세요.")
             }
             else{
-              props.createProblems(point,problemNum,question)
+              props.createProblems(img,point,problemNum,question)
             }
+            setImg("")
+            handleClose()
           }}>저장</Button>
         </Modal.Footer>
       </Modal>
@@ -258,6 +289,7 @@ function ProblemUpdateModal(props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  let [img, setImg] = useState("");
 
   return (
     <>
@@ -289,6 +321,11 @@ function ProblemUpdateModal(props) {
               <Form.Label>문제내용</Form.Label>
               <Form.Control as="textarea" rows={3} defaultValue={props.question} />
             </Form.Group>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>문제 첨부파일</Form.Label>
+              <Form.Control type="file" onChange={(e) => {setImg(e.target.files[0])
+              }}/>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -309,7 +346,7 @@ function ProblemUpdateModal(props) {
               alert("문제 내용을 입력해주세요.")
             }
             else{
-              props.updateProblems(point,problemNum,question)
+              props.updateProblems(img,point,problemNum,question)
             }
           }}>저장</Button>
         </Modal.Footer>
