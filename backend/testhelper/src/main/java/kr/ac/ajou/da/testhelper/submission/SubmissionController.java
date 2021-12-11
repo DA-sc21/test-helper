@@ -93,5 +93,16 @@ public class SubmissionController {
 
         return ResponseEntity.ok().body(BooleanResponse.TRUE);
     }
+    
+    @GetMapping("/tests/{testId}/students/{studentId}/submissions/{submissionType}/download-url")
+    @AccessTestByProfessor
+    public ResponseEntity<GetSubmissionDownloadUrlResDto> getSubmissionDownloadUrl(@PathVariable Long testId,
+                                                                               @PathVariable Long studentId,
+                                                                               @PathVariable SubmissionType submissionType) {
+
+        return ResponseEntity.ok().body(new GetSubmissionDownloadUrlResDto(
+                submissionService.getDownloadUrlByTestIdAndStudentIdAndSubmissionType(testId, studentId, submissionType)));
+
+    }
 
 }

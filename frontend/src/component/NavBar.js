@@ -5,6 +5,12 @@ import { baseUrl } from "./baseUrl";
 import axios from 'axios';
 
 function NavBar(){
+  let name = sessionStorage.getItem("name");
+  let role = sessionStorage.getItem("role");
+  const pro_ass_role = {
+    "PROFESSOR": "교수",
+    "ASSISTANT": "조교"
+  }
   let history = useHistory();
   async function logout(e){
     let response = await fetch(baseUrl+'/sessions',{
@@ -15,27 +21,18 @@ function NavBar(){
       console.log("response:", res);
       if(res.status === 200){
         alert("로그아웃 되었습니다.");
-        localStorage.removeItem('isAuthorized');
-        localStorage.clear();
-        history.push("/login");
+        sessionStorage.removeItem("name");
+        sessionStorage.removeItem("role");
+        sessionStorage.removeItem('isAuthorized');
+        sessionStorage.clear();
+        document.location.href="/login";
+        // history.push("/login");
       }
       else{
         alert("로그아웃에 실패했습니다.");
       }
     })
     .catch(error => {console.error('Error:', error)});
-    // await axios
-    // .delete(baseUrl+'/sessions',{
-    //   withCredentials : true
-    // })
-    // .then((result)=>{
-    //   console.log(result.data);
-    //   alert("로그아웃 되었습니다.");
-    //   localStorage.removeItem('isAuthorized');
-    //   localStorage.clear();
-    //   history.push("/login");
-    // })
-    // .catch(()=>{ console.log("실패") })
   }
   return(
     <Navbar bg="dark" variant="dark" expand="lg" style={{height:"9vh"}}>
@@ -64,7 +61,7 @@ function NavBar(){
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text style={{fontSize:"17px", marginTop:"0.5%"}}>
-          Signed in as: <a href="#login" style={{textUnderlinePosition:"under"}}>윤대균 교수</a>
+          Signed in as: <a href="#login" style={{textUnderlinePosition:"under"}}>{name} {pro_ass_role[role]}</a>
           </Navbar.Text>
         </Navbar.Collapse>
         <Button style={{marginLeft:"1%", backgroundColor:"#ffffff00", borderColor:"#b6b6b6", color:"black", color:"#b6b6b6", boxShadow:"1px 1px 1px #b6b6b6"}} onClick={(e)=>logout(e)}>로그아웃</Button>

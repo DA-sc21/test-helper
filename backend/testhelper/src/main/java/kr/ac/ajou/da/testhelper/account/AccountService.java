@@ -49,8 +49,8 @@ public class AccountService implements UserDetailsService {
     	if(!verifyEmail(reqDto.getEmail()).isEmpty()) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 계정입니다. 비밀번호 찾기를 진행해주세요.");
     	}
-		Account account = new Account(reqDto.getName(), reqDto.getEmail(), passwordEncoder.encode(reqDto.getPassword()), reqDto.getRole());
 		PortalAccount portalAccount = portalAccountService.getByEmail(reqDto.getEmail());
+		Account account = new Account(portalAccount.getName(), reqDto.getEmail(), passwordEncoder.encode(reqDto.getPassword()), portalAccount.getRole());
 		accountRepository.save(account);
 		portalAccount.updateJoined(PortalStatus.DONE);
 		return true;

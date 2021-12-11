@@ -99,7 +99,10 @@ const AdminCourse = (props) => {
       .then(res=>res.json())
       .then( res => {
         console.log("response:", res);
-        if(res.result){
+        if(res.errorMessage!=undefined){
+          alert(res.errorMessage);
+        }
+        else{
           alert(`${registerCourse.name} 수업을 등록 취소하였습니다.`)
           const result = allCourse.map((data)=>{
             if(data.id == id){
@@ -111,9 +114,7 @@ const AdminCourse = (props) => {
         props.change(result);
           // document.location.href="/admin/courses";
         }
-        else if(res.errorMessage){
-          alert(`${registerCourse.name} 수업은 시험을 생성하여 서비스를 이용중이므로 등록을 취소할 수 없습니다.`);
-        }
+
       })
       .catch(error => {
         console.error('Error:', error);
@@ -179,7 +180,7 @@ const AdminCourse = (props) => {
       let ass = assistant.filter((data)=>data.id === id)[0];
       // console.log(ass);
         return (
-            <div className="content">
+            <div className="adminContent">
               <Table responsive="md">
                 <thead>
                 <tr>

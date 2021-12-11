@@ -1,7 +1,7 @@
 package kr.ac.ajou.da.testhelper.test.result;
 
 import kr.ac.ajou.da.testhelper.submission.Submission;
-import kr.ac.ajou.da.testhelper.test.invitation.exception.FailedToSendInvitationEmailException;
+import kr.ac.ajou.da.testhelper.test.invitation.exception.FailedToSendEmailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailSendException;
@@ -37,7 +37,7 @@ public class TestGradeSender {
                 mailSender.send(createMessage(submission));
             } catch (MessagingException | MailSendException e) {
                 log.error("Failed To Send Email : email = {} test = {}", submission.getStudent().getEmail(), submission.getTest().getId());
-                throw new FailedToSendInvitationEmailException();
+                throw new FailedToSendEmailException();
             }
         }
     }

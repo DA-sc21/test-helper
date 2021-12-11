@@ -43,19 +43,6 @@ function UnscoredTests(){
     }
     setTestInfo(temp);
   }
-
-  // async function getStudentList(){
-  //   await axios
-  //   .get(baseUrl+path+'/submissions?studentNumber=2',{ //학생 전체 조회
-  //       withCredentials : true
-  //     })
-  //   .then((result)=>{
-  //     console.log(result.data);
-  //     setStudents(result.data);
-  //     setLoading(true);
-  //   })
-  //   .catch(()=>{ console.log("실패") })
-  // }
   
   if(!loading)return(<Loading></Loading>)
   return(
