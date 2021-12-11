@@ -23,10 +23,9 @@ function App() {
         <Route exact path="/admin/courses" component={AdminCourseList} />
         <Route path="/admin" component= {AdminLogin} />
         <>
-          {!isAuthorized ? <Redirect to="/login" /> : <Redirect to="/" />}
+          {!isAuthorized ? <Redirect to="/login" /> : <NavBar></NavBar>}
           <Route path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
-          <NavBar></NavBar>
           <Route exact path="/tests/:testId/problems" component={CreateProblems} />
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />
