@@ -40,8 +40,10 @@ public class AccountController {
     }
     
     @PutMapping("/users/password")
-    public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto) {
-    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(reqDto.getEmail(), reqDto.getPassword(), reqDto.getNewPassword())));
+    @IsAccount
+    public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto,
+                                                              @AuthenticationPrincipal @ApiIgnore Account account) {
+    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(account, reqDto.getPassword(), reqDto.getNewPassword())));
     }
 
     @GetMapping("/account")

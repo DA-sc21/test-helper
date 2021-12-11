@@ -75,21 +75,14 @@ public class AccountService implements UserDetailsService {
 		return accountRepository.findByEmail(email)
 				.orElseThrow(AccountNotFoundException::new);
 	}
-
-    @Transactional
-	public void updatePasswordByEmail(String email, String password) {
-		Account account = getByEmail(email);
-		account.updatePassword(passwordEncoder.encode(password));
-	}
         
     @Transactional
-    public boolean updatePassword(String email, String password, String newPassword) {
-    	Account account = getByEmail(email);
+    public boolean updatePassword(Account account, String password, String newPassword) {
     	log.info(account.getPassword());
     	if(!passwordEncoder.matches(password, account.getPassword())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 틀렸습니다.");
     	}
-    	updatePasswordByEmail(email, newPassword);
+        account.updatePassword(passwordEncoder.encode(newPassword));
     	return true;
     }
 
