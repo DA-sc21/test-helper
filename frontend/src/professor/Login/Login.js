@@ -6,7 +6,7 @@ import axios from 'axios';
 
 function Login(){
   const [state, setState] = useState([]);
-  const [show, setShow] = useState(false); //시험 정보 조회 Modal
+  const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   let history = useHistory();
@@ -30,21 +30,25 @@ function Login(){
       method: 'POST',
       credentials : 'include'
     })
-    .then( res => {
-      console.log("response:", res);
-      if(res.status === 200){
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.errorMessage != undefined){ //error
+        alert(res.errorMessage);
+      }
+      else{ //success
         alert("로그인에 성공했습니다.");
         getCookie("da_name");
         getCookie("da_role");
         sessionStorage.setItem("isAuthorized", "true");
         document.location.href="/";
-        // history.push("/");
       }
-      else{
-        alert("로그인에 실패했습니다.");
-      }
+      console.log("response:", res);
+      console.log(res.result);
+      console.log(res.errorMessage);
     })
-    .catch(error => {console.error('Error:', error)});
+    .catch((error) => {
+      console.error("Error:", error);
+    });
   }
 
   function getCookie(name) {
