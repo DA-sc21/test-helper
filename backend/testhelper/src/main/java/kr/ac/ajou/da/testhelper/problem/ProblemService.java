@@ -1,5 +1,7 @@
 package kr.ac.ajou.da.testhelper.problem;
 
+import kr.ac.ajou.da.testhelper.aws.s3.PreSignedURLService;
+import kr.ac.ajou.da.testhelper.problem.dto.GetProblemResDto;
 import kr.ac.ajou.da.testhelper.problem.dto.TestProblemReqDto;
 import kr.ac.ajou.da.testhelper.problem.exception.ProblemNotFoundException;
 import kr.ac.ajou.da.testhelper.test.Test;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,14 +19,11 @@ import java.util.List;
 public class ProblemService {
 
 	private final ProblemRepository problemRepository;
-
 	private final ProblemMapper problemMapper;
 
 	@Transactional
     public List<Problem> getByTestId(Long testId) {
-
-        return problemRepository.findByTestId(testId);
-
+		return problemRepository.findByTestId(testId);
     }
 	
 	@Transactional
