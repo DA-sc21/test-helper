@@ -16,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import kr.ac.ajou.da.testhelper.aws.s3.PreSignedURLService;
+import kr.ac.ajou.da.testhelper.problem.dto.GetProblemResDto;
+
 class ProblemServiceTest {
 	
 	@InjectMocks
@@ -24,6 +27,9 @@ class ProblemServiceTest {
 	@Mock
 	private ProblemRepository problemRepository;
 	
+	@Mock
+	private PreSignedURLService preSignedURLService;
+	
 	private final Problem problem = new Problem(1L, 1L, 1L, "1+1", 20L, null);
     private final List<Problem> problems = new LinkedList<>();
     private final long testId = 1L;
@@ -31,7 +37,8 @@ class ProblemServiceTest {
     @BeforeEach
 	void setup() {
 		problemRepository = mock(ProblemRepository.class);
-		problemService = new ProblemService(problemRepository);		
+		preSignedURLService = mock(PreSignedURLService.class);
+		problemService = new ProblemService(problemRepository, preSignedURLService);		
 		problems.add(problem);
 	}
 	
@@ -43,7 +50,7 @@ class ProblemServiceTest {
         when(problemRepository.findByTestId(anyLong())).thenReturn(problems);
 
         //when
-        List<Problem> res = problemService.getByTestId(testId);
+        List<GetProblemResDto> res = problemService.getByTestId(testId);
 
         //then
         verify(problemRepository, times(1)).findByTestId(anyLong());
