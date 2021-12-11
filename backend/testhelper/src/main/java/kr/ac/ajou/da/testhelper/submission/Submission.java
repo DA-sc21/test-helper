@@ -98,4 +98,9 @@ public class Submission {
     public void updateSupervisedBy(Long supervisedBy) {
         setSupervisedBy(supervisedBy);
     }
+
+    public int resolveScore(){
+        if(Objects.isNull(score)) return 0;
+        return score;
+    }
 }
