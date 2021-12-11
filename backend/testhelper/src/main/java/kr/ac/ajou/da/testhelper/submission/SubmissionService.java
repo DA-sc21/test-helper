@@ -137,6 +137,6 @@ public class SubmissionService {
         	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시험 종료 후 확인 가능 합니다.");
         }
 
-        return fileService.getDownloadUrl(submissionType.resolveSubmissionPath(submission, false));
+        return fileService.getDownloadUrl(submissionType.resolveSubmissionPath(submission));
     }
 }
