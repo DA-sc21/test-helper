@@ -34,9 +34,11 @@ function CreateProblems(props){
     let preSignedUrl="";
     let testIdPad=String(testId).padStart(5,"0")
     let attachedFile=""
+    let timeStamp =+ new Date();
+
 
     if (img!==""){
-    let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
+    let response = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+timeStamp+'.jpg',{
       method: "GET",
       credentials: "include"
     })
@@ -53,8 +55,8 @@ function CreateProblems(props){
      .put(preSignedUrl,img)
      .then((result)=>{
        // getProblems();
-       alert("첨부파일 등록이 완료되었습니다.")
-       attachedFile="test/"+testIdPad+'/problems/'+problemNum+".jpg"
+      //  alert("첨부파일 등록이 완료되었습니다.")
+       attachedFile="test/"+testIdPad+'/problems/'+timeStamp+".jpg"
        console.log("put성공")
      })
      .catch((e)=>{ console.log(e) })
@@ -99,9 +101,10 @@ function CreateProblems(props){
     let preSignedUrl="";
     let testIdPad=String(testId).padStart(5,"0")
     let attachedFile=""
-  
+    let timeStamp =+ new Date();
+
     if (img!==""){
-      let response2 = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+problemNum+'.jpg',{
+      let response2 = await fetch(baseUrl+'/s3-upload-url?objectKey=test/'+testIdPad+'/problems/'+timeStamp+'.jpg',{
         method: "GET",
         credentials: "include"
       })
@@ -118,8 +121,8 @@ function CreateProblems(props){
       .put(preSignedUrl,img)
       .then((result)=>{
         // getProblems();
-        alert("첨부파일 등록이 완료되었습니다.")
-        attachedFile="test/"+testIdPad+'/problems/'+problemNum+".jpg"
+        // alert("첨부파일 등록이 완료되었습니다.")
+        attachedFile="test/"+testIdPad+'/problems/'+timeStamp+".jpg"
         console.log("put성공")
       })
       .catch((e)=>{ console.log(e) })
