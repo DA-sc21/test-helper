@@ -30,7 +30,7 @@ function CreateProblems(props){
   }
   
 
-  async function createProblems(img,point,problemNum,question){
+  async function createProblems(img,point,problemNum,question,closeModal){
     let preSignedUrl="";
     let testIdPad=String(testId).padStart(5,"0")
   
@@ -77,6 +77,7 @@ function CreateProblems(props){
       getProblems();
       if(res.status === 200){
           alert("문제가 생성되었습니다.");
+          closeModal()
       }
       else if(res.status === 400){
         alert("문제 번호가 이미 존재합니다.");
@@ -90,7 +91,7 @@ function CreateProblems(props){
     
   }
 
-  async function updateProblems(img,point,problemNum,question){
+  async function updateProblems(img,point,problemNum,question,closeModal){
     let preSignedUrl="";
     let testIdPad=String(testId).padStart(5,"0")
   
@@ -136,6 +137,7 @@ function CreateProblems(props){
       getProblems();
       if(res.status === 200){
         alert("문제가 수정되었습니다.");
+        closeModal()
       }
       else{
         alert("문제 수정에 실패했습니다.");
@@ -298,10 +300,9 @@ function ProblemModal(props) {
               alert("문제 내용을 입력해주세요.")
             }
             else{
-              props.createProblems(img,point,problemNum,question)
+              props.createProblems(img,point,problemNum,question,handleClose)
             }
             setImg("")
-            handleClose()
           }}>저장</Button>
         </Modal.Footer>
       </Modal>
@@ -370,7 +371,7 @@ function ProblemUpdateModal(props) {
               alert("문제 내용을 입력해주세요.")
             }
             else{
-              props.updateProblems(img,point,problemNum,question)
+              props.updateProblems(img,point,problemNum,question,handleClose)
             }
           }}>저장</Button>
         </Modal.Footer>
