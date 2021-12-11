@@ -9,6 +9,7 @@ import kr.ac.ajou.da.testhelper.examinee.Examinee;
 import kr.ac.ajou.da.testhelper.examinee.ExamineeService;
 import kr.ac.ajou.da.testhelper.test.definition.TestStatus;
 import kr.ac.ajou.da.testhelper.test.dto.PostAndPatchTestReqDto;
+import kr.ac.ajou.da.testhelper.test.exception.CannotDeleteStartedTestException;
 import kr.ac.ajou.da.testhelper.test.exception.CannotResendTestInvitationException;
 import kr.ac.ajou.da.testhelper.test.exception.TestNotFoundException;
 import kr.ac.ajou.da.testhelper.test.invitation.TestInvitationSender;
@@ -83,6 +84,10 @@ public class TestService {
 
         reqDto.updateTest(test, updatedBy);
 
+        if(test.hasSentInvitation()){
+            testInvitationSender.sendUpdates(test);
+        }
+
         if (test.canUpdateAssistant()) {
             List<Account> assistants = accountService.getByIds(reqDto.getAssistants());
 
@@ -90,6 +95,24 @@ public class TestService {
         }
 
         return test;
+    }
+
+    @Transactional
+    public void deleteTest(Long testId) {
+        Test test = testRepository.getById(testId);
+
+        if(test.hasStarted()){
+            throw new CannotDeleteStartedTestException();
+        }
+
+        if(test.hasSentInvitation()){
+            testInvitationSender.sendCancellation(test);
+        }
+
+        //TODO : 필요 없는 submission도 지워야함
+
+        testRepository.delete(test);
+
     }
 
     @Transactional

@@ -199,6 +199,28 @@ class TestServiceTest {
     }
 
     @Test
+    void updateTest_testStatusINVITED_success_sendUpdateEmail() {
+        //given
+        kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();
+        Account professor = test.getCourse().getProfessor();
+        List<Account> assistants = Collections.singletonList(DummyFactory.createAssistant());
+
+        PostAndPatchTestReqDto reqDto = new PostAndPatchTestReqDto(TestType.MID,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2),
+                assistants.stream().mapToLong(Account::getId).boxed().collect(Collectors.toList()));
+
+        when(testRepository.getById(anyLong())).thenReturn(test);
+        when(accountService.getByIds(anyList())).thenReturn(assistants);
+
+        //when
+        kr.ac.ajou.da.testhelper.test.Test actualTest = testService.updateTest(test.getId(), reqDto, professor.getId());
+
+        //then
+        verify(testInvitationSender, times(1)).sendUpdates(any(kr.ac.ajou.da.testhelper.test.Test.class));
+    }
+
+    @Test
     void updateTest_testStatusINPROGRESS_thenThrow_CannotUpdateTestException() {
         //given
         kr.ac.ajou.da.testhelper.test.Test test = DummyFactory.createTest();

@@ -205,4 +205,20 @@ public class Test {
         return Arrays.asList(TestStatus.MARK, TestStatus.GRADED).contains(this.status)
                 && !Objects.isNull(this.result);
     }
+
+    public boolean hasStarted() {
+        return Arrays.asList(TestStatus.IN_PROGRESS,
+                TestStatus.ENDED,
+                TestStatus.MARK,
+                TestStatus.GRADED).contains(this.status);
+    }
+
+    public boolean hasSentInvitation(){
+        return Arrays.asList(TestStatus.INVITED,
+                TestStatus.IN_PROGRESS,
+                TestStatus.ENDED,
+                TestStatus.MARK,
+                TestStatus.GRADED)
+                .contains(this.status);
+    }
 }

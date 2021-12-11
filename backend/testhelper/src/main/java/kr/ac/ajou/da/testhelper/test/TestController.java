@@ -78,6 +78,16 @@ public class TestController {
 
     }
 
+    @DeleteMapping("/tests/{testId}")
+    @AccessTestByProfessor
+    public ResponseEntity<BooleanResponse> deleteTest(@PathVariable Long testId) {
+
+        testService.deleteTest(testId);
+
+        return ResponseEntity.ok().body(BooleanResponse.TRUE);
+
+    }
+
     @PostMapping("/tests/{testId}/invitation")
     @AccessTestByProfessor
     public ResponseEntity<BooleanResponse> postTestInvitation(@PathVariable Long testId) {
