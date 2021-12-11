@@ -3,8 +3,13 @@ package kr.ac.ajou.da.testhelper.course;
 import kr.ac.ajou.da.testhelper.account.Account;
 import kr.ac.ajou.da.testhelper.account.AccountService;
 import kr.ac.ajou.da.testhelper.common.dummy.DummyFactory;
+import kr.ac.ajou.da.testhelper.course.assistant.CourseAssistantService;
 import kr.ac.ajou.da.testhelper.course.exception.CourseNotFoundException;
+import kr.ac.ajou.da.testhelper.portal.PortalService;
+import kr.ac.ajou.da.testhelper.student.StudentService;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -28,12 +34,28 @@ class CourseServiceTest {
 
     @Mock
     private AccountService accountService;
+    
+    @Mock
+    private PortalService portalService;
+    
+    @Mock
+    private CourseAssistantService courseAssistantService;
+    
+    @Mock
+    private CourseMapper courseMapper;
+    
+    @Mock
+    private StudentService studentService;
 
     @BeforeEach
     void init() {
         courseRepository = mock(CourseRepository.class);
         accountService = mock(AccountService.class);
-        courseService = new CourseService(courseRepository, accountService);
+        portalService = mock(PortalService.class);
+        courseAssistantService = mock(CourseAssistantService.class);
+        courseMapper = mock(CourseMapper.class);
+        studentService = mock(StudentService.class);
+        courseService = new CourseService(courseRepository, accountService, portalService, courseAssistantService, courseMapper, studentService);
     }
 
     @Test
@@ -137,4 +159,37 @@ class CourseServiceTest {
         assertEquals(1, course.getAssistants().size());
         assertTrue(course.getAssistants().contains(assistant));
     }
+    
+    @Test
+    void getCourseByCode_success() {
+    	//given
+    	String code = "F000";
+    	Course expectedCourse = DummyFactory.createCourse();
+    	
+    	when(courseRepository.getByCode(anyString())).thenReturn(Optional.of(expectedCourse));
+
+        //when
+    	Course actualCourse = courseService.getCourseByCode(code);
+
+        //then
+    	verify(courseRepository, times(1)).getByCode(anyString());
+    	assertEquals(expectedCourse, actualCourse);
+    }
+    
+    @Test
+    void deleteCourse_success() {
+    	//given
+    	Course course = DummyFactory.createCourse();
+
+    	when(courseRepository.findById(anyLong())).thenReturn(null);
+
+        //when
+    	courseService.deleteCourse(course);
+    	
+        //then
+        verify(courseRepository, times(1)).delete(course);
+        assertThat(courseRepository.findById(course.getId())).isNull();
+    }
+    
+
 }
