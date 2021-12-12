@@ -73,6 +73,7 @@ function AdminLogin(){
         </div>
         <Button style={{marginTop:"7%", width:"75%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>로그인</Button>
       </div>
+      <br />
       <img src={'/img/question.png'} className = {"question"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
       <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
         <Modal.Header closeButton>
