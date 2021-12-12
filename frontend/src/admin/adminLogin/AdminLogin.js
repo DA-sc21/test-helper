@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { baseUrl } from "../../component/baseUrl";
 
 function AdminLogin(){
   let history = useHistory();
   const [state, setState] = useState([]);
+  
+  const [showQuestion, setShowQuestion] = useState(false);
+  const handleQuestionClose = () => setShowQuestion(false);
+  const handleQuestionShow = () => setShowQuestion(true);
 
   useEffect(() => {
     if (sessionStorage.getItem("isAdmin")) {
@@ -69,6 +73,17 @@ function AdminLogin(){
         </div>
         <Button style={{marginTop:"7%", width:"75%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>로그인</Button>
       </div>
+      <img src={'/img/question.png'} className = {"question"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
+      <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
+        <Modal.Header closeButton>
+          <Modal.Title>문의하기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{height:"15vh"}}>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>Test-Helper 관리자 계정 문의 : testhelper@naver.com</p>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

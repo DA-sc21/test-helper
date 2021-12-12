@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button} from 'react-bootstrap';
+import { Button,Modal} from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
@@ -19,6 +19,9 @@ const AdminCourseList = () => {
   const [semester, setSemester] = useState(0);
   const [registerStatus, setResisterStatus] = useState("all");
 
+  const [showQuestion, setShowQuestion] = useState(false);
+  const handleQuestionClose = () => setShowQuestion(false);
+  const handleQuestionShow = () => setShowQuestion(true);
 
   useEffect(()=>{
     if(!sessionStorage.getItem("isAdmin")){
@@ -164,6 +167,17 @@ const AdminCourseList = () => {
          </select>
         <input type="text" className="searchField" placeholder="search" name="search" onChange={(e)=>handleValueChange(e)} value={searchValue} onKeyPress={(e) => enterEvent(e)} required />
         <Button className={"btn btn-secondary search"} onClick={(e)=>{handleSearch(e.target.value)}} style={{borderColor:"#4c5272"}} value = "professor">search</Button>
+        <img src={'/img/question.png'} className = {"adminQuestion"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
+      <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
+        <Modal.Header closeButton>
+          <Modal.Title>문의하기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{height:"15vh"}}>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>Test-Helper 서비스 문의 : testhelper@naver.com</p>
+          </div>
+        </Modal.Body>
+      </Modal>
         <br />
         <div className="showCourse">
         <span className = {"sortSpan"}> 전체 수업 중 등록된 수업 조회 / 미등록된 수업 조회</span>

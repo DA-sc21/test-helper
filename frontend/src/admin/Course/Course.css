@@ -4,6 +4,23 @@
   font-weight : 700;
 }
 
+.question{
+  width : 60px;
+  height :60px;
+  margin-top: 3vh;
+  margin-left : 70vw;
+  display : "flex";
+  cursor: pointer;
+}
+
+.adminQuestion{
+  margin-left : 10px;
+  width : 40px;
+  height :40px;
+  display : "flex";
+  cursor: pointer;
+}
+
 .logodiv{
   display : "flex";
 }
