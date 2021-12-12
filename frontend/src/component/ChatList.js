@@ -9,8 +9,6 @@ export default function ChatList(props){
     }
   };
 
-  let l=document.querySelector(".chat-history")
-  l.scrollTop = 498
  
   return(
     <div className="">
@@ -102,10 +100,20 @@ export default function ChatList(props){
                 variant="dark" 
                 onClick={
                   ()=>{
-                    props.sendMessage(1, {"author":props.role,
-                    "message":document.querySelector("#MessageInput"+props.chatRoomId).value})
+                    
+                    let author=props.role;
+                    let message=document.querySelector("#MessageInput"+props.chatRoomId).value;
+                    if(message===""){
+                      alert("메시지를 입력해주세요")
+                    }
+                    else{
+                    props.sendMessage(1, {
+                      "author":author,
+                      "message":message})
+                    }
                     document.querySelector("#MessageInput"+props.chatRoomId).value=""
-                  }}
+                  }
+                }
                 >전송</Button>
               </div>
             </div>
