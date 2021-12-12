@@ -22,7 +22,7 @@ function TestStudentPre(){
   let [audio, setAudio] = useState(false);
   let [consented,setConsented]=useState(false)
   let [tabCompleted,setTabCompleted]=useState([consented,false,false,false,""])
-  let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
+  let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
   let history = useHistory()
   let path="/tests/:testId/students/:studentId"
@@ -101,12 +101,16 @@ function TestStudentPre(){
       <>
       <NavBarStudent></NavBarStudent>
       <BrowserView> 
-        <Nav variant="tabs" >
+        <Nav justify variant="tabs" >
           {
             tabTitles.map((tabtitle,index)=>{
               return(
-                <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle}</Nav.Link>
+                <Nav.Item  key={index}>
+                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >
+                    <div style={{color:"black",fontSize: "18px" ,textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
+                      {tabtitle}
+                    </div>
+                  </Nav.Link>
                 </Nav.Item>
               )
             })
