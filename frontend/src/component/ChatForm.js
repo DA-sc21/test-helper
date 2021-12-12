@@ -92,7 +92,7 @@ function ChatForm(props) {
       {!loading
       ?<Loading></Loading>
       :
-      <ChatList messages={messages} role={props.role} chatRoomId={chatRoomId} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage}></ChatList>
+      <ChatList show={props.show} setShow={props.setShow} messages={messages} role={props.role} chatRoomId={chatRoomId} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage}></ChatList>
     }
 
       <SockJsClient

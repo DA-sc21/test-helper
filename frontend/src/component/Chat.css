@@ -19,7 +19,7 @@
 }
 .roomName {
   margin-left: 26%;
-  font: bold;
+  font-weight: bold;
   font-size: 22px;
   vertical-align: middle;
 }
@@ -54,7 +54,7 @@
   padding: 20px;
   padding-top: 0px;
   margin-bottom: 15px;
-  height: 500px;
+  height: 450px;
   overflow: scroll;
   border-bottom: 2px solid #fff;
 }
