@@ -185,7 +185,6 @@ function SuperviseTest(props){
     setRemainTime(temp)
     let tempEnd=timeToDict(durationEndTime)
     setRemainEndTime(tempEnd)
-    console.log(remainTime,remainEndTime)
   }, 1000);
 
   function timeToDict(duration){
@@ -222,9 +221,13 @@ function SuperviseTest(props){
                 <td colSpan="2">
                   <div style={{backgroundColor:"#FFD8D8", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
 
-                  { ended 
+                  { 
+                  started
+                  ?  
+                    ended 
                     ?  "시험 종료 "+(-remainEndTime.days)+"일 "+(-remainEndTime.hours)+"시간 "+(-remainEndTime.minutes)+"분 "+(-remainEndTime.seconds)+"초 지났습니다."
                     :  "시험 종료까지 "+ remainEndTime.days+"일 "+remainEndTime.hours+"시간 "+remainEndTime.minutes+"분 "+remainEndTime.seconds+"초 남았습니다." 
+                  :  "시험 시작까지 "+ remainTime.days+"일 "+remainTime.hours+"시간 "+remainTime.minutes+"분 "+remainTime.seconds+"초 남았습니다." 
                   }
                   </div>
                 </td>
