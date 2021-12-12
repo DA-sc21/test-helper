@@ -9,6 +9,9 @@ export default function ChatList(props){
     }
   };
 
+  let l=document.querySelector(".chat-history")
+  l.scrollTop = 498
+ 
   return(
     <div className="">
       <div className="chatcard chat-app" style={{boxShadow:"3px 3px 3px #57575775"}}>
