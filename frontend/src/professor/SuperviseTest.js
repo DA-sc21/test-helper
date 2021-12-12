@@ -386,7 +386,7 @@ function ChattingModal(props) {
           채팅
           </Button>
       }
-        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} setShow={setShow} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
         <ToastContainerB className="p-3 chatAlarmContainer positionTop" position="top-center">
           {
             newMessages.map((message,index)=>{
