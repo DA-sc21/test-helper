@@ -61,7 +61,7 @@ function NavBar(){
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text style={{fontSize:"17px", marginTop:"0.5%"}}>
-          Signed in as: <a href="#login" style={{textUnderlinePosition:"under"}}>{name} {pro_ass_role[role]}</a>
+          Signed in as: <a href="/mypage" style={{textUnderlinePosition:"under"}}>{name} {pro_ass_role[role]}</a>
           </Navbar.Text>
         </Navbar.Collapse>
         <Button style={{marginLeft:"1%", backgroundColor:"#ffffff00", borderColor:"#b6b6b6", color:"black", color:"#b6b6b6", boxShadow:"1px 1px 1px #b6b6b6"}} onClick={(e)=>logout(e)}>로그아웃</Button>

@@ -2,7 +2,8 @@ import React from 'react';
 import { Carousel } from 'react-bootstrap';
 function Main(){
   return(
-    <div style={{height:"91vh", backgroundColor:"#090d1d"}}>
+    <>
+    <div style={{height:"86vh", backgroundColor:"#090d1d"}}>
       {/* <img src="./img/main.png" style={{marginLeft:"2%", width:"87%", height:"100%"}}/> */}
       <Carousel style={{backgroundColor:"#090d1d", height:"100%",}}>
         <Carousel.Item interval={1500}>
@@ -10,7 +11,7 @@ function Main(){
             className="d-block"
             src="./img/main.png"
             alt="First slide"
-            style={{height:"91vh", width:"93%", marginLeft:"5%"}}
+            style={{height:"86vh", width:"90%", marginLeft:"7%"}}
           />
         </Carousel.Item>
         <Carousel.Item interval={2500}>
@@ -18,7 +19,7 @@ function Main(){
             className="d-block w-100"
             src="./img/main1.png"
             alt="Second slide"
-            style={{height:"91vh", marginLeft:"1%"}}
+            style={{height:"86vh", marginLeft:"1%"}}
           />
         <Carousel.Caption>
           <h3>AI 본인인증 자동화</h3>
@@ -30,7 +31,7 @@ function Main(){
             className="d-block w-100"
             src="./img/main2.png"
             alt="Third slide"
-            style={{height:"91vh", marginLeft:"1%"}}
+            style={{height:"86vh", marginLeft:"1%"}}
           />
         <Carousel.Caption>
           <h3>AI 시험 감독 보조</h3>
@@ -42,7 +43,7 @@ function Main(){
             className="d-block w-100"
             src="./img/main3.png"
             alt="Third slide"
-            style={{height:"91vh", marginLeft:"1%"}}
+            style={{height:"86vh", marginLeft:"1%"}}
           />
         <Carousel.Caption>
           <h3>답안지 관리 툴</h3>
@@ -51,6 +52,10 @@ function Main(){
       </Carousel.Item>
      </Carousel>  
     </div>
+    <div style={{height:"5vh", backgroundColor:"#21242b"}}>
+      <span style={{color:"white", fontSize:"18px", float:"right", marginTop:"5px", marginRight:"2%"}}>문의: testhelper@naver.com</span>
+    </div>
+    </>
   )
 }
 export default Main;
