@@ -74,7 +74,7 @@ function TestStudentPre(){
       .then((res) => res.json())
       .then((res) => {
         console.log("response:", res);
-        // setConsented(res.room.consented);
+        setConsented(res.room.consented);
         if(res.errorMessage != undefined){
           setDeniedTestAccess(false);
           setMessage(res.errorMessage);
@@ -105,8 +105,8 @@ function TestStudentPre(){
           {
             tabTitles.map((tabtitle,index)=>{
               return(
-                <Nav.Item  key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >
+                <Nav.Item key={index}>
+                  <Nav.Link as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >
                     <div style={{color:"black",fontSize: "18px" ,textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
                       {tabtitle}
                     </div>

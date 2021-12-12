@@ -7,27 +7,48 @@ import { useParams } from 'react-router-dom';
 function TestStudentAgreement(props){
   let {testId, studentId} =useParams();
   let [agree,setagree]=useState(false)
-  async function studentConsented(){
-    let temp=[...props.tabCompleted]
-    temp[0]=!temp[0]
-    props.setTabCompleted(temp)
+  let [consented,setConsented]=useState(props.consented)
+  console.log(props.consented)
+
+  async function studentConsented(consentedChange){
     
-    // await axios
-    // .put(baseUrl+'/tests/'+testId+'/students/'+studentId+'/submissions/consented',{
-    //   "consented": !temp[0]
-    // })
-    // .then((result)=>{ 
-    //   console.log(result.data)
-    // })
-    // .catch(()=>{ console.log("실패") })
+    const data = {
+      "consented": consentedChange
+    };
+
+    let response = await fetch(baseUrl+`/tests/`+testId+'/students/'+studentId+'/submissions/consented',{
+      method: 'PUT',
+      credentials : 'include',
+      body: JSON.stringify(data),
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+    .then( res => {
+      console.log("response:", res);
+      setConsented(!consented)
+      if(res.status === 200){
+        alert("사전 동의가 완료되었습니다.");
+        let temp=[...props.tabCompleted]
+        temp[0]=consented
+        props.setTabCompleted(temp)
+      }
+      else{
+        alert("사전 동의에 실패했습니다. 잠시 후 다시 시도해주세요");
+      }
+      }
+    )
+    .catch(error => {console.error('Error:', error)});
+
   }
 
   return(
     <div className="p-5"> 
       <Card className="mt-0 m-5">
-        <Card.Header as="h5">안내사항</Card.Header>
+        {/* <Card.Header as="h5">안내사항</Card.Header> */}
         <Card.Body>
-          <Card.Title>시험 유의사항</Card.Title>
+          <h5>안내사항</h5>
+          <hr></hr>
           <Card.Text style={{textAlign:"left", marginLeft:"5%"}}>
             <p>- 시험 중 응시자 간 의사소통을 금지합니다.</p>
 
@@ -41,24 +62,24 @@ function TestStudentAgreement(props){
         </Card.Body>
       </Card>
       <Card className="m-5">
-        <Card.Header as="h5">사전동의</Card.Header>
+        {/* <Card.Header as="h5">사전동의</Card.Header> */}
         <Card.Body>
-          <Card.Title>Special title treatment</Card.Title>
+          <h5>사전동의</h5>
+          <hr></hr>
+          {/* <Card.Title>Special title treatment</Card.Title> */}
           <Card.Text>
             PC화면 공유 및 녹화, 모바일 화면공유 및 녹화, 모바일 마이크 공유 및 녹화에 동의합니다.
           </Card.Text>
 
-          {!agree?
-          <Button variant="primary" type="submit" onClick={()=>{
-            setagree(!agree)
-            console.log(agree)
+          {!consented?
+          <Button variant="dark" type="submit" onClick={()=>{
+            studentConsented(true)
           }}>
             동의합니다
           </Button>
           :
-          <Button variant="primary" type="submit" disabled onClick={()=>{
-            setagree(!agree)
-            console.log(agree)
+          <Button variant="secondary" type="submit" disabled onClick={()=>{
+            studentConsented(false)
           }}>
             동의완료
           </Button>
