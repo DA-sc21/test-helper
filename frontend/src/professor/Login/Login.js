@@ -153,6 +153,7 @@ function Login(){
         </Modal.Footer>
       </Modal>
 
+      <br />
       <img src={'/img/question.png'} className = {"question"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
       <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
         <Modal.Header closeButton>

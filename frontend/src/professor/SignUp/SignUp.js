@@ -210,6 +210,7 @@ function SignUp(){
         <Button style={{marginTop:"3%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
         <div style={{textDecoration:"underline", textAlign:"right", marginTop:"6%", marginRight:"11%", fontSize:"17px"}}><Link to="/login" style={{color:"#525252"}}>로그인</Link></div>
       </div>
+      <br />
       <img src={'/img/question.png'} className = {"question"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
       <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
         <Modal.Header closeButton>
