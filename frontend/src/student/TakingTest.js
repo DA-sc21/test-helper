@@ -23,12 +23,18 @@ function TakingTest(props) {
           </Modal.Header>
           <Modal.Body>
             {props.ended?
-            <SubmitAnswer></SubmitAnswer>
+            <SubmitAnswer handleClose={handleClose}></SubmitAnswer>
             :<Problems></Problems>
             }
           </Modal.Body>
           <Modal.Footer>
-            시험 종료 시간인 {props.endTime} 까지 {props.remainEndTime.hours}시간 {props.remainEndTime.minutes}분 {props.remainEndTime.seconds}초 남았습니다.{props.ended}
+            <div style={{backgroundColor:"#2a2f38",color:"white", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
+              {
+                props.ended 
+                ?  "시험 종료 "+(-props.remainEndTime.days)+"일 "+(-props.remainEndTime.hours)+"시간 "+(-props.remainEndTime.minutes)+"분 "+(-props.remainEndTime.seconds)+"초 지났습니다."
+                :  "시험 종료까지 "+ props.remainEndTime.days+"일 "+props.remainEndTime.hours+"시간 "+props.remainEndTime.minutes+"분 "+props.remainEndTime.seconds+"초 남았습니다." 
+              }
+            </div>
             <Button variant="secondary" onClick={handleClose}>
               시험종료
             </Button>
