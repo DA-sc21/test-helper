@@ -126,14 +126,21 @@ function SuperviseTest(props){
   });
 
   async function exitTest(e){
-    history.push('/tests');
-    let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
+
+    let response = await fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
       method: 'PUT',
       credentials : 'include',
     })
     .then((res) => res.json())
     .then((res) => {
       console.log("response:", res);
+      if(res.errorMessage){
+        alert(res.errorMessage)
+      }
+      else{
+        alert("시험이 정상적으로 종료되었습니다.")
+        history.push("/tests")
+      }
     })
     .catch(error => {console.error('Error:', error)});
 
