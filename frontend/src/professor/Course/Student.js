@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, InputGroup, FormControl, Form } from 'react-bootstrap';
+import { Table, Button, Spinner } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
@@ -75,9 +75,10 @@ function Student(props){
       }
   }
 
-  if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"2%", width:"70%"}}>
+    {loading? 
+    <div>
       <h4 style={{marginBottom:"3%", textAlign:"left"}}>학생 정보</h4>
       <div>
       <Button variant="light" style={{marginTop : "10px", marginBottom : "10px", float:"left", color:"black", borderColor:"gray"}} onClick={(e)=>setStudents(allStudent)}>모든 학생 조회</Button>
@@ -109,6 +110,14 @@ function Student(props){
         </Table>
       </div>
     </div>
+    :
+      <div>
+        <h2 style={{marginRight:"15%", marginTop:"10%"}}>정보를 불러오는 중입니다.</h2>
+        <Spinner animation="border" role="status" style={{marginRight:"15%", marginTop:"2%", width:"50px", height:"50px"}}>
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>}
+      </div>
   )
 }
 
