@@ -14,10 +14,15 @@
 }
 
 .chat-room {
-  background: #683db8;
+  background: #4f4b57;
   color: #fff;
 }
-
+.roomName {
+  margin-left: 26%;
+  font: bold;
+  font-size: 22px;
+  vertical-align: middle;
+}
 .chat-app .chat {
   border-left: 1px solid #eaeaea;
 }
@@ -47,9 +52,15 @@
 
 .chat .chat-history {
   padding: 20px;
+  padding-top: 0px;
+  margin-bottom: 15px;
   height: 500px;
   overflow: scroll;
   border-bottom: 2px solid #fff;
+}
+
+.chat-history::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
 }
 
 .chat .chat-history ul {
@@ -82,7 +93,7 @@
 .chat .chat-history .message {
   color: #444;
   padding: 18px 20px;
-  line-height: 10px;
+  line-height: 18px;
   font-size: 16px;
   border-radius: 7px;
   display: inline-block;
@@ -158,12 +169,3 @@
 .float-right {
   float: right;
 }
-
-/* .clearfix:after {
-  visibility: hidden;
-  display: block;
-  font-size: 0;
-  content: " ";
-  clear: both;
-  height: 0;
-} */
