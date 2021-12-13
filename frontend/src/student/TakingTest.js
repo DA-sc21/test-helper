@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Button , Modal } from 'react-bootstrap'
+import { useParams } from 'react-router-dom';
+import ChatForm from '../component/ChatForm';
 import { Problems } from './Problems';
 import SubmitAnswer from './SubmitAnswer';
 
@@ -8,7 +10,10 @@ function TakingTest(props) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     console.log(props.data)
-    
+    let [showNotice,setShowNotice]=useState(false)
+    let [showChat,setShowChat]=useState(false)
+    let { testId ,studentId } = useParams();
+    let [newMessages,setNewMessages] =useState([])
     // let id = props.data.room.device + props.data.student.id;
 
     return (
@@ -20,6 +25,14 @@ function TakingTest(props) {
         <Modal show={show} fullscreen={true} onHide={handleClose}>
           <Modal.Header >
             <Modal.Title>시험장</Modal.Title>
+            <div className="d-flex justify-content-end">
+              <Button className="" variant="dark" onClick={()=>{setShowNotice(!showNotice);setShowChat(false);setNewMessages([])}} >공지사항</Button>
+              <Button className="mx-3" variant="secondary" onClick={()=>{setShowChat(!showChat);setShowNotice(false);setNewMessages([])}} >채팅하기</Button>
+            </div>
+            <div  className="position-absolute top-0 end-0">
+              <ChatForm testId={testId} role="Viewer" chatroom="0" show={showNotice} setShow={setShowNotice} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
+              <ChatForm testId={testId} role="Viewer" chatroom={studentId} show={showChat} setShow={setShowChat} newMessages={newMessages} setNewMessages={setNewMessages} ></ChatForm> 
+            </div>
           </Modal.Header>
           <Modal.Body>
             {props.ended?

@@ -88,7 +88,7 @@ function ChatForm(props) {
   }
   // if(!loading)return(<Loading></Loading>)
   return (
-    <div style={{zIndex:1100}} className={props.show?"position-absolute top-10 end-0":"position-absolute top-10 end-0 d-none"}>
+    <div className={props.show?"position-absolute top-10 end-0":"position-absolute top-10 end-0 d-none"}>
       {!loading
       ?<Loading></Loading>
       :

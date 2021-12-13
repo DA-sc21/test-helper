@@ -1,5 +1,5 @@
 .positionTop {
-  z-index: 1000;
+  z-index: 2000;
 }
 .chatcard {
   background: #fff;
@@ -9,7 +9,7 @@
   border-radius: 0.55rem;
   position: relative;
   width: 400px;
-  z-index: 999;
+  z-index: 1;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
 }
 
