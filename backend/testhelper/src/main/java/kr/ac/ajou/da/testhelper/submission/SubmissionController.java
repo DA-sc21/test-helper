@@ -104,5 +104,13 @@ public class SubmissionController {
                 submissionService.getDownloadUrlByTestIdAndStudentIdAndSubmissionType(testId, studentId, submissionType)));
 
     }
+    
+    @GetMapping("/tests/{testId}/students/{studentId}/submissions/status")
+    @AccessExaminee
+    public ResponseEntity<GetSubmissionStatusResDto> getSubmissionStatus(@PathVariable Long testId,
+                                                                  @PathVariable Long studentId) {
+
+    	return ResponseEntity.ok().body(submissionService.getStatus(testId, studentId));
+    }
 
 }
