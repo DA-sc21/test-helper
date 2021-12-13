@@ -122,6 +122,28 @@ function SuperviseTest(props){
     progress: undefined,
   });
 
+  const notifyPc = (name) => toast.info(`${name} 학생의 PC 화면 공유가 꺼졌습니다.`, {
+    position: "bottom-right",
+    transition: Slide,
+    autoClose: 15000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+  });
+
+  const notifyMobile = (name) => toast.info(`${name} 학생의 모바일 화면 공유가 꺼졌습니다.`, {
+    position: "bottom-right",
+    transition: Slide,
+    autoClose: 15000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+  });
+
   async function exitTest(e){
     history.push('/tests');
     let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
@@ -169,7 +191,7 @@ function SuperviseTest(props){
           {
             verifications.map((verification,index)=>{
 
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName} notifyPc={notifyPc} notifyMobile={notifyMobile }/>;
 
             })
           }
@@ -205,6 +227,16 @@ function StudentCard(props){
   function pushHandDetetionNotice(){
     props.notify(props.studentName[props.index]);
   }
+
+  function pcScreenShareOff(){
+    console.log("pcScreenShareOff 함수 호출")
+    props.notifyPc(props.studentName[props.index]);
+  }
+
+  function mobileShareOff(){
+    console.log("mobileShareOff 함수 호출")
+    props.notifyMobile(props.studentName[props.index]);
+  }
   
   function getIdentificationImgae(e){
     getimages("student_card",setStudentCard);
@@ -226,7 +258,7 @@ function StudentCard(props){
     <div className="col-md-6 mb-5">
       <Card style={{borderColor: "white", padding: "3%", backgroundColor:"white", borderRadius: "20px", boxShadow: "3px 3px 3px #dcdcdc"}}>
         <div className="row">
-          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc} pushHandDetetionNotice={pushHandDetetionNotice}></Master>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc} pushHandDetetionNotice={pushHandDetetionNotice} pcScreenShareOff={pcScreenShareOff} mobileShareOff={mobileShareOff}></Master>
         </div>
         <Card.Body>
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
