@@ -1,19 +1,14 @@
 package kr.ac.ajou.da.testhelper.account;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import kr.ac.ajou.da.testhelper.account.dto.PostAccountReqDto;
-import kr.ac.ajou.da.testhelper.account.dto.PutAccountPasswordReqDto;
-import kr.ac.ajou.da.testhelper.account.dto.GetAssistantsReqDto;
-import kr.ac.ajou.da.testhelper.account.dto.GetAssistantsResDto;
+import kr.ac.ajou.da.testhelper.account.dto.*;
 import kr.ac.ajou.da.testhelper.common.dto.BooleanResponse;
+import kr.ac.ajou.da.testhelper.common.security.authority.IsAccount;
 import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,8 +35,17 @@ public class AccountController {
     }
     
     @PutMapping("/users/password")
-    public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto) {
-    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(reqDto.getEmail(), reqDto.getPassword(), reqDto.getNewPassword())));
+    @IsAccount
+    public ResponseEntity<BooleanResponse> putAccountPassword(@RequestBody PutAccountPasswordReqDto reqDto,
+                                                              @AuthenticationPrincipal @ApiIgnore Account account) {
+
+    	return ResponseEntity.ok().body(BooleanResponse.of(accountService.updatePassword(account.getId(), reqDto.getPassword(), reqDto.getNewPassword())));
+    }
+
+    @GetMapping("/account")
+    @IsAccount
+    public ResponseEntity<GetAccountResDto> getAccount(@AuthenticationPrincipal @ApiIgnore Account account){
+        return ResponseEntity.ok().body(new GetAccountResDto(account));
     }
             
 }
