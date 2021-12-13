@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion } from 'react-bootstrap';
+import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion, Table, Modal } from 'react-bootstrap';
 import {ToastContainer as ToastContainerB} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
@@ -12,9 +12,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import './toastify.css';
 import moment from "moment";
 import ChatAlarm from '../component/ChatAlarm';
+import { useInterval } from 'react-use';
+import Moment from "react-moment"
+import 'moment/locale/ko';
 
 function SuperviseTest(props){
   let history = useHistory();
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   let [studentName,setStudentName] = useState([]);
   let [studentInfo,setStudentInfo] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
@@ -122,15 +128,43 @@ function SuperviseTest(props){
     progress: undefined,
   });
 
+  const notifyPc = (name) => toast.info(`${name} 학생의 PC 화면 공유가 꺼졌습니다.`, {
+    position: "bottom-right",
+    transition: Slide,
+    autoClose: 15000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+  });
+
+  const notifyMobile = (name) => toast.info(`${name} 학생의 모바일 화면 공유가 꺼졌습니다.`, {
+    position: "bottom-right",
+    transition: Slide,
+    autoClose: 15000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+  });
+
   async function exitTest(e){
-    history.push('/tests');
-    let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
+    let response = await fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
       method: 'PUT',
       credentials : 'include',
     })
     .then((res) => res.json())
     .then((res) => {
       console.log("response:", res);
+      if(res.errorMessage){
+        alert(res.errorMessage)
+      }
+      else{
+        alert("시험이 정상적으로 종료되었습니다.")
+        document.location.href="/tests";
+      }
     })
     .catch(error => {console.error('Error:', error)});
 
@@ -142,9 +176,90 @@ function SuperviseTest(props){
     // .catch(()=>{ console.log("실패") })
   }
 
+  moment.locale('ko')
+
+  let startTime = props.location.state.testStartTime
+  startTime = moment(startTime).format("YYYY-MM-DD dd HH:mm:ss")
+  let endTime = props.location.state.testEndTime
+  endTime = moment(endTime).format("YYYY-MM-DD dd HH:mm:ss")
+
+  let formatTime={
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  }
+
+  const [remainTime, setRemainTime] = useState(formatTime);
+  const [remainEndTime, setRemainEndTime] = useState(formatTime);
+  let [started,setStarted]=useState(false)
+  let [ended,setEnded]=useState(false)
+
+  useInterval(() => {
+    let currentTime = moment();
+    // let testStartTime = moment("2021 10 31 18:07");//테스트용
+    let testStartTime = moment(props.location.state.testStartTime);
+    // let testEndTime = moment("2021 11 14 23:25");//테스트용
+    let testEndTime = moment(props.location.state.testEndTime);
+    let duration = moment.duration(testStartTime.diff(currentTime));
+    let durationEndTime = moment.duration(testEndTime.diff(currentTime));
+    duration < 0 ? setStarted(true) :setStarted(false) 
+    durationEndTime < 0 ? setEnded(true) :setEnded(false) 
+    let temp=timeToDict(duration)
+    setRemainTime(temp)
+    let tempEnd=timeToDict(durationEndTime)
+    setRemainEndTime(tempEnd)
+  }, 1000);
+
+  function timeToDict(duration){
+    return {
+      days: duration.days(),
+      hours: duration.hours(),
+      minutes: duration.minutes(),
+      seconds: duration.seconds()
+    }
+  }
+
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="conatiner p-3" style={{backgroundColor:"#f3f3f3"}}>
+      <div className="row">
+        <div className="col-md-8">
+        </div>
+        <div className="col-md-4 d-flex justify-content-end">
+          <Table striped bordered hover size="sm">
+            <tbody>
+              <tr>
+                <td> 현재 시간 </td>
+                <td> <Moment format="YYYY-MM-DD dd HH:mm:ss" >{Date.now()}</Moment>  </td>
+              </tr>
+              <tr>
+                <td>시험시작 시간</td>
+                <td> {startTime}  </td>
+              </tr>
+              <tr>
+                <td>시험종료 시간</td>
+                <td> {endTime}  </td>
+              </tr>
+              <tr>
+                <td colSpan="2">
+                  <div style={{backgroundColor:"#FFD8D8", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
+
+                  { 
+                  started
+                  ?  
+                    ended 
+                    ?  "시험 종료 "+(-remainEndTime.days)+"일 "+(-remainEndTime.hours)+"시간 "+(-remainEndTime.minutes)+"분 "+(-remainEndTime.seconds)+"초 지났습니다."
+                    :  "시험 종료까지 "+ remainEndTime.days+"일 "+remainEndTime.hours+"시간 "+remainEndTime.minutes+"분 "+remainEndTime.seconds+"초 남았습니다." 
+                  :  "시험 시작까지 "+ remainTime.days+"일 "+remainTime.hours+"시간 "+remainTime.minutes+"분 "+remainTime.seconds+"초 남았습니다." 
+                  }
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+      </div>
       <div className="row">
         <div className="col-md-3 d-flex justify-content-start">
           <ToastContainer
@@ -163,18 +278,36 @@ function SuperviseTest(props){
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0" cheating={false}></ChattingModal>
-          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={(e)=> exitTest(e)}>종료</Button>
+          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={()=> handleShow()}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#f3f3f3"}}>
           {
             verifications.map((verification,index)=>{
 
-              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName}/ >;
+              return <StudentCard className="" key={index} testId={testId} verification = {verification} setVerifications={setVerifications} testRooms={testRooms} credentials={credentials} index={index} audio={shareState.audio} pc={shareState.pc} studentId={studentId} changeAudioState={changeAudioState} changePcState={changePcState} studentInfo={studentInfo} notify={notify} studentName={studentName} notifyPc={notifyPc} notifyMobile={notifyMobile }/>;
 
             })
           }
         </div>
       </div>
+      <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{fontSize:"18px"}}>
+              <p>시험을 종료하면 학생들이 답안 제출이 불가능합니다.</p>
+              <p>그래도 종료하시겠습니까?</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="light" style={{color:"black", borderColor:"black", fontWeight:"bold"}} onClick={()=>exitTest()}>
+              예
+            </Button>
+            <Button variant="dark" onClick={()=>handleClose()}>
+              아니오
+            </Button>
+          </Modal.Footer>
+        </Modal>
     </div> 
   )
 }
@@ -205,6 +338,16 @@ function StudentCard(props){
   function pushHandDetetionNotice(){
     props.notify(props.studentName[props.index]);
   }
+
+  function pcScreenShareOff(){
+    console.log("pcScreenShareOff 함수 호출")
+    props.notifyPc(props.studentName[props.index]);
+  }
+
+  function mobileShareOff(){
+    console.log("mobileShareOff 함수 호출")
+    props.notifyMobile(props.studentName[props.index]);
+  }
   
   function getIdentificationImgae(e){
     getimages("student_card",setStudentCard);
@@ -226,7 +369,7 @@ function StudentCard(props){
     <div className="col-md-6 mb-5">
       <Card style={{borderColor: "white", padding: "3%", backgroundColor:"white", borderRadius: "20px", boxShadow: "3px 3px 3px #dcdcdc"}}>
         <div className="row">
-          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc} pushHandDetetionNotice={pushHandDetetionNotice}></Master>
+          <Master testRooms={props.testRooms[props.index]} credentials={props.credentials} region="us-east-2" index={props.index} audio={props.audio} pc={props.pc} studentId={props.studentId} changeAudio={changeAudio} changePc={changePc} pushHandDetetionNotice={pushHandDetetionNotice} pcScreenShareOff={pcScreenShareOff} mobileShareOff={mobileShareOff}></Master>
         </div>
         <Card.Body>
           <Card.Title><h4>{props.studentInfo[props.index].student.name}-<span style={{fontSize: "15px"}}>{props.studentInfo[props.index].student.studentNumber}</span></h4></Card.Title>
@@ -295,7 +438,7 @@ function ChattingModal(props) {
           채팅
           </Button>
       }
-        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} setShow={setShow} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
         <ToastContainerB className="p-3 chatAlarmContainer positionTop" position="top-center">
           {
             newMessages.map((message,index)=>{

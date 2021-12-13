@@ -88,11 +88,11 @@ function ChatForm(props) {
   }
   // if(!loading)return(<Loading></Loading>)
   return (
-    <div style={{zIndex:1100}} className={props.show?"position-absolute top-10 end-0":"position-absolute top-10 end-0 d-none"}>
+    <div className={props.show?"position-absolute top-10 end-0":"position-absolute top-10 end-0 d-none"}>
       {!loading
       ?<Loading></Loading>
       :
-      <ChatList messages={messages} role={props.role} chatRoomId={chatRoomId} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage}></ChatList>
+      <ChatList show={props.show} setShow={props.setShow} messages={messages} role={props.role} chatRoomId={chatRoomId} notice={chatRoomId==="0"?true:false} sendMessage={sendMessage}></ChatList>
     }
 
       <SockJsClient

@@ -27,7 +27,9 @@ function TestStudentRouter (props){
             test={test} 
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
-            setTabCompleted={setTabCompleted} />
+            setTabCompleted={setTabCompleted}
+            consented={room.consented}
+          />
         }
       />
       <Route exact path={path+"/pcsetting"}

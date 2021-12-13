@@ -222,39 +222,54 @@ function RecordView(props){
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {
-    getUrlScreenShare();
-    getRoomUrl();
-    setShow(true);
+    setShow(true)
+    getVideoUrl();
   };
   let path = props.path;
   let studentId = props.student.id;
-  let [screenVideo,setScreenVideo]= useState("")
-  let [roomVideo,setroomVideo]= useState("")
-  console.log(props.student)
-  async function getUrlScreenShare(){
+  let [loading,setLoading] = useState(false)
+  const [screenVideo,setScreenVideo]= useState("")
+  const [roomVideo,setroomVideo]= useState("")
+
+  async function getVideoUrl(){
+    let presignedUrlScreen=""
+    let presignedUrlRoom=""
 
     await axios
-    .get(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{ 
-        withCredentials : true
+      .get(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{ 
+          withCredentials : true
+        })
+      .then((result)=>{
+        presignedUrlScreen=result.data.downloadUrl;
       })
-    .then((result)=>{
-      console.log("sdf",result.data.downloadUrl);
-      setScreenVideo(result.data.downloadUrl)
-    })
-    .catch((e)=>{ console.log("실패",e) })
-}
+      .catch((e)=>{ console.log("실패",e) })
 
-  async function getRoomUrl(){
+    await axios
+      .get(presignedUrlScreen,{withCredentials : true})
+      .then((result)=>{
+        setScreenVideo(result.config.url)
+      })
+      .catch((e)=>{ 
+        console.log("실패",e.response.status) })
 
-      await axios
+    await axios
       .get(baseUrl+path+'/students/'+studentId+'/submissions/ROOM_VIDEO/download-url',{ 
           withCredentials : true
         })
       .then((result)=>{
-        console.log("sdf",result.data.downloadUrl);
-        setroomVideo(result.data.downloadUrl)
+        presignedUrlRoom=result.data.downloadUrl;
       })
       .catch((e)=>{ console.log("실패",e) })
+
+    await axios
+    .get(presignedUrlRoom,{withCredentials : true})
+    .then((result)=>{
+      setroomVideo(result.config.url)
+    })
+    .catch((e)=>{ 
+      console.log("실패",e.response.status) })
+
+    setLoading(true);
   }
   return(
     <>
@@ -264,22 +279,28 @@ function RecordView(props){
           <Modal.Title>녹화영상확인 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
         </Modal.Header>
         <Modal.Body>
+        {!loading?
+          <div className="m-5 p-5 d-flex row justify-content-center">
+            <Spinner className="m-5 p-5 "animation="border" role="status" />
+          </div>
+          :
           <div className="row">
             <div className="col-md-6">
               <div style={{backgroundColor:"#ffc0cb", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>PC화면녹화본</div>
-              <video controls className="w-100">
+              <video controls className="w-100" style={{ borderRadius:"10px",}}>
                 <source src={screenVideo} type="video/mp4" />
-                Sorry, your browser doesn't support embedded videos.
+                해당 브라우저는 video 태그를 지원하지 않습니다.
               </video>
             </div>
             <div className="col-md-6">
               <div style={{backgroundColor:"#59a5fc", textAlign:"center", padding:"4px", margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>시험환경녹화본</div>
-              <video controls className="w-100">
+              <video controls className="w-100" style={{ borderRadius:"10px",}}>
                 <source src={roomVideo} type="video/mp4" />
-                Sorry, your browser doesn't support embedded videos.
+                해당 브라우저는 video 태그를 지원하지 않습니다.
               </video>
             </div>
           </div>
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button variant="dark" onClick={handleClose}> 닫기
