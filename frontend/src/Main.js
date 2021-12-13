@@ -3,7 +3,7 @@ import { Carousel } from 'react-bootstrap';
 function Main(){
   return(
     <>
-    <div style={{height:"86vh", backgroundColor:"#090d1d"}}>
+    <div style={{height:"93vh", backgroundColor:"#090d1d"}}>
       {/* <img src="./img/main.png" style={{marginLeft:"2%", width:"87%", height:"100%"}}/> */}
       <Carousel style={{backgroundColor:"#090d1d", height:"100%",}}>
         <Carousel.Item interval={1500}>
@@ -52,9 +52,9 @@ function Main(){
       </Carousel.Item>
      </Carousel>  
     </div>
-    <div style={{height:"5vh", backgroundColor:"#21242b"}}>
+    {/* <div style={{height:"5vh", backgroundColor:"#21242b"}}>
       <span style={{color:"white", fontSize:"18px", float:"right", marginTop:"5px", marginRight:"2%"}}>문의: testhelper@naver.com</span>
-    </div>
+    </div> */}
     </>
   )
 }

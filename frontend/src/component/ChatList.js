@@ -1,13 +1,40 @@
 import "./Chat.css"
-import React from "react"
+import React, { useState } from "react"
 import { Form , Button } from 'react-bootstrap';
 
 export default function ChatList(props){
+  const enterEvent = (e) => {
+    if (e.key === "Enter") {
+      document.querySelector(".messageSubmitBt").click();
+    }
+  };
+  const [state, setState] = useState([]);
+
+  function onChangehandler(e){
+    let { name , value} = e.target;
+    setState({
+      ...state,
+      [name]: value,
+    });
+    console.log(state);
+  }
+ 
   return(
-    <div className="row">
+    <div className="">
       <div className="chatcard chat-app" style={{boxShadow:"3px 3px 3px #57575775"}}>
         <div className="chat">
-          <div className="chat-room p-3">{props.notice?"공지사항": props.cheating?"부정행위 경고알림":"채팅하기"}</div>
+          <div className="chat-room p-3">
+            <div className="row">
+              <div className="col-md-10">
+                <span className="roomName" >
+                  {props.notice?"공지사항": props.cheating?"부정행위 경고알림":"채팅하기"}
+                </span>
+              </div>
+              <div className="col-md-2">
+                <Button className="justify-content-end" variant="light" onClick={()=>{props.setShow(!props.show)}}>X</Button>
+              </div>
+            </div>
+          </div>
           <div className="chat-history">
             <ul className="m-b-0">
               {
@@ -68,26 +95,41 @@ export default function ChatList(props){
               >부정행위 경고</Button>
             </div>
               :
-              <div className="input-group mb-0">
-              <Form.Control 
-                size="lg" 
-                type="text" 
-                id={"MessageInput"+props.chatRoomId} 
-                placeholder="메세지를 입력하세요." 
-              />
-              <Button 
-              variant="primary" 
-              onClick={
-                ()=>{
-
-                  props.sendMessage(1, {"author":props.role,
-                  "message":document.querySelector("#MessageInput"+props.chatRoomId).value})
-                  document.querySelector("#MessageInput"+props.chatRoomId).value=""
-                }}
-              >전송</Button>
+              <div className="p-2">
+                <div className="input-group mb-0">
+                <Form.Control 
+                  size="lg" 
+                  type="text" 
+                  id={"MessageInput"+props.chatRoomId} 
+                  name="MessageInput"
+                  placeholder="메세지를 입력하세요." 
+                  onChange={(e)=>onChangehandler(e)}
+                  onKeyPress={(e) => enterEvent(e)}
+                />
+                <Button 
+                className="messageSubmitBt"
+                variant="dark" 
+                onClick={
+                  (e)=>{
+                    let author=props.role;
+                    let message = state.MessageInput
+                    // console.log(message)
+                    if(message==="" || message===null || message===undefined){
+                      alert("메시지를 입력해주세요")
+                    }
+                    else{
+                    props.sendMessage(1, {
+                      "author":author,
+                      "message":message})
+                    }
+                    document.querySelector("#MessageInput"+props.chatRoomId).value=""
+                  }
+                }
+                >전송</Button>
+              </div>
             </div>
           }
-        </div>
+      </div>
       </div>
     </div>
   )

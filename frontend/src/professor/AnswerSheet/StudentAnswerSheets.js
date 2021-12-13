@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Badge, InputGroup, FormControl, Modal, Spinner } from 'react-bootstrap';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import {baseUrl} from "../../component/baseUrl";
 import Loading from '../../component/Loading';
@@ -185,29 +185,129 @@ function StudentList(props){
   return(
     <div>
       <Card className="studentListCard">
-          <Card.Body>
-            <button className="scoringBt" onClick={()=>scoringAnswerSheet(props.student.name, props.submitted)}>
-            <span className="studentNumber">{props.student.studentNumber}</span> 
-            <span className="studentName">{props.student.name}</span>
-            <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
-            </button>
-          </Card.Body>
-        </Card>
+        <Card.Body>
+          <div className="row">
+            <div className="col-md-10">
+              <button className="scoringBt" onClick={()=>scoringAnswerSheet(props.student.name, props.submitted)}>
+                <span className="studentNumber">{props.student.studentNumber}</span> 
+                <span className="studentName">{props.student.name}</span>
+                <div className="scoringStatus" style={{backgroundColor: scoring_status_css[props.submitted]}}>{scoring_status[props.submitted]}</div>
+              </button>
+            </div>
+            <div className="col-md-2">
+              <RecordView path={path} student={props.student} ></RecordView>
+            </div>
+          </div>
+        </Card.Body>
+      </Card>
 
-        <Modal show={show} fullscreen={true} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button style={{backgroundColor:"#333c50", borderColor:"333c50"}} onClick={(e)=>completeScoring(e)}>
-              채점 완료
-            </Button>
-          </Modal.Footer>
-        </Modal>
+      <Modal show={show} fullscreen={true} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>답안지 채점 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ScoringTests path={path} studentId={props.student.id}></ScoringTests>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button style={{backgroundColor:"#333c50", borderColor:"333c50"}} onClick={(e)=>completeScoring(e)}>
+            채점 완료
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
+  )
+}
+
+function RecordView(props){
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true)
+    getVideoUrl();
+  };
+  let path = props.path;
+  let studentId = props.student.id;
+  let [loading,setLoading] = useState(false)
+  const [screenVideo,setScreenVideo]= useState("")
+  const [roomVideo,setroomVideo]= useState("")
+
+  async function getVideoUrl(){
+    let presignedUrlScreen=""
+    let presignedUrlRoom=""
+
+    await axios
+      .get(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{ 
+          withCredentials : true
+        })
+      .then((result)=>{
+        presignedUrlScreen=result.data.downloadUrl;
+      })
+      .catch((e)=>{ console.log("실패",e) })
+
+    await axios
+      .get(presignedUrlScreen,{withCredentials : true})
+      .then((result)=>{
+        setScreenVideo(result.config.url)
+      })
+      .catch((e)=>{ 
+        console.log("실패",e.response.status) })
+
+    await axios
+      .get(baseUrl+path+'/students/'+studentId+'/submissions/ROOM_VIDEO/download-url',{ 
+          withCredentials : true
+        })
+      .then((result)=>{
+        presignedUrlRoom=result.data.downloadUrl;
+      })
+      .catch((e)=>{ console.log("실패",e) })
+
+    await axios
+    .get(presignedUrlRoom,{withCredentials : true})
+    .then((result)=>{
+      setroomVideo(result.config.url)
+    })
+    .catch((e)=>{ 
+      console.log("실패",e.response.status) })
+
+    setLoading(true);
+  }
+  return(
+    <>
+      <Button style={{backgroundColor:"#aee4ff",borderColor:"#aee4ff"}} onClick={handleShow}>녹화영상확인</Button>
+      <Modal show={show} fullscreen={true} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>녹화영상확인 <span style={{fontSize:"21px"}}>({props.student.studentNumber}/{props.student.name})</span></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {!loading?
+          <div className="m-5 p-5 d-flex row justify-content-center">
+            <Spinner className="m-5 p-5 "animation="border" role="status" />
+          </div>
+          :
+          <div className="row">
+            <div className="col-md-6">
+              <div style={{backgroundColor:"#ffc0cb", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>PC화면녹화본</div>
+              <video controls className="w-100" style={{ borderRadius:"10px",}}>
+                <source src={screenVideo} type="video/mp4" />
+                해당 브라우저는 video 태그를 지원하지 않습니다.
+              </video>
+            </div>
+            <div className="col-md-6">
+              <div style={{backgroundColor:"#59a5fc", textAlign:"center", padding:"4px", margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>시험환경녹화본</div>
+              <video controls className="w-100" style={{ borderRadius:"10px",}}>
+                <source src={roomVideo} type="video/mp4" />
+                해당 브라우저는 video 태그를 지원하지 않습니다.
+              </video>
+            </div>
+          </div>
+          }
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="dark" onClick={handleClose}> 닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   )
 }
 

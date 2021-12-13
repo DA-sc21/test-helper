@@ -9,6 +9,11 @@ function Login(){
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [showQuestion, setShowQuestion] = useState(false);
+  const handleQuestionClose = () => setShowQuestion(false);
+  const handleQuestionShow = () => setShowQuestion(true);
+
   let history = useHistory();
   function onChangehandler(e){
     let { name , value} = e.target;
@@ -146,6 +151,20 @@ function Login(){
             이메일 전송
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      <br />
+      <img src={'/img/question.png'} className = {"question"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
+      <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
+        <Modal.Header closeButton>
+          <Modal.Title>문의하기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{height:"15vh"}}>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>관리자 문의 : admin@ajou.ac.kr</p>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>Test-Helper 서비스 사용 문의 : testhelper@naver.com</p>
+          </div>
+        </Modal.Body>
       </Modal>
     </div>
   )
