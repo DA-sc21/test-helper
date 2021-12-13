@@ -74,7 +74,6 @@ function TestStudentPre(){
       .then((res) => res.json())
       .then((res) => {
         console.log("response:", res);
-        setConsented(res.room.consented);
         if(res.errorMessage != undefined){
           setDeniedTestAccess(false);
           setMessage(res.errorMessage);
@@ -82,6 +81,7 @@ function TestStudentPre(){
         else{
           setDeniedTestAccess(true);
           setCredentials(res.credentials);
+          setConsented(res.room.consented);
           setRoom(res.room);
           setStudent(res.room.student);
           setTest(res.room.test);
