@@ -33,10 +33,12 @@ function TestStudentIdentification(props){
           <img src={studentCard} style={{width:"18%", height:"28vh",marginLeft:"30%"}} alt="studentCard" />
           <img src={face} style={{width:"18%", height:"28vh",marginLeft:"5%"}} alt="face"/>
       </div>
-      <div className="row m-5">
-        <Button className="" variant="info" onClick={()=>{
-          Identification(testId, studentId,setIdentificationResult)
-        }} >본인인증신청</Button>
+      <div className="row m-5 d-flex justify-content-center">
+        <div className="col-md-4">
+          <Button className="" variant="dark" onClick={()=>{
+            Identification(testId, studentId,setIdentificationResult)
+          }} >본인인증신청</Button>
+        </div>
       </div>
       <div className="row">
         <h3>
