@@ -97,10 +97,20 @@ function CreateProblems(props){
     
   }
 
-  async function updateProblems(img,point,problemNum,question,closeModal){
+  async function updateProblems(img,point,problemNum,question,attachedFile,closeModal){
     let preSignedUrl="";
+    console.log(attachedFile)
+    if (attachedFile==="" ||attachedFile===null||attachedFile===undefined){}
+    else{
+      let startIdx=attachedFile.indexOf("test/")
+      let endIdx=attachedFile.indexOf("?X-Amz-Algorithm=")
+      if(startIdx===-1 ||endIdx===-1){
+      }
+      else{
+      attachedFile=attachedFile.substring(startIdx,endIdx)}
+    
+    }
     let testIdPad=String(testId).padStart(5,"0")
-    let attachedFile=""
     let timeStamp =+ new Date();
 
     if (img!==""){
@@ -227,7 +237,7 @@ function CreateProblems(props){
                           </Card.Text>
                         </Card.Body>
                         <Card.Footer>
-                          <ProblemUpdateModal updateProblems={updateProblems} problemNum={problem.problemNum} point={problem.point} question={problem.question}></ProblemUpdateModal>
+                          <ProblemUpdateModal updateProblems={updateProblems} problem={problem} ></ProblemUpdateModal>
                           <Button variant="danger" onClick={()=>{
                             deleteProblems(problem.problemNum)
                           }}>문제 삭제</Button>
@@ -349,13 +359,13 @@ function ProblemUpdateModal(props) {
               <Col>
               <Form.Group className="mb-3" controlId="problemNum">
                 <Form.Label>문제 번호</Form.Label>
-                <Form.Control disabled type="number" defaultValue={props.problemNum} />
+                <Form.Control disabled type="number" defaultValue={props.problem.problemNum} />
               </Form.Group>
               </Col>
               <Col>
               <Form.Group className="mb-3" controlId="point">
                 <Form.Label>문제 배점</Form.Label>
-                <Form.Control type="number" defaultValue={props.point} onChange={(e)=>{
+                <Form.Control type="number" defaultValue={props.problem.point} onChange={(e)=>{
                   if(e.target.value<0){
                     alert("0이상의 배점을 입력해주세요.")
                     e.target.value=0
@@ -366,7 +376,7 @@ function ProblemUpdateModal(props) {
             </Row>
             <Form.Group className="mb-3" controlId="question">
               <Form.Label>문제내용</Form.Label>
-              <Form.Control as="textarea" rows={3} defaultValue={props.question} />
+              <Form.Control as="textarea" rows={3} defaultValue={props.problem.question} />
             </Form.Group>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>문제 첨부파일</Form.Label>
@@ -393,7 +403,7 @@ function ProblemUpdateModal(props) {
               alert("문제 내용을 입력해주세요.")
             }
             else{
-              props.updateProblems(img,point,problemNum,question,handleClose)
+              props.updateProblems(img,point,problemNum,question,props.problem.attachedFile,handleClose)
             }
           }}>저장</Button>
         </Modal.Footer>

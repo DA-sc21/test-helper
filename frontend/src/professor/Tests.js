@@ -186,7 +186,7 @@ function TestCard(props){
   }
 
   return(
-    <div className="col-md-4">
+    <div className="col-md-4 mb-3">
       <Card>
         <Card.Body>
           <Card.Title>{props.test.name}</Card.Title>

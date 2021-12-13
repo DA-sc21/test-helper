@@ -127,7 +127,7 @@ function ScoringTests(props){
 	
   return(
     <>
-    {!loading? 
+    {loading? 
       <div style={{textAlign:"center"}}>
         <h3 style={{paddingTop:"5%", marginBottom:"2%"}}>정보를 불러오는 중입니다.</h3>
         <Spinner style={{width:"40px", height:"40px"}} animation="border" role="status">
@@ -165,23 +165,23 @@ function ScoringTests(props){
                     />
                   <Button style={{backgroundColor:"#575757", borderColor:"gray"}} onClick={(e)=>enterScore(e,index+1)}>입력</Button>
                 </InputGroup>
-                </div>
+              </div>
               </div>
               <div className="row my-3">
                 <div className="col-md-12">
-                  <span style={{fontSize:"17px"}}>
+                  <span style={{fontSize:"20px", fontWeight:"bold"}}>
                     {problem.question.split("\n").map((line)=>{
                       return <div>{line}</div>
                     })}
                   </span>
-                  <Image className="col-md-12" src={problem.attachedFile} />
+                  <Image className="mt-2 col-md-5" src={problem.attachedFile} />
                 <div>
               </div>
             </div>
             </div>
             <div className="row">
               <div className="col-md-4">
-                <div style={{backgroundColor:"#ffb649", textAlign:"center", padding:"4px",  margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>시험 답안지</div>
+                <div style={{backgroundColor:"#ffb649", textAlign:"center", padding:"4px",  margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>모범 답안</div>
                 <div style={{border:"1px solid gray", height:"70vh", borderRadius:"5px"}}>
                   <Pagination style={{marginBottom:"0%"}}>
                     {TestAnswerSheetUrl.map((data,idx)=>(
@@ -204,32 +204,6 @@ function ScoringTests(props){
                 <Image src={captureimageUrl} style={{ borderRadius:"5px", width:"100%", height:"70vh"}}/>
               </div>
             </div>
-            {/* <div style={{float:"right", marginRight:"38%", marginTop:"1%", backgroundColor:"#ffb649", width:"100px", textAlign:"center", padding:"2px", borderRadius:"5px", fontWeight:"bold"}}>시험 답안지</div>
-            <div style={{marginLeft:"13%", marginTop:"1%", backgroundColor:"#59a5fc", width:"100px", textAlign:"center", padding:"2px", borderRadius:"5px", fontWeight:"bold"}}>학생 답안지</div>
-            <div style={{border:"1px solid gray", float:"right", width:"35%", height:"70vh", marginRight:"25%", borderRadius:"5px"}}>
-              <Pagination style={{marginBottom:"0%"}}>
-                {TestAnswerSheetUrl.map((data,idx)=>(
-                  <Pagination.Item key={idx+1} active={idx+1 === active} onClick={()=>changeTestAnswerSheet(idx)}>
-                  {idx+1}
-                </Pagination.Item>
-                ))}
-              </Pagination>
-              {TestAnswerSheetImgUrl != ""? 
-                <Image src={TestAnswerSheetImgUrl} style={{width:"100%", height:"92%", marginTop:"0%"}}/>:
-                <h4 style={{marginTop:"50%", textAlign:"center"}}>등록된 답안이 없습니다.</h4>}
-            </div>
-            <Image src={imageUrl} style={{width:"35%", height:"70vh", marginTop:"0%"}}/>
-            <Image src={imageUrl2} style={{width:"35%", height:"70vh", marginTop:"0%"}}/>
-              
-            <Button style={{marginTop:"1%", backgroundColor:"#575757", borderColor:"gray"}} onClick={(e)=>enterScore(e,index+1)}>입력</Button>
-            <InputGroup style={{float:"left", width:"30%", marginTop:"1%"}}>
-            <InputGroup.Text>점수</InputGroup.Text>
-              <FormControl
-                name="score"
-                value={state.score}
-                onChange={(e)=>onChangehandler(e)}
-              />
-            </InputGroup> */}
 
 				  </Tab.Pane>
 				)

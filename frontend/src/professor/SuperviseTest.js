@@ -126,14 +126,21 @@ function SuperviseTest(props){
   });
 
   async function exitTest(e){
-    history.push('/tests');
-    let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
+
+    let response = await fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
       method: 'PUT',
       credentials : 'include',
     })
     .then((res) => res.json())
     .then((res) => {
       console.log("response:", res);
+      if(res.errorMessage){
+        alert(res.errorMessage)
+      }
+      else{
+        alert("시험이 정상적으로 종료되었습니다.")
+        history.push("/tests")
+      }
     })
     .catch(error => {console.error('Error:', error)});
 
@@ -178,7 +185,6 @@ function SuperviseTest(props){
     setRemainTime(temp)
     let tempEnd=timeToDict(durationEndTime)
     setRemainEndTime(tempEnd)
-    console.log(remainTime,remainEndTime)
   }, 1000);
 
   function timeToDict(duration){
@@ -215,9 +221,13 @@ function SuperviseTest(props){
                 <td colSpan="2">
                   <div style={{backgroundColor:"#FFD8D8", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
 
-                  { ended 
+                  { 
+                  started
+                  ?  
+                    ended 
                     ?  "시험 종료 "+(-remainEndTime.days)+"일 "+(-remainEndTime.hours)+"시간 "+(-remainEndTime.minutes)+"분 "+(-remainEndTime.seconds)+"초 지났습니다."
                     :  "시험 종료까지 "+ remainEndTime.days+"일 "+remainEndTime.hours+"시간 "+remainEndTime.minutes+"분 "+remainEndTime.seconds+"초 남았습니다." 
+                  :  "시험 시작까지 "+ remainTime.days+"일 "+remainTime.hours+"시간 "+remainTime.minutes+"분 "+remainTime.seconds+"초 남았습니다." 
                   }
                   </div>
                 </td>
@@ -376,7 +386,7 @@ function ChattingModal(props) {
           채팅
           </Button>
       }
-        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
+        <ChatFormPro testId={testId} role="Master" chatroom={props.studentId} show={show} setShow={setShow} newMessages={newMessages} setNewMessages={setNewMessages} cheating={props.cheating}></ChatFormPro>
         <ToastContainerB className="p-3 chatAlarmContainer positionTop" position="top-center">
           {
             newMessages.map((message,index)=>{
