@@ -6,6 +6,7 @@ import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswerService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
+import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionStatusResDto;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotSubmitWhenTestNotInProgressException;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotViewNotSubmittedSubmissionException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
@@ -28,6 +29,7 @@ public class SubmissionService {
     private final FileService fileService;
     private final FileConvertService fileConvertService;
     private final SubmissionAnswerService submissionAnswerService;
+    private final SubmissionMapper submissionMapper;
 
     @Transactional
     public Submission getByTestIdAndStudentId(Long testId, Long studentId) {
@@ -139,4 +141,10 @@ public class SubmissionService {
 
         return fileService.getDownloadUrl(submissionType.resolveSubmissionPath(submission));
     }
+
+	@Transactional
+	public GetSubmissionStatusResDto getStatus(Long testId, Long studentId) {
+		return submissionMapper.findVerifiedAndConsented(testId, studentId)
+				.orElseThrow(SubmissionNotFoundException::new);
+	}
 }
