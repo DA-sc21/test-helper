@@ -27,10 +27,14 @@ public class TestInvitationSender {
     private static final String TEST_INVITATION_BODY_FORMAT = "<div style='margin:100px;'>\n" +
             "    <h1>%s님, 안녕하세요 Test-Helper 입니다.</h1><br>\n" +
             "    <p><strong>%s</strong> 시험 접속 안내입니다.<p><br>\n" +
+            "    <p><strong>시험 시간 종료 후, 입장이 불가하니 이 점 유의하시어 입장 부탁드립니다.</strong><p><br>\n" +
             "    <p>시험 시작 시간 : <strong>%s</strong><p>\n" +
             "    <p>시험 종료 시간 : <strong>%s</strong><p>\n" +
             "    <br>\n" +
             "    <p><a href=\"%s\">시험 접속 링크</a>입니다.</p>\n" +
+            "    <br>\n" +
+            "    <br>\n" +
+            "    <p>링크 접속이 불가능한 경우 testhelper@naver.com으로 문의하세요.</p>\n" +
             "</div>";
     private static final String TEST_INVITATION_LINK_FORMAT = "%s/tests/%d/students/%d?accessKey=%s";
     

@@ -1,6 +1,7 @@
 import React from "react";
 import {  Route } from 'react-router-dom';
 import Assistant from './Assistant';
+import Student from './Student';
 import Test from './Test';
 
 function CourseRouter (props){
@@ -25,6 +26,13 @@ function CourseRouter (props){
             path={path} 
             courseName={courseName}
             assistant={assistant} />
+        }
+      />
+
+      <Route exact path={path+"/students"} 
+        render ={()=>
+          <Student
+            path={path} />
         }
       />
     </>

@@ -29,7 +29,7 @@ public class AccountService implements UserDetailsService {
     private final PortalAccountService portalAccountService;
 
     @Autowired
-	private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public Account get(Long id){
@@ -75,21 +75,17 @@ public class AccountService implements UserDetailsService {
 		return accountRepository.findByEmail(email)
 				.orElseThrow(AccountNotFoundException::new);
 	}
-
-    @Transactional
-	public void updatePasswordByEmail(String email, String password) {
-		Account account = getByEmail(email);
-		account.updatePassword(passwordEncoder.encode(password));
-	}
         
     @Transactional
-    public boolean updatePassword(String email, String password, String newPassword) {
-    	Account account = getByEmail(email);
-    	log.info(account.getPassword());
+    public boolean updatePassword(Long accountId, String password, String newPassword) {
+
+        Account account = this.get(accountId);
+
+        log.info(account.getPassword());
     	if(!passwordEncoder.matches(password, account.getPassword())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 틀렸습니다.");
     	}
-    	updatePasswordByEmail(email, newPassword);
+        account.updatePassword(passwordEncoder.encode(newPassword));
     	return true;
     }
 
