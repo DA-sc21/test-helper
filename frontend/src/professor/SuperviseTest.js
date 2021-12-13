@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion } from 'react-bootstrap';
+import {ListGroup, Card, Button, Offcanvas, Image, Badge, Accordion, Modal } from 'react-bootstrap';
 import {ToastContainer as ToastContainerB} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams, useHistory } from 'react-router-dom';
@@ -15,6 +15,9 @@ import ChatAlarm from '../component/ChatAlarm';
 
 function SuperviseTest(props){
   let history = useHistory();
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   let [studentName,setStudentName] = useState([]);
   let [studentInfo,setStudentInfo] = useState([]);
   let [testRooms,setTestRooms] = useState([]);
@@ -145,7 +148,6 @@ function SuperviseTest(props){
   });
 
   async function exitTest(e){
-    history.push('/tests');
     let response = fetch(baseUrl+'/tests/'+testId+'/status?status=ENDED',{
       method: 'PUT',
       credentials : 'include',
@@ -153,6 +155,7 @@ function SuperviseTest(props){
     .then((res) => res.json())
     .then((res) => {
       console.log("response:", res);
+      document.location.href="/tests";
     })
     .catch(error => {console.error('Error:', error)});
 
@@ -185,7 +188,7 @@ function SuperviseTest(props){
         </div>
         <div className="col-md-9 d-flex justify-content-end">
           <ChattingModal studentId="0" cheating={false}></ChattingModal>
-          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={(e)=> exitTest(e)}>종료</Button>
+          <Button style={{marginRight:"3%", backgroundColor:"#303641", borderColor:"#303641", boxShadow:"2px 2px 2px #57575775"}} onClick={()=> handleShow()}>종료</Button>
         </div>
         <div className="row mt-3" style={{backgroundColor:"#f3f3f3"}}>
           {
@@ -197,6 +200,24 @@ function SuperviseTest(props){
           }
         </div>
       </div>
+      <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{fontSize:"18px"}}>
+              <p>시험을 종료하면 학생들이 답안 제출이 불가능합니다.</p>
+              <p>그래도 종료하시겠습니까?</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="light" style={{color:"black", borderColor:"black", fontWeight:"bold"}} onClick={()=>exitTest()}>
+              예
+            </Button>
+            <Button variant="dark" onClick={()=>handleClose()}>
+              아니오
+            </Button>
+          </Modal.Footer>
+        </Modal>
     </div> 
   )
 }
