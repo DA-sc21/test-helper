@@ -8,6 +8,8 @@ import kr.ac.ajou.da.testhelper.common.security.authority.IsProfessor;
 import kr.ac.ajou.da.testhelper.course.dto.GetCourseResDto;
 import kr.ac.ajou.da.testhelper.course.dto.GetDetailedCourseResDto;
 import kr.ac.ajou.da.testhelper.course.dto.PutCourseAssistantReqDto;
+import kr.ac.ajou.da.testhelper.student.Student;
+import kr.ac.ajou.da.testhelper.test.room.dto.StudentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -64,6 +66,14 @@ public class CourseController {
         Set<Account> assistants = courseService.getCourseAssistantsById(courseId);
 
         return ResponseEntity.ok().body(assistants.stream().map(AssistantDto::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/courses/{courseId}/students")
+    @AccessCourseByProfessor
+    public ResponseEntity<List<StudentDto>> getCourseStudents(@PathVariable Long courseId){
+        List<Student> students = courseService.getStudentsById(courseId);
+
+        return ResponseEntity.ok().body(students.stream().map(StudentDto::new).collect(Collectors.toList()));
     }
     
     @PostMapping("/admin/classes/{courseId}")

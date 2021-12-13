@@ -17,6 +17,7 @@ function CourseInfo(){
   const menus = [
     { name: "조교 정보", path: `/courses/${courseId}/assistants`},
     { name: "시험 정보", path: `/courses/${courseId}/tests`},
+    { name: "학생 정보", path: `/courses/${courseId}/students`},
   ];
   useEffect(()=>{
     getCourseInfo();
