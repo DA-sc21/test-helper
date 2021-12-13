@@ -8,6 +8,7 @@ import kr.ac.ajou.da.testhelper.submission.answer.SubmissionAnswerService;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionStatus;
 import kr.ac.ajou.da.testhelper.submission.definition.SubmissionType;
 import kr.ac.ajou.da.testhelper.submission.dto.GetDetailedSubmissionResDto;
+import kr.ac.ajou.da.testhelper.submission.dto.GetSubmissionStatusResDto;
 import kr.ac.ajou.da.testhelper.submission.exception.CannotViewNotSubmittedSubmissionException;
 import kr.ac.ajou.da.testhelper.submission.exception.SubmissionNotFoundException;
 import kr.ac.ajou.da.testhelper.submission.exception.UploadedFileNotFoundException;
@@ -249,5 +250,21 @@ class SubmissionServiceTest {
         assertThrows(CannotViewNotSubmittedSubmissionException.class, ()-> submissionService.getDetailedByTestIdAndStudentId(test.getId(), student.getId(), true));
 
         //then
+    }
+    
+    @Test
+    void getStatus_success() {
+    	//given
+    	Long testId = 1L;
+    	Long studentId = 1L;
+    	GetSubmissionStatusResDto expectedStatus = new GetSubmissionStatusResDto("SUCCESS", true);
+    	when(submissionMapper.findVerifiedAndConsented(anyLong(), anyLong())).thenReturn(Optional.of(expectedStatus));
+
+    	//when
+    	GetSubmissionStatusResDto actualStatus = submissionService.getStatus(testId, studentId);
+ 
+    	//then
+    	verify(submissionMapper, times(1)).findVerifiedAndConsented(anyLong(), anyLong());
+    	assertEquals(expectedStatus, actualStatus);
     }
 }
