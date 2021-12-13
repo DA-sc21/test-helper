@@ -127,7 +127,7 @@ function ScoringTests(props){
 	
   return(
     <>
-    {loading? 
+    {!loading? 
       <div style={{textAlign:"center"}}>
         <h3 style={{paddingTop:"5%", marginBottom:"2%"}}>정보를 불러오는 중입니다.</h3>
         <Spinner style={{width:"40px", height:"40px"}} animation="border" role="status">
