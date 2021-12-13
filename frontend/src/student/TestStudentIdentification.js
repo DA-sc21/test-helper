@@ -10,12 +10,27 @@ function TestStudentIdentification(props){
   let [face,setface]= useState("");
   let [identificationResult, setIdentificationResult]=useState("");
   let studentNum=props.student.studentNumber
-  
+  let [verification,setVerification]=useState(false)
   useEffect(()=>{
     getimages("student_card",setStudentCard);
     getimages("face",setface);
+    getStudentSetting();
   },[]);
   
+  async function getStudentSetting(){
+
+    let response = await fetch(baseUrl+`/tests/`+testId+'/students/'+studentId+'/submissions/status',{
+			method: 'GET',
+			credentials : 'include',
+		  })
+      .then((res) => res.json())
+		  .then((result) => {
+        console.log("response:", result)
+        setVerification(result.verified)
+		  })
+      .catch(error => {console.error('Error:', error)});
+  }
+ 
   async function getimages(target,setImagepath){
     testId=String(testId).padStart(5,"0")
     
@@ -27,6 +42,13 @@ function TestStudentIdentification(props){
       .catch(()=>{ console.log("실패") })
   
   }
+
+  let verificationOption={
+    "PENDING" : "보류",
+    "REJECTED" : "거절",
+    "SUCCESS" : "성공",
+  }
+
   return(
     <div className="m-5 p-5"> 
       <div className="row">
@@ -36,19 +58,22 @@ function TestStudentIdentification(props){
       <div className="row m-5 d-flex justify-content-center">
         <div className="col-md-4">
           <Button className="" variant="dark" onClick={()=>{
-            Identification(testId, studentId,setIdentificationResult)
+            Identification(testId, studentId,setIdentificationResult,getStudentSetting)
           }} >본인인증신청</Button>
         </div>
       </div>
-      <div className="row">
-        <h3>
-          학생증,본인얼굴 일치 여부 : {identificationResult}
-        </h3>
+      <div className="row d-flex justify-content-center">
+        <div className="col-md-4" style={{backgroundColor:"#FFD8D8", fontSize:"17px", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
+          학생증,본인얼굴 일치 여부는 "{verificationOption[verification]}" 입니다.
+          {/* <Button className="col-md-2" variant="secondary" onClick={()=>{
+            getStudentSetting()
+          }} >본인인증 새로고침</Button> */}
+        </div>
       </div>
     </div>
   )
 }
-async function Identification(testId,studentId,setIdentificationResult){
+async function Identification(testId,studentId,setIdentificationResult,getStudentSetting){
   let response = await fetch(baseUrl+'/tests/'+testId+'/students/'+studentId+'/verification',{
     method : 'POST',
     credentials : 'include',
@@ -56,6 +81,7 @@ async function Identification(testId,studentId,setIdentificationResult){
   .then((res)=>res.text())
     .then((result)=>{
       setIdentificationResult(result);
+      getStudentSetting();
       console.log(result)
     })
     .catch(()=>{ console.log("실패") })
