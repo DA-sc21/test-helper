@@ -31,7 +31,7 @@ function Test(props){
 
   useEffect(()=>{
     console.log(props);
-    setAssistant(props.assistant);
+    setAssistant(props.assistant); //수정 필요
     getTest();
   },[])
 
@@ -397,6 +397,28 @@ const CheckTestInfo = (props) => {
     }
   }
 
+  async function deleteTest(){
+    let response = await fetch(baseUrl+`/tests/${props.id}`,{
+      method: 'DELETE',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.errorMessage != undefined){ //error
+        alert(res.errorMessage);
+      }
+      else{ //success
+        props.getTest();
+        alert("시험이 삭제되었습니다.");
+        setShow1(false);
+      }
+      console.log("response:", res);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  }
+
   return(
     <div>
       <button className="testName" onClick={(e)=>getTestInfo(e)}>
@@ -450,6 +472,9 @@ const CheckTestInfo = (props) => {
         <Modal.Footer>
           <Button variant="secondary" onClick={()=>openModifyModal()}>
             수정
+          </Button>
+          <Button variant="dark" onClick={()=>deleteTest()}>
+            삭제
           </Button>
         </Modal.Footer>
       </Modal>

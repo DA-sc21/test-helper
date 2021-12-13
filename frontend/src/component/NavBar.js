@@ -1,12 +1,17 @@
-import React from 'react'
+import React,{ useState }  from 'react'
 import { Link, useHistory } from 'react-router-dom';
-import { Navbar , Nav , NavDropdown , Container , Button  } from 'react-bootstrap';
+import { Navbar , Nav , NavDropdown , Container , Button,Modal  } from 'react-bootstrap';
 import { baseUrl } from "./baseUrl";
 import axios from 'axios';
 
 function NavBar(){
   let name = sessionStorage.getItem("name");
   let role = sessionStorage.getItem("role");
+
+  const [showQuestion, setShowQuestion] = useState(false);
+  const handleQuestionClose = () => setShowQuestion(false);
+  const handleQuestionShow = () => setShowQuestion(true);
+
   const pro_ass_role = {
     "PROFESSOR": "교수",
     "ASSISTANT": "조교"
@@ -48,6 +53,7 @@ function NavBar(){
             <Nav.Link as = {Link} to="/" style={{fontSize:"17px", marginTop:"2%"}}> Home </Nav.Link>
             <Nav.Link as = {Link} to="/courses" style={{fontSize:"17px", marginTop:"3%"}}> 강의 </Nav.Link>
             <Nav.Link as = {Link} to="/tests" style={{fontSize:"17px", marginTop:"3%"}}> 시험목록 </Nav.Link>
+            <Nav className={"nav-link"} style={{fontSize:"17px", marginTop:"3%", cursor : "pointer"}} onClick={()=>handleQuestionShow()}>문의하기</Nav>
             {/* <Nav.Link as = {Link} to="/tests/1/students/1" >1번대학생시험준비(완료 후 navbar에선 삭제예정)</Nav.Link> */}
             {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
@@ -61,11 +67,22 @@ function NavBar(){
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text style={{fontSize:"17px", marginTop:"0.5%"}}>
-          Signed in as: <a href="#login" style={{textUnderlinePosition:"under"}}>{name} {pro_ass_role[role]}</a>
+          Signed in as: <a href="/mypage" style={{textUnderlinePosition:"under"}}>{name} {pro_ass_role[role]}</a>
           </Navbar.Text>
         </Navbar.Collapse>
         <Button style={{marginLeft:"1%", backgroundColor:"#ffffff00", borderColor:"#b6b6b6", color:"black", color:"#b6b6b6", boxShadow:"1px 1px 1px #b6b6b6"}} onClick={(e)=>logout(e)}>로그아웃</Button>
       </Container>
+      <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
+        <Modal.Header closeButton>
+          <Modal.Title>문의하기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{height:"15vh"}}>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>수업 등록 문의 : admin@ajou.ac.kr</p>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>Test-Helper 서비스 문의 : testhelper@naver.com</p>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Navbar>
   )
 }

@@ -6,9 +6,11 @@ import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import kr.ac.ajou.da.testhelper.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.ac.ajou.da.testhelper.account.AccountService;
@@ -28,6 +30,9 @@ public class EmailServiceImpl {
 	
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	private MimeMessage codeMessage(String to, String ePw) throws Exception {
 
@@ -131,17 +136,17 @@ public class EmailServiceImpl {
 	}
 
 	public void sendPasswordMessage(String email) throws Exception {
-		accountService.getByEmail(email);
+		Account account = accountService.getByEmail(email);
 		String password = createKey();
 		MimeMessage message = passwordMessage(email, password);
 		try {
 			log.info(message.toString());
 			emailSender.send(message);
+			account.updatePassword(passwordEncoder.encode(password));
 		} catch(MailException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}
-		accountService.updatePasswordByEmail(email, password);
 	}
 
 }
