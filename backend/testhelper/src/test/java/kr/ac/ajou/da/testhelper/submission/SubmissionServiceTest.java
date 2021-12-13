@@ -38,7 +38,8 @@ class SubmissionServiceTest {
     private FileConvertService fileConvertService;
     @Mock
     private SubmissionAnswerService submissionAnswerService;
-
+    @Mock
+    private SubmissionMapper submissionMapper;
 
 
     private final String uploadUrl = "uploadUrl";
@@ -50,7 +51,8 @@ class SubmissionServiceTest {
         fileService = mock(FileService.class);
         fileConvertService = mock(FileConvertService.class);
         submissionAnswerService = mock(SubmissionAnswerService.class);
-        submissionService = new SubmissionService(submissionRepository, fileService, fileConvertService, submissionAnswerService);
+        submissionMapper = mock(SubmissionMapper.class);
+        submissionService = new SubmissionService(submissionRepository, fileService, fileConvertService, submissionAnswerService, submissionMapper);
     }
 
     @Test
