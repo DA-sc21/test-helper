@@ -235,40 +235,44 @@ function RecordView(props){
     let presignedUrlScreen=""
     let presignedUrlRoom=""
 
-    await axios
-      .get(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{ 
-          withCredentials : true
-        })
-      .then((result)=>{
-        presignedUrlScreen=result.data.downloadUrl;
+    let response = await fetch(baseUrl+path+'/students/'+studentId+'/submissions/SCREEN_SHARE_VIDEO/download-url',{
+      method : 'GET',
+      credentials : 'include'})
+      .then((res)=>res.json())
+      .then((result) =>{
+      presignedUrlScreen=result.downloadUrl;
+      console.log("response:",result);
       })
-      .catch((e)=>{ console.log("실패",e) })
+      .catch(error => {console.error('Error:',error)})
+      console.log(presignedUrlScreen);
 
-    await axios
-      .get(presignedUrlScreen,{withCredentials : true})
-      .then((result)=>{
-        setScreenVideo(result.config.url)
+    let response2 = await fetch(presignedUrlScreen,{
+      method : 'GET'})
+      .then((result) =>{
+      console.log(result.url);
+      setScreenVideo(result.url)
       })
-      .catch((e)=>{ 
-        console.log("실패",e.response.status) })
+      .catch(error => {console.error('Error:',error)})
 
-    await axios
-      .get(baseUrl+path+'/students/'+studentId+'/submissions/ROOM_VIDEO/download-url',{ 
-          withCredentials : true
-        })
-      .then((result)=>{
-        presignedUrlRoom=result.data.downloadUrl;
+    let response3 = await fetch(baseUrl+path+'/students/'+studentId+'/submissions/ROOM_VIDEO/download-url',{
+      method : 'GET',
+      credentials : 'include'})
+      .then((res)=>res.json())
+      .then((result) =>{
+        console.log(result)
+        presignedUrlRoom=result.downloadUrl;
       })
-      .catch((e)=>{ console.log("실패",e) })
-
-    await axios
-    .get(presignedUrlRoom,{withCredentials : true})
-    .then((result)=>{
-      setroomVideo(result.config.url)
-    })
-    .catch((e)=>{ 
-      console.log("실패",e.response.status) })
-
+      .catch(error => {console.error('Error:',error)})
+      console.log(presignedUrlRoom);
+      
+    let response4 = await fetch(presignedUrlRoom,{
+      method : 'GET'})
+      .then((result) =>{
+        console.log(result.url);
+        setroomVideo(result.url)
+      })
+      .catch(error => {console.error('Error:',error)})
+  
     setLoading(true);
   }
   return(
