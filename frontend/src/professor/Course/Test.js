@@ -31,7 +31,7 @@ function Test(props){
 
   useEffect(()=>{
     console.log(props);
-    setAssistant(props.assistant);
+    setAssistant(props.assistant); //수정 필요
     getTest();
   },[])
 
@@ -88,13 +88,9 @@ function Test(props){
     setLoading(true);
   }
   async function submitForm(e){
-    if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
+    if(state.startTime===undefined||state.endTime===undefined||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
-    //   //현재시간>=시작시간 or 시작시간>=종료시간
-    //   alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
-    // }
     else{
       let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
       let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
@@ -149,115 +145,124 @@ function Test(props){
     });
   }
 
-  if(!loading)return(<Loading></Loading>)
+  // if(!loading)return(<Loading></Loading>)
   return(
     <div style={{marginLeft:"7%", marginTop:"2%", width:"70%"}}>
-      <Button variant="secondary" style={{float:"right", marginRight:"15%"}} onClick={handleShow}>시험 생성</Button>
-      <h4 style={{marginBottom:"3%", textAlign:"left"}}>시험 정보</h4>
-      <div style={{width:"85%", height:"75vh", borderRadius:"10px", overflow: "auto", textAlign:"center"}}>
-        <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>중간고사</div>
-        {midterm.length !=0 ? midterm.map((data,idx)=>(
-          <Card key={idx} className="testCard">
+      {loading? 
+      <div>
+        <Button variant="secondary" style={{float:"right", marginRight:"15%"}} onClick={handleShow}>시험 생성</Button>
+        <h4 style={{marginBottom:"3%", textAlign:"left"}}>시험 정보</h4>
+        <div style={{width:"85%", height:"75vh", borderRadius:"10px", overflow: "auto", textAlign:"center"}}>
+          <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>중간고사</div>
+          {midterm.length !=0 ? midterm.map((data,idx)=>(
+            <Card key={idx} className="testCard">
+              <Card.Body>
+                <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
+              </Card.Body>
+            </Card>
+          )):
+          <Card className="noTestCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path}/>
+              <div className="noTest">
+                시험이 존재하지 않습니다
+              </div>
             </Card.Body>
-          </Card>
-        )):
-        <Card className="noTestCard">
-          <Card.Body>
-            <div className="noTest">
-              시험이 존재하지 않습니다
-            </div>
-          </Card.Body>
-        </Card>}
-        <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>기말고사</div>
-        {final.length != 0 ? final.map((data,idx)=>(
-          <Card key={idx} className="testCard">
+          </Card>}
+          <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>기말고사</div>
+          {final.length != 0 ? final.map((data,idx)=>(
+            <Card key={idx} className="testCard">
+              <Card.Body>
+                <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path} getTest={getTest} />
+              </Card.Body>
+            </Card>
+          )):
+          <Card className="noTestCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} assistant={assistant} path={path}/>
+              <div className="noTest">
+                시험이 존재하지 않습니다
+              </div>
             </Card.Body>
-          </Card>
-        )):
-        <Card className="noTestCard">
-          <Card.Body>
-            <div className="noTest">
-              시험이 존재하지 않습니다
-            </div>
-          </Card.Body>
-        </Card>}
-        <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>퀴즈</div>
-        {quiz.length !=0 ? quiz.map((data,idx)=>(
-          <Card key={idx} className="testCard">
+          </Card>}
+          <div style={{textAlign:"left", marginLeft:"2%", fontSize:"19px"}}>퀴즈</div>
+          {quiz.length !=0 ? quiz.map((data,idx)=>(
+            <Card key={idx} className="testCard">
+              <Card.Body>
+                <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path} getTest={getTest} />
+              </Card.Body>
+            </Card>
+          )):
+          <Card className="noTestCard">
             <Card.Body>
-              <CheckTestInfo name={data.name} type={data.test_type} id={data.id} idx={idx+1} assistant={assistant} path={path}/>
+              <div className="noTest">
+                시험이 존재하지 않습니다
+              </div>
             </Card.Body>
-          </Card>
-        )):
-        <Card className="noTestCard">
-          <Card.Body>
-            <div className="noTest">
-              시험이 존재하지 않습니다
-            </div>
-          </Card.Body>
-        </Card>}
-      </div>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>시험 생성</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div style={{height:"55vh"}}>
-            <div className="FormName">시험 유형</div>
-            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
-              <option>시험 유형</option>
-              <option value="MID">중간고사</option>
-              <option value="FINAL">기말고사</option>
-              <option value="QUIZ">퀴즈</option>
-            </Form.Select>
-            <div className="FormName">시작 일시</div>
-            <input className="date" type="datetime-local" name="startTime" onChange={(e)=>onChangehandler(e)}/>
-            <div className="FormName">종료 일시</div>
-            <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
-            <div className="FormName">담당 조교 등록</div>
-            <div style={{height:"34%", overflow: "auto"}}>
-            <Table striped bordered hover>
-              <thead style={{backgroundColor:"#aeb8ce"}}>
-              <tr>
-              <th>#</th>
-              <th>이름</th>
-              <th>이메일</th>
-              <th>Check</th>
-              </tr>
-              </thead>
-              <tbody>
-              {assistant.map((data,idx)=>(
-                <tr key={idx}>
-                <td>{idx+1}</td>
-                <td>{data.name}</td>
-                <td>{data.email}</td>
-                <td><Form style={{marginLeft:"12%"}}>
-                  <Form.Check
-                    inline
-                    name="assistantId"
-                    value={data.id}
-                    // onChange={(e)=>onChangehandler(e)}
-                    onChange={(e)=>checkBoxHandler(e.currentTarget.checked, data.id)}
-                  />
-                  </Form>
-                </td>
+          </Card>}
+        </div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>시험 생성</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{height:"55vh"}}>
+              <div className="FormName">시험 유형</div>
+              <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)}>
+                <option>시험 유형</option>
+                <option value="MID">중간고사</option>
+                <option value="FINAL">기말고사</option>
+                <option value="QUIZ">퀴즈</option>
+              </Form.Select>
+              <div className="FormName">시작 일시</div>
+              <input className="date" type="datetime-local" name="startTime" onChange={(e)=>onChangehandler(e)}/>
+              <div className="FormName">종료 일시</div>
+              <input className="date" type="datetime-local" name="endTime" onChange={(e)=>onChangehandler(e)}/>
+              <div className="FormName">담당 조교 등록</div>
+              <div style={{height:"34%", overflow: "auto"}}>
+              <Table striped bordered hover>
+                <thead style={{backgroundColor:"#aeb8ce"}}>
+                <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>Check</th>
                 </tr>
-              ))}
-            </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                {assistant.map((data,idx)=>(
+                  <tr key={idx}>
+                  <td>{idx+1}</td>
+                  <td>{data.name}</td>
+                  <td>{data.email}</td>
+                  <td><Form style={{marginLeft:"12%"}}>
+                    <Form.Check
+                      inline
+                      name="assistantId"
+                      value={data.id}
+                      // onChange={(e)=>onChangehandler(e)}
+                      onChange={(e)=>checkBoxHandler(e.currentTarget.checked, data.id)}
+                    />
+                    </Form>
+                  </td>
+                  </tr>
+                ))}
+              </tbody>
+              </Table>
+              </div>
             </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={(e)=>submitForm(e)}>
-            등록
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={(e)=>submitForm(e)}>
+              등록
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>:
+      <div>
+        <h2 style={{marginRight:"15%", marginTop:"10%"}}>정보를 불러오는 중입니다.</h2>
+        <Spinner animation="border" role="status" style={{marginRight:"15%", marginTop:"2%", width:"50px", height:"50px"}}>
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>}
     </div>
   )
 }
@@ -350,13 +355,9 @@ const CheckTestInfo = (props) => {
 
   async function submitForm(e){;
     console.log(state.startTime,state.endTime,state.type,checkList)
-    if(state.startTime===undefined||state.endTime===undefined||checkList.length===0||state.type===undefined){
+    if(state.startTime===undefined||state.endTime===undefined||state.type===undefined){
       alert("정보를 모두 입력해 주세요.");
     }
-    // else if(moment().format("YYYY-MM-DD HH:mm")>=moment(state.startTime).format("YYYY-MM-DD HH:mm")||moment(state.endTime).format("YYYY-MM-DD HH:mm")<=moment(state.startTime).format("YYYY-MM-DD HH:mm")){
-    //   //현재시간>=시작시간 or 시작시간>=종료시간
-    //   alert("시험 시작 및 종료 일시를 정확히 입력해 주세요.");
-    // }
     else{
       let start_time = moment(state.startTime).format("YYYY-MM-DD HH:mm");
       let end_time = moment(state.endTime).format("YYYY-MM-DD HH:mm");
@@ -383,36 +384,46 @@ const CheckTestInfo = (props) => {
           alert(res.errorMessage);
         }
         else{ //success
+          props.getTest();
           alert("시험 정보가 수정되었습니다.");
           setShow2(false);
-          history.push(props.path+'/tests');
+          // history.push(props.path+'/tests');
         }
         console.log("response:", res);
-        console.log(res.result);
-        console.log(res.errorMessage);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-      // .then( res => {
-      //   console.log("response:", res);
-      //   if(res.status === 200){
-      //       alert("시험 정보가 수정되었습니다.");
-      //       setShow2(false);
-      //       history.push(props.path+'/tests');
-      //   }
-      //   else{
-      //     alert("시험 정보 수정에 실패했습니다.");
-      //   }
-      // })
-      // .catch(error => {console.error('Error:', error)});
     }
+  }
+
+  async function deleteTest(){
+    let response = await fetch(baseUrl+`/tests/${props.id}`,{
+      method: 'DELETE',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.errorMessage != undefined){ //error
+        alert(res.errorMessage);
+      }
+      else{ //success
+        props.getTest();
+        alert("시험이 삭제되었습니다.");
+        setShow1(false);
+      }
+      console.log("response:", res);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
   }
 
   return(
     <div>
       <button className="testName" onClick={(e)=>getTestInfo(e)}>
-        {props.name}{quizNum}
+        {/* {props.name}{quizNum} */}
+        {props.name}
       </button>
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Header closeButton>
@@ -462,6 +473,9 @@ const CheckTestInfo = (props) => {
           <Button variant="secondary" onClick={()=>openModifyModal()}>
             수정
           </Button>
+          <Button variant="dark" onClick={()=>deleteTest()}>
+            삭제
+          </Button>
         </Modal.Footer>
       </Modal>
       <Modal show={show2} onHide={handleClose2}>
@@ -471,7 +485,7 @@ const CheckTestInfo = (props) => {
         <Modal.Body>
           <div style={{height:"55vh"}}>
           <div className="FormName">시험 유형</div>
-            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)} value={testInfo.type}>
+            <Form.Select className="type" name="type" onChange={(e)=>onChangehandler(e)} defaultValue={testInfo.type}>
               <option>시험 유형</option>
               <option value="MID">중간고사</option>
               <option value="FINAL">기말고사</option>

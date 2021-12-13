@@ -25,8 +25,8 @@ public class TestResult {
     private Double average;
 
     public void update(List<Submission> submissions) {
-        this.minScore = submissions.stream().mapToInt(Submission::getScore).min().orElse(0);
-        this.maxScore = submissions.stream().mapToInt(Submission::getScore).max().orElse(0);
-        this.average = submissions.stream().mapToInt(Submission::getScore).average().orElse(0);
+        this.minScore = submissions.stream().mapToInt(Submission::resolveScore).min().orElse(0);
+        this.maxScore = submissions.stream().mapToInt(Submission::resolveScore).max().orElse(0);
+        this.average = submissions.stream().mapToInt(Submission::resolveScore).average().orElse(0);
     }
 }

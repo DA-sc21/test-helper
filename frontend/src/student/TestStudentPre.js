@@ -22,10 +22,12 @@ function TestStudentPre(){
   let [audio, setAudio] = useState(false);
   let [consented,setConsented]=useState(false)
   let [tabCompleted,setTabCompleted]=useState([consented,false,false,false,""])
-  let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유 & 모바일마이크공유","본인인증"," 시험대기 "]
+  let tabTitles=["안내사항 & 사전동의","PC화면공유","모바일화면공유","본인인증"," 시험대기 "]
   let tabPath=["agreement","pcsetting","mobilesetting","identification","waiting"]
   let history = useHistory()
   let path="/tests/:testId/students/:studentId"
+  const [deniedTestAccess, setDeniedTestAccess] = useState(true);
+  const [message, setMessage] = useState("");
 
   let changeVideo = (e) => {
     setVideo(e.target.checked)
@@ -72,41 +74,43 @@ function TestStudentPre(){
       .then((res) => res.json())
       .then((res) => {
         console.log("response:", res);
-        // setConsented(res.room.consented);
-        setCredentials(res.credentials)
-        setRoom(res.room)
-        setStudent(res.room.student)
-        setTest(res.room.test)
+        setConsented(res.room.consented);
+        if(res.errorMessage != undefined){
+          setDeniedTestAccess(false);
+          setMessage(res.errorMessage);
+        }
+        else{
+          setDeniedTestAccess(true);
+          setCredentials(res.credentials);
+          setRoom(res.room);
+          setStudent(res.room.student);
+          setTest(res.room.test);
+        }
         setLoading(true);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-    // await axios
-    // .get(baseUrl+'/tests/'+testId+'/students/'+studentId+'/room')
-    // .then((result)=>{ 
-    //   setConsented(result.data.consented)
-    //   setCredentials(result.data.credentials)
-    //   setRoom(result.data.room)
-    //   setStudent(result.data.room.student)
-    //   setTest(result.data.room.test)
-    //   setLoading(true);
-    //   console.log(result.data)
-    // })
-    // .catch(()=>{ console.log("실패") })
   }
   
   if(!loading)return(<Loading></Loading>)
   return(
     <div className="position-relative">
+      {!deniedTestAccess? 
+      <h3 style={{marginTop:"20%"}}>{message}</h3>:
+      <>
       <NavBarStudent></NavBarStudent>
       <BrowserView> 
-        <Nav variant="tabs" >
+        <Nav justify variant="tabs" >
           {
             tabTitles.map((tabtitle,index)=>{
               return(
                 <Nav.Item key={index}>
-                  <Nav.Link  as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >{tabtitle}</Nav.Link>
+                  <Nav.Link as={Link} to ={"/tests/"+testId+"/students/"+studentId+"/"+tabPath[index]} eventKey={"link-"+index}  >
+                    <div style={{color:"black",fontSize: "18px" ,textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
+                      {tabtitle}
+                    </div>
+                  </Nav.Link>
                 </Nav.Item>
               )
             })
@@ -144,6 +148,7 @@ function TestStudentPre(){
           video={true}
           audio={true}
         />
+        </>}
     </div>
   )
 }

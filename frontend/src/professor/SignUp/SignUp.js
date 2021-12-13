@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form,Modal } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { baseUrl } from "../../component/baseUrl";
 import axios from 'axios';
@@ -17,6 +17,10 @@ function SignUp(){
   const [minutes, setMinutes] = useState(3);
   const [seconds, setSeconds] = useState(0);
   let history = useHistory();
+
+  const [showQuestion, setShowQuestion] = useState(false);
+  const handleQuestionClose = () => setShowQuestion(false);
+  const handleQuestionShow = () => setShowQuestion(true);
 
   function onChangehandler(e){
     let { name , value} = e.target;
@@ -108,21 +112,18 @@ function SignUp(){
     .post(baseUrl+'/users/email/validate', JSON.stringify(data),{
       headers: { "Content-Type": `application/json`}
         })
-    .then((res)=>res.json())
-    .then((result)=>{
-      console.log(result.data);
+    .then((res)=>{
       // response 이미 있는 경우, 성공한 경우, 실패한 경우에 따라 다르게 처리 필요
-      if(result.errorMessage!=undefined){
-        alert(result.errorMessage);
-      }
-      else {
-        alert("이메일을 전송하였습니다.");
-        setMinutes(3);
-        setSeconds(0);
-        setTimerId(true);
-      }
+      console.log(res);
+      alert("이메일을 전송하였습니다.");
+      setMinutes(3);
+      setSeconds(0);
+      setTimerId(true);
     })
-    .catch((e)=>{ console.log(e) })
+    .catch((e)=>{ 
+      alert(e.response.data.errorMessage);
+    })
+    
   }
 
   async function confirmEmail(e){
@@ -142,9 +143,9 @@ function SignUp(){
         alert("이메일 인증에 성공했습니다.");
       }
     })
-    .catch(()=>{ 
+    .catch((e)=>{ 
       console.log("실패");
-      alert("인증번호가 일치하지 않습니다.");
+      alert(e.response.data.errorMessage);
      })
   }
 
@@ -209,6 +210,19 @@ function SignUp(){
         <Button style={{marginTop:"3%", width:"80%", backgroundColor:"#3e475c", borderColor:"#3e475c"}} onClick={(e)=>submitForm(e)}>회원가입</Button>
         <div style={{textDecoration:"underline", textAlign:"right", marginTop:"6%", marginRight:"11%", fontSize:"17px"}}><Link to="/login" style={{color:"#525252"}}>로그인</Link></div>
       </div>
+      <br />
+      <img src={'/img/question.png'} className = {"question"} alt={"question mark"} onClick={()=>handleQuestionShow()}/>
+      <Modal show={showQuestion} onHide={handleQuestionClose} style={{marginTop:"5%"}}>
+        <Modal.Header closeButton>
+          <Modal.Title>문의하기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{height:"15vh"}}>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>관리자 문의 : admin@ajou.ac.kr</p>
+          <p style={{fontSize:"18px", marginBottom:"1%"}}>Test-Helper 서비스 사용 문의 : testhelper@naver.com</p>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

@@ -63,7 +63,7 @@ const Viewer = (props) => {
   useEffect(()=>{
     console.log(props.isEnded)
     if(props.isEnded && videoRecoder){ //녹화 시작&제출 완료 시
-      console.log("시험 종료");
+      console.log("녹화 종료");
       // setIsRecordEnded(true);
       stopCapture();
       videoRecoder.stop(); //stop recording video
@@ -91,6 +91,10 @@ const Viewer = (props) => {
     // }
     if(currentTime === testStartTime){
       startCapture();
+    }
+    if(currentTime === testEndTime){
+      console.log("시험 종료");
+      stopCapture();
     }
     // if(currentTime === testEndTime){
     //   console.log("시험 종료");

@@ -13,6 +13,7 @@ import CourseInfo from './professor/Course/CourseInfo';
 import AdminLogin from './admin/adminLogin/AdminLogin';
 import AdminCourseList from './admin/Course/CourseList';
 import UnscoredTest from './professor/AnswerSheet/UnscoredTests';
+import Mypage from './professor/Mypage';
 
 function App() {
   let isAuthorized = sessionStorage.getItem("isAuthorized");
@@ -26,6 +27,7 @@ function App() {
           {!isAuthorized ? <Redirect to="/login" /> : <NavBar></NavBar>}
           <Route path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
+          <Route path="/mypage" component={Mypage} />
           <Route exact path="/tests/:testId/problems" component={CreateProblems} />
           <Route exact path="/tests/:testId/supervise" component={SuperviseTest} />
           <Route exact path="/courses" component={Course} />

@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PutAccountPasswordReqDto {
-	private String email;
 	private String password;
 	private String newPassword;
 }
