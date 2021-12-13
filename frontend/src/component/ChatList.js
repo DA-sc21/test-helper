@@ -1,5 +1,5 @@
 import "./Chat.css"
-import React from "react"
+import React, { useState } from "react"
 import { Form , Button } from 'react-bootstrap';
 
 export default function ChatList(props){
@@ -8,7 +8,16 @@ export default function ChatList(props){
       document.querySelector(".messageSubmitBt").click();
     }
   };
+  const [state, setState] = useState([]);
 
+  function onChangehandler(e){
+    let { name , value} = e.target;
+    setState({
+      ...state,
+      [name]: value,
+    });
+    console.log(state);
+  }
  
   return(
     <div className="">
@@ -92,18 +101,20 @@ export default function ChatList(props){
                   size="lg" 
                   type="text" 
                   id={"MessageInput"+props.chatRoomId} 
+                  name="MessageInput"
                   placeholder="메세지를 입력하세요." 
+                  onChange={(e)=>onChangehandler(e)}
                   onKeyPress={(e) => enterEvent(e)}
                 />
                 <Button 
                 className="messageSubmitBt"
                 variant="dark" 
                 onClick={
-                  ()=>{
-                    
+                  (e)=>{
                     let author=props.role;
-                    let message=document.querySelector("#MessageInput"+props.chatRoomId).value;
-                    if(message===""){
+                    let message = state.MessageInput
+                    // console.log(message)
+                    if(message==="" || message===null || message===undefined){
                       alert("메시지를 입력해주세요")
                     }
                     else{
