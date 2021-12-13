@@ -98,7 +98,6 @@ function TestStudentMobileSetting(props){
           </div>
           :
         <div>
-        <h5>아래의 버튼을 클릭하면 학생증과 본인얼굴이 캡쳐됩니다.</h5>
         <Viewer 
           testId ={testId}
           studentId={studentId}
@@ -123,6 +122,7 @@ function TestStudentMobileSetting(props){
               {(e) => capture(e,testId,studentNum,setStudentCard,"student_card")
               }>학생증사진등록
           </Button> */}
+          <h5 className="mb-5" >아래의 버튼을 클릭하면 학생증과 본인얼굴이 캡쳐됩니다.</h5>
          
           <Button 
             className="col-5" 
@@ -155,6 +155,7 @@ function TestStudentMobileSetting(props){
         </div>
         :
         <div className="row">
+          <h4 className="mb-5">답안지 사진이 제대로 인식되지 않으면 채점에 불이익이 있을 수 있습니다.</h4>
           <Button 
             className="col-5" 
             variant="warning" 
