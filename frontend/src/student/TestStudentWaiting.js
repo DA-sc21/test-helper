@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ListGroup ,Button , Table } from 'react-bootstrap'
+import { Table ,Card } from 'react-bootstrap'
 import moment from 'moment';
 import Moment from "react-moment"
 import 'moment/locale/ko';
@@ -83,57 +83,68 @@ function TestStudentWaiting(props){
           <TakingTest consented={consented} verification={verification} started={started} data={props} endTime={endTime} remainEndTime={remainEndTime} ended={ended} ></TakingTest>
         </div>
         <div className="col-md-12">
-          <Table striped bordered hover size="sm">
-            <tbody>
-              <tr>
-                <td> 현재 시간 </td>
-                <td> <Moment format="YYYY-MM-DD dd HH:mm:ss" >{Date.now()}</Moment>  </td>
-              </tr>
-              <tr>
-                <td>시험시작 시간</td>
-                <td> {startTime}  </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  { started 
-                    ?  (-remainTime.days)+"일 "+(-remainTime.hours)+"시간 "+(-remainTime.minutes)+"분 "+(-remainTime.seconds)+"초 지났습니다."
-                    :  remainTime.days+"일 "+remainTime.hours+"시간 "+remainTime.minutes+"분 "+remainTime.seconds+"초 남았습니다." 
-                  }
-                </td>
-              </tr>
-            </tbody>
-          </Table>
+          <Card className="mt-5 m-5">
+            <Card.Body>
+              <h5>{props.test[testInformations[1]]} 시험정보</h5>
+              <hr></hr>
+              <Table striped bordered hover size="sm">
+                <tbody>
+                  <tr>
+                    <td> 현재 시간 </td>
+                    <td> <Moment format="YYYY-MM-DD dd HH:mm:ss" >{Date.now()}</Moment>  </td>
+                  </tr>
+                  <tr>
+                    <td>시험시작 시간</td>
+                    <td> {startTime}  </td>
+                  </tr>
+                  <tr>
+                    <td>시험종료 시간</td>
+                    <td> {endTime}  </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="2">
+                      <div style={{backgroundColor:"#2a2f38",color:"white", textAlign:"center", padding:"4px",margin:"10px", borderRadius:"5px", fontWeight:"bold"}}>
+                        { started 
+                          ?  "시험 시작이 "+ (-remainTime.days)+"일 "+(-remainTime.hours)+"시간 "+(-remainTime.minutes)+"분 "+(-remainTime.seconds)+"초 지났습니다."
+                          :  "시험 시작이 "+ remainTime.days+"일 "+remainTime.hours+"시간 "+remainTime.minutes+"분 "+remainTime.seconds+"초 남았습니다." 
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
         </div>
       </div>
-      <hr />
-      <div className="row mt-5">
-        <div className="col-md-6">
+      <div className="row mt-5 d-flex justify-content-center">
+      <div className="col-md-12 my-4">
+      </div>
+        {/* <div className="col-md-6">
           <h4>Setting현황</h4>
           <ListGroup>
+            <ListGroup.Item variant="info">
+              {props.tabTitles[0] +" 성공여부 : "}{consented?"성공":"실패"}
+            </ListGroup.Item>
+            <ListGroup.Item variant="info">
+              {props.tabTitles[1] +" 성공여부 : 성공 "}
+            </ListGroup.Item>
+            <ListGroup.Item variant="info">
+              {props.tabTitles[2] +" 성공여부 : 성공 "}
+            </ListGroup.Item>
+            <ListGroup.Item variant="info">
+              {props.tabTitles[3] +" 성공여부 : "}{verification?"성공":"실패"}
+            </ListGroup.Item>
             {props.tabCompleted.map((completed,index)=>{
               if (index===4){return}
               return (
-                <ListGroup.Item key={index} action variant="info">
+                <ListGroup.Item action variant="info">
                   {props.tabTitles[index] +" 성공여부 : true "}
                 </ListGroup.Item>
               )
             })}
           </ListGroup>
-        </div>
-        <div className="col-md-6">
-          <h4>시험정보</h4>
-          <ListGroup>
-            { 
-              testInformations.map((info,index)=>{
-                return(
-                  <ListGroup.Item key={index} action variant="success">
-                    {info +" : "+props.test[info]}
-                  </ListGroup.Item>
-                )
-              })
-            }
-          </ListGroup>
-        </div>
+        </div> */}
       </div>
     </div>
 

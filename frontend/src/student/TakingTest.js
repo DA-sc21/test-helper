@@ -30,7 +30,7 @@ function TakingTest(props) {
 
     return (
       <>
-        <Button variant= "success" size="lg" disabled= {!props.started} onClick={handleShow}>
+        <Button variant= "dark" size="lg" disabled= {!props.started} onClick={handleShow}>
           시험장입장
         </Button>
 
