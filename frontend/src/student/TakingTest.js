@@ -8,7 +8,19 @@ import SubmitAnswer from './SubmitAnswer';
 function TakingTest(props) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+      if(!props.consented)
+      {
+        alert("사전 동의를 완료하지 않아서 시험장에 입장할 수 없습니다.")
+      }
+      else if(props.verification!=="SUCCESS")
+      {
+        alert("본인인증을 완료하지 않아서 시험장에 입장할 수 없습니다.")
+      }
+      else{
+        setShow(true);
+      }
+    };
     console.log(props.data)
     let [showNotice,setShowNotice]=useState(false)
     let [showChat,setShowChat]=useState(false)

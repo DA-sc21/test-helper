@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ListGroup ,Button , Table } from 'react-bootstrap'
 import moment from 'moment';
 import Moment from "react-moment"
 import 'moment/locale/ko';
 import { useInterval } from 'react-use';
 import TakingTest from './TakingTest';
+import { baseUrl } from '../component/baseUrl';
+import { useParams } from 'react-router-dom';
 
 function TestStudentWaiting(props){
   moment.locale('ko')
-
+  let {testId, studentId} =useParams();
   let testInformations = ["id","name","startTime","endTime"]
   let startTime = props.test.startTime
   startTime = moment(startTime).format("YYYY-MM-DD dd HH:mm:ss")
@@ -25,6 +27,27 @@ function TestStudentWaiting(props){
   const [remainEndTime, setRemainEndTime] = useState(formatTime);
   let [started,setStarted]=useState(false)
   let [ended,setEnded]=useState(false)
+  let [consented,setConsented]=useState(false)
+  let [verification,setVerification]=useState(false)
+
+  useEffect(() => {
+    getStudentSetting();
+  },[])
+
+  async function getStudentSetting(){
+
+    let response = await fetch(baseUrl+`/tests/`+testId+'/students/'+studentId+'/submissions/status',{
+			method: 'GET',
+			credentials : 'include',
+		  })
+      .then((res) => res.json())
+		  .then((result) => {
+        console.log("response:", result)
+        setConsented(result.consented)
+        setVerification(result.verification)
+		  })
+      .catch(error => {console.error('Error:', error)});
+  }
 
   useInterval(() => {
     let currentTime = moment();
@@ -57,7 +80,7 @@ function TestStudentWaiting(props){
           {/* <Button variant= "success" size="lg" disabled= {!started} >
             시험장입장
           </Button> */}
-          <TakingTest started={started} data={props} endTime={endTime} remainEndTime={remainEndTime} ended={ended} ></TakingTest>
+          <TakingTest consented={consented} verification={verification} started={started} data={props} endTime={endTime} remainEndTime={remainEndTime} ended={ended} ></TakingTest>
         </div>
         <div className="col-md-12">
           <Table striped bordered hover size="sm">
