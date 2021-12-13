@@ -28,7 +28,6 @@ function TestStudentRouter (props){
             tabTitles={tabTitles} 
             tabCompleted={tabCompleted} 
             setTabCompleted={setTabCompleted}
-            consented={room.consented}
           />
         }
       />

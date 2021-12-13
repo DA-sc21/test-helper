@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Card,Button} from 'react-bootstrap'
 import {baseUrl} from "../component/baseUrl"
 import axios from 'axios';
@@ -6,10 +6,25 @@ import { useParams } from 'react-router-dom';
 
 function TestStudentAgreement(props){
   let {testId, studentId} =useParams();
-  let [agree,setagree]=useState(false)
-  let [consented,setConsented]=useState(props.consented)
-  console.log(props.consented)
+  let [consented,setConsented]=useState(false)
 
+  useEffect(() => {
+    getStudentConsented();
+  },[])
+
+  async function getStudentConsented(){
+
+    let response = await fetch(baseUrl+`/tests/`+testId+'/students/'+studentId+'/submissions/status',{
+			method: 'GET',
+			credentials : 'include',
+		  })
+      .then((res) => res.json())
+		  .then((result) => {
+      console.log("response:", result)
+      setConsented(result.consented)
+		  })
+      .catch(error => {console.error('Error:', error)});
+  }
   async function studentConsented(consentedChange){
     
     const data = {
@@ -26,8 +41,8 @@ function TestStudentAgreement(props){
     })
     .then( res => {
       console.log("response:", res);
-      setConsented(!consented)
       if(res.status === 200){
+        getStudentConsented();
         alert("사전 동의가 완료되었습니다.");
         let temp=[...props.tabCompleted]
         temp[0]=consented
