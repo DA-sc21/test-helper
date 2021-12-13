@@ -44,7 +44,7 @@ function TestStudentWaiting(props){
 		  .then((result) => {
         console.log("response:", result)
         setConsented(result.consented)
-        setVerification(result.verification)
+        setVerification(result.verified)
 		  })
       .catch(error => {console.error('Error:', error)});
   }
