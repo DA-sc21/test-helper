@@ -76,10 +76,10 @@ function Tests(){
       </ButtonGroup>
       <div className="row mt-5">
         {toggled===4? unscoredTests.map((testdata,index)=>{
-          return <TestCard key={index} test = {testdata} testState="unscored"/>;
+          return <TestCard key={index} test = {testdata} testState="unscored" />;
           }):
           testDatas.map((testdata,index)=>{
-            return <TestCard key={index} test = {testdata} testState=""/>;
+            return <TestCard key={index} test = {testdata} testState="" />;
           })
         }
       </div>
@@ -161,7 +161,7 @@ function TestCard(props){
             pathname: "/tests/"+props.test.id+"/supervise",
             state: {
               testStartTime: props.test.start_time,
-              testEndTime: props.test.end_time
+              testEndTime: props.test.end_time,
           }});
         }
       })

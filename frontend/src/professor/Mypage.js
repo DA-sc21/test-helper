@@ -13,8 +13,12 @@ function Mypage(){
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {setShow(true);setPassword(true);setConfirmPassword(true);}
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
 
   useEffect(()=>{
+    getUserInfo();
   },[])
 
   function onChangehandler(e){
@@ -24,6 +28,28 @@ function Mypage(){
       [name]: value,
     });
     console.log(state);
+  }
+
+  async function getUserInfo(){
+    let response = await fetch(baseUrl+'/account',{
+      method: 'GET',
+      credentials : 'include',
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      if(res.errorMessage != undefined){ //error
+        console.log(res.errorMessage);
+      }
+      else{ //success
+        setName(res.name);
+        setEmail(res.email);
+        setRole(res.role);
+      }
+      console.log("response:", res);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
   }
 
   async function checkPassword(){
@@ -53,7 +79,7 @@ function Mypage(){
     let isConfirmPassword = await checkConfirmPassword();
 
     let data = {
-      "email": "",
+      "email": email,
       "newPassword": state.newPassword,
       "password": state.originPassword
     }
@@ -91,13 +117,13 @@ function Mypage(){
     <div style={{textAlign:"center"}}>
       <div style={{fontSize:"28px", marginTop:"1%"}}>마이 페이지</div>
       <div style={{border:"2px solid gray", width: "68%", height:"72vh", marginLeft:"16%", marginTop:"1%", borderRadius:"10px"}}>
-        <div style={{marginTop:"12%", marginLeft:"15%", textAlign:"left", fontSize:"22px"}}>
-          <span>이름: </span>
+        <div style={{marginTop:"12%", textAlign:"left", fontSize:"25px", width:"100%", textAlign:"center"}}>
+          <span style={{display:"inlineBlock"}}>이름: {name}</span>
         </div>
-        <div style={{marginTop:"5%", marginLeft:"15%", textAlign:"left", fontSize:"22px"}}>
-          <span>이메일: </span>
+        <div style={{marginTop:"5%", textAlign:"left", fontSize:"25px", width:"100%", textAlign:"center"}}>
+          <span style={{display:"inlineBlock"}}>이메일: {email}</span>
         </div>
-        <Button style={{marginTop:"20%", width:"50%"}} onClick={()=>handleShow()}>비밀번호 변경</Button>
+        <Button style={{marginTop:"18%", width:"50%", backgroundColor:"#2e384b", borderColor:"#2e384b"}} onClick={()=>handleShow()}>비밀번호 변경</Button>
       </div>
       <Modal show={show} onHide={handleClose} style={{marginTop:"5%"}}>
         <Modal.Header closeButton>

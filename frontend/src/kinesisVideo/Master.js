@@ -29,7 +29,8 @@ const Master = (props) => {
   const pcView = useRef(null);
   const [isAudioShare, setIsAudioShare] = useState(false); //모바일 마이크 공유 여부
   const [isPcShare, setIsPcShare] = useState(false); //PC 화면 공유 여부
-  
+  let audioShareState = true;
+  let pcShareState = true;
   const master = {
     signalingClient: null,
     peerConnectionByClientId: {},
@@ -243,6 +244,10 @@ const Master = (props) => {
               props.changePc(props.studentId.indexOf(parseInt(remoteClientId[2])), false);
             case "failed":
               setIsPcShare(false);
+              if(pcShareState){
+                pcShareState=false;
+                props.pcScreenShareOff();
+              }
               console.log('pc connection failed');
               break;
             case "closed":
@@ -263,6 +268,10 @@ const Master = (props) => {
               props.changeAudio(props.studentId.indexOf(parseInt(remoteClientId[2])), false);
             case "failed":
               setIsAudioShare(false);
+              if(audioShareState){
+                audioShareState=false;
+                props.mobileShareOff();
+              }
               console.log('mobile connection failed');
               break;
             case "closed":
