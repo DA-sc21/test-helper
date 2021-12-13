@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PortalService {
 	@Autowired
-	private PortalRepository portalRepository;
+	private final PortalRepository portalRepository;
 	
 	@Transactional
 	public List<PortalCourse> getAll() {
