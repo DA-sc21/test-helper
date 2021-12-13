@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Sort;
 
 import kr.ac.ajou.da.testhelper.account.definition.AccountRole;
 import kr.ac.ajou.da.testhelper.definition.PortalStatus;
@@ -26,6 +27,21 @@ class PortalServiceTest {
 	void init() {
 		portalRepository = mock(PortalRepository.class);
 		portalService = new PortalService(portalRepository);
+	}
+	
+	@Test
+	void getAll_success() {
+		//given
+		List<PortalCourse> expectedList = new ArrayList<>();
+		
+		when(portalRepository.findAll(Sort.by(Sort.Direction.ASC, "name"))).thenReturn(expectedList);
+		
+		//when
+		List<PortalCourse> actualList = portalService.getAll();
+		
+		//then
+		verify(portalRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "name"));
+		assertEquals(expectedList, actualList);
 	}
 	
 	@Test
