@@ -1,7 +1,7 @@
 
 import React ,{useState} from 'react';
 import { useParams } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { BrowserView,MobileView } from 'react-device-detect';
 import Viewer from '../kinesisVideo/Viewer';
@@ -65,8 +65,30 @@ function TestStudentMobileSetting(props){
   return(
     <div className="m-4"> 
       <BrowserView>
-        <h4 >모바일 기기에서 세팅 완료 후 본인인증 페이지로 넘어가시면 됩니다.
-        </h4>
+      <div className="p-5"> 
+        <Card className="mt-0 m-5">
+          <Card.Body>
+            <h5>안내사항</h5>
+            <hr></hr>
+            <Card.Text style={{textAlign:"left", marginLeft:"5%"}}>
+              <h4 className="mb-3">
+                1. 모바일 기기에서 시험 링크에 접속해주세요.
+              </h4>
+              <h4 className="mb-3">
+                2. 모바일 기기에서 본인인증을 위한 학생증 사진과 얼굴 사진을 등록해주세요.
+                <br />
+              </h4>
+              <h4 className="mb-3">
+                3. 모바일 기기를 두 손을 비출 수 있도록 각도 조정해주세요. 
+                <br />
+              </h4>
+              <h4 className="mb-3">
+                4. PC의 본인인증 페이지로 이동해주세요.
+              </h4>
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      </div>
       </BrowserView>
       <MobileView>
         { submitted?
