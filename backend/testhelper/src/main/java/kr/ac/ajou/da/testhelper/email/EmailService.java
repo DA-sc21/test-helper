@@ -18,6 +18,7 @@ import kr.ac.ajou.da.testhelper.email.dto.PostEmailReqDto;
 import kr.ac.ajou.da.testhelper.portal.PortalAccount;
 import kr.ac.ajou.da.testhelper.portal.account.PortalAccountService;
 import kr.ac.ajou.da.testhelper.redis.RedisService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmailService {
@@ -55,6 +56,7 @@ public class EmailService {
 		return redisService.isVerify(reqDto);
 	}
 
+	@Transactional
 	public boolean sendPassword(PostEmailReqDto reqDto) throws Exception {
 		emailServiceImpl.sendPasswordMessage(reqDto.getEmail());
 		return true;

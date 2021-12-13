@@ -1,4 +1,4 @@
-package kr.ac.ajou.da.testhelper.account.dto;
+package kr.ac.ajou.da.testhelper.submission.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter(value = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PutAccountPasswordReqDto {
-	private String password;
-	private String newPassword;
+public class GetSubmissionStatusResDto {
+	private String verified;
+	private Boolean consented;
 }
