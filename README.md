@@ -153,6 +153,6 @@ cf ) cloud-converter API
 | ---- | ---- | --- |
 | 고예준 | [@KoYeJoon](https://github.com/KoYeJoon) | AI |
 | 송지연 | [@SongZzi](https://github.com/SongZzi) | Frontend |
-| 우나영 | [@WooNaYoung22](https://github.com/WooNaYoung22) | Backend |
+| 우나영 | [@UNayoung](https://github.com/UNayoung) | Backend |
 | 이승현 | [@leeshyeon](https://github.com/leeshyeon) | Frontend |
 | 최정민 | [@jmchoi1225](https://github.com/jmchoi1225) | Backend |
