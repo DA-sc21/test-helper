@@ -1,0 +1,102 @@
+spring:
+  profiles:
+    active: prod
+
+  datasource: #DB 접속정보
+    driver-class-name: org.mariadb.jdbc.Driver
+    logging: # ROOT레벨 전체 로깅 레벨 결정
+      level:
+        root: trace
+
+  hikari: #Hikari 설정
+    maximum-pool-size: 3
+    connection-test-query: SELECT 1
+    data-source-properties:
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+
+  jpa: #JPA 설정
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MariaDBDialect
+        show_sql: true #하이버네이트가 실행하는 모든 SQL문을 콘솔로 출력해 준다.
+        format_sql: true #콘솔에 출력되는 JPA 실행 쿼리를 가독성있게 표현한다.
+        use_sql_comments: false #디버깅이 용이하도록 SQL문 이외에 추가적인 정보를 출력해 준다.
+        physical_naming_strategy: kr.ac.ajou.da.testhelper.common.database.naming.DBNamingStrategy
+
+mybatis: #Mybatis 설정
+  mapper-locations: mapper/**/*.xml
+
+logging: # ROOT레벨 전체 로깅 레벨 결정
+  level:
+    root: info
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
+CLOUDCONVERT_API_KEY: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZmI4NDBmYzVhNWE4NjRiMmMwNmI5MmY3ODQ2YjNkZWQ4NzdiZGFlYWQwMjYyMDNhMzZkNTQxODg1ODljNTRmOTczM2M3MjM1ZTM1MWVlNDMiLCJpYXQiOjE2MzkzOTEyODAuOTQxNzU0LCJuYmYiOjE2MzkzOTEyODAuOTQxNzU5LCJleHAiOjQ3OTUwNjQ4ODAuOTI4NjQ5LCJzdWIiOiI1NDYyNDQyNSIsInNjb3BlcyI6WyJ1c2VyLnJlYWQiLCJ0YXNrLnJlYWQiLCJ1c2VyLndyaXRlIiwidGFzay53cml0ZSIsIndlYmhvb2sucmVhZCIsIndlYmhvb2sud3JpdGUiLCJwcmVzZXQucmVhZCIsInByZXNldC53cml0ZSJdfQ.auEDHaQkC8gUvdpRE7u0FCgr4x9zXeKkL5emEI0iTVKlh0cs0j7UrQX-3QzHMHe7rFtAdRInkzCeAjmo4MkbTo32T-v0_pq_g1F7XP2azmUlkNvBKgHsnEJiZXELLNih5NcOmgwkIJ13xDwdn-9R6WD2VYP7A4Gj-H8IDe_BizrcgmfGRUSLw65CHMoEn1zsbe0nh0XJpzMzJN95R6O3qHHx6D2MNERFjTO7UcWqYDZSZeUEXHTnWw7siZGX5806raW9pxrVY2M6EY_Bz5Sj_PvxUre0mE5pqfDr0OxK-Z_kpkFlRQVtOTcY_42GtIrIJOvL01roNJ4UMhCOs6WBdbRmdu8MoSuM-mftvap2_wjmQhZbwvhj_RvmlYNS6jtfCXvstOZfvl0ZMvZym7t5gtMoazvuv4MKgx1BAMlkG6uZ5VZIcjF6WrS5CLTPRDEhFzoOQqlApwamoqItgTiiFXpbYn4Unp2G4yssXHDcmZ1s-x2awxScIgwCoTzb6LbHPZ4i9FQyvmzJeXB_rc-qwSPh2xrnCRwHHBvXfFNj2gezHJpf7MoxAVqk_CKdDjx484BDhX5DIitEvM9XtwFV7BfaTwkmDZjUAfeB9zgyxCfdv8NQLblN6gzsIfwZav1IipxdkxF-X1DkoPfCBKEkVU4j39YJvpzFlpiyjD4fVUg
+CLOUDCONVERT_WEBHOOK_SIGNING_SECRET:
+
+email:
+  username: testhelper@naver.com
+  password: da4da4!!@@
+
+server:
+  port: 8081
+
+--- #local 환경
+spring:
+  profiles: local
+  datasource:
+    url: jdbc:mariadb://testhelper-db.c4veo8ludcnc.us-east-2.rds.amazonaws.com:3306/testhelper
+    hikari:
+      username: server
+      password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: localhost
+    port: 6379
+
+server:
+  cookie-domain : localhost
+  fe: http://localhost:3000
+  ai: http://localhost:5000
+
+--- #dev 환경
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mariadb://testhelper-db.c4veo8ludcnc.us-east-2.rds.amazonaws.com:3306/testhelper
+    hikari:
+      username: server
+      password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: redis
+    port: 6379
+
+server:
+  cookie-domain : localhost
+  fe: http://localhost:3000
+  ai: http://host.docker.internal:5000
+
+--- #prod 환경
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mariadb://testhelper-db.c4veo8ludcnc.us-east-2.rds.amazonaws.com:3306/testhelper
+    hikari:
+      username: server
+      password: alkz8VF0GkWue23LWac0GA
+  redis:
+    host: redis
+    port: 6379
+
+server:
+  cookie-domain : test-helper.com
+  fe: https://site.test-helper.com
+  ai: https://ai.test-helper.com
+  servlet:
+    session:
+      cookie:
+        domain: .test-helper.com
+
