@@ -57,7 +57,8 @@ const PCScreenShare = (props) => {
     let testEndTime = moment(props.endTime).format("YYYY-MM-DD HH:mm:ss");
     // let testEndTime = moment("2021 12 04 01:15").format("YYYY-MM-DD HH:mm:ss");//테스트
     // console.log(currentTime,testEndTime);
-    if(currentTime === testEndTime){
+    if(currentTime === testEndTime && !isRecordEnded){
+      console.log(currentTime,testEndTime);
       console.log("시험 종료");
       // setIsRecordEnded(true);
       isRecordEnded = true;

@@ -54,9 +54,9 @@ public class SubmissionService {
 
         Submission submission = this.getByTestIdAndStudentId(testId, studentId);
 
-        if (!submission.getTest().isInProgress()) {
-            throw new CannotSubmitWhenTestNotInProgressException();
-        }
+        // if (!submission.getTest().isInProgress()) {
+        //     throw new CannotSubmitWhenTestNotInProgressException();
+        // }
 
         return fileService.getUploadUrl(submissionType.resolveSubmissionPath(submission, false));
     }

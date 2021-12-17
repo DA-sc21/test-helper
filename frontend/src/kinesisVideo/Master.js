@@ -173,7 +173,7 @@ const Master = (props) => {
                 console.log(time)
               }
               else{
-                if((Math.floor(Date.now() / 1000)-time >= 40)){
+                if((Math.floor(Date.now() / 1000)-time >= 5)){
                   // console.log(time,Math.floor(Date.now() / 1000), Math.floor(Date.now() / 1000)-time)
                   time=0;
                 }
@@ -234,6 +234,7 @@ const Master = (props) => {
           let arr_pc = props.pc;
           switch(peerConnection.connectionState) {
             case "connected":
+              pcShareState=true;
               setIsPcShare(true);
               console.log('pc connect');
               props.changePc(props.studentId.indexOf(parseInt(remoteClientId[2])), true);
@@ -260,6 +261,7 @@ const Master = (props) => {
           let arr_audio = props.audio;
           switch(peerConnection.connectionState) {
             case "connected":
+              audioShareState=true;
               console.log('mobile connect');
               break;
             case "disconnected":

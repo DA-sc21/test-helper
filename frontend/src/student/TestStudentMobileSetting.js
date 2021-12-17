@@ -1,4 +1,3 @@
-
 import React ,{useState} from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Card } from 'react-bootstrap';
@@ -183,6 +182,9 @@ function TestStudentMobileSetting(props){
                 
               }>답안지후면카메라사진
           </Button>
+
+          
+          
         </div>
         }
           
@@ -191,16 +193,16 @@ function TestStudentMobileSetting(props){
         <div className="row mt-5">
           <div>사진 재등록을 원하신다면 버튼을 다시 누르시면 됩니다.</div>
           {/* <img src={studentCard} className="image col-5" alt="studentCard"></img> */}
-          <img id="frame" className="image col-5" alt="camera"></img>
+          <img id="frame" className=" col-5" alt="camera"></img>
           <div className="col-2"></div>
-          <img src={face} className="image col-5" alt="face"></img>
+          <img src={face} className=" col-5" alt="face"></img>
         </div>
         :
          <div className="row mt-5">
           <div>사진 재등록을 원하신다면 버튼을 다시 누르시면 됩니다.</div>
-          <img src={capture_1} className="image col-5" alt="capture_1"></img>
+          <img src={capture_1} className=" col-5" alt="capture_1"></img>
           <div className="col-2"></div>
-          <img id="frame" className="image col-5" alt="camera"></img>
+          <img id="frame" className=" col-5" alt="camera"></img>
         </div>
         }
         {!ended?
