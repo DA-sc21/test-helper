@@ -588,8 +588,8 @@ function AnswerSheetSubmissionList(props) {
                 return (
                   <ListGroup.Item key={index}>
                     <div className="row ">
-                      <div className="col-md-6">{index+1}. {props.studentInfo[index].student.name}</div>
-                      <div className="col-md-6 d-flex justify-content-end"> 
+                      <div className="col-md-8">{submissions.student.studentNumber}. {submissions.student.name}</div>
+                      <div className="col-md-4 d-flex justify-content-end"> 
                         <Badge bg={submission_status_css[submissions.submitted]} className="mx-3">{submission_status_options[submissions.submitted]}</Badge>
                       </div>
                     </div>

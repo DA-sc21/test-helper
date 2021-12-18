@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AWSTemporaryCredentialService {
 
-    private static final int TEMPORARY_CREDENTIALS_DURATION = 900;
+    private static final int TEMPORARY_CREDENTIALS_DURATION = 9000;
     private final AWSSecurityTokenService stsClient;
 
     public AWSTemporaryCredentialService() {
