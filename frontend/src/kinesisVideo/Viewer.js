@@ -112,7 +112,7 @@ const Viewer = (props) => {
   };
   
   function startCapture(e){
-    captureId=setInterval(capture, 3000);
+    captureId=setInterval(capture, 1000);
   }
   
   function stopCapture(e){
@@ -133,8 +133,12 @@ const Viewer = (props) => {
         .then((blob) => 
           {
         console.log(blob); //blob=캡쳐이미지
-       
-        checkHandDetection(blob);
+        let currentTime = moment().format("YYYY-MM-DD HH:mm:ss"); //현재 시간
+        let testEndTime = moment(props.endTime).format("YYYY-MM-DD HH:mm:ss"); //종료시간
+
+        if(currentTime<=testEndTime){
+          checkHandDetection(blob);
+        }       
         })
         .catch(error => console.log(error));
     })
@@ -158,7 +162,7 @@ const Viewer = (props) => {
       }
       else{
         cnt+=1;
-        if(cnt === 2){
+        if(cnt === 5){
           console.log(cnt, "false");
           sendMessage();
           cnt=0;
